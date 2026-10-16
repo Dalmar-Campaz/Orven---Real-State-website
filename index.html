@@ -29,9 +29,6 @@
           </p>
         </section>
         <section class="seccion-busqueda">
-          <div></div>
-          <div></div>
-          <div></div>
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +37,76 @@
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="ubicacion"
+            >
+              <path
+                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+              ></path>
+
+              <!-- El punto / círculo central del pin -->
+              <circle cx="12" cy="9" r="3"></circle>
+            </svg>
+            <div>
+              <p>Ubicación</p>
+              <span>¿En que ciudad o zona?</span>
+            </div>
+          </div>
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="tipo-vivienda"
+            >
+              <polygon points="3.5,22 21,22 21,10 12,2 3.5,10"></polygon>
+              <rect x="9.5" y="14" width="5.5" height="8" />
+            </svg>
+            <div>
+              <p>Tipo de propiedad</p>
+              <span>Casa, Apartamento...</span>
+            </div>
+          </div>
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="1.5"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="precio"
+            >
+              <rect x="2" y="6" width="20" height="12"></rect>
+              <circle cx="7" cy="12.5" r="0.5" fill="currentColor"></circle>
+              <circle cx="12" cy="12.5" r="2"></circle>
+              <circle cx="17" cy="12.5" r="0.5" fill="currentColor"></circle>
+            </svg>
+            <div>
+              <p>Precio</p>
+              <span>Desde - Hasta</span>
+            </div>
+          </div>
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
               class="icono-lupa"
@@ -52,7 +118,17 @@
           </div>
         </section>
       </header>
+      <section id="propiedades">
+        <h2>Propiedades Destacadas</h2>
+      </section>
     </main>
-    <footer></footer>
+    <footer>
+      <section id="sobre-nosotros">
+        <h2>Valoraciones y Reseñas</h2>
+      </section>
+      <div>
+
+      </div>
+    </footer>
   </body>
 </html>
