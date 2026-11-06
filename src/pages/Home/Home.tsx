@@ -137,9 +137,9 @@ function Home() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"></path>
               <circle cx="12" cy="9" r="3"></circle>
@@ -163,9 +163,9 @@ function Home() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="1.7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
               <polygon points="3.5,22 21,22 21,10 12,2 3.5,10"></polygon>
               <rect x="9.5" y="14" width="5.5" height="8" />
@@ -189,10 +189,10 @@ function Home() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
               <rect x="2" y="6" width="20" height="12"></rect>
               <circle cx="7" cy="12.5" r="0.5" fill="currentColor"></circle>
@@ -204,7 +204,9 @@ function Home() {
               <label htmlFor="price">Precio</label>
               <select id="property-type" defaultValue="">
                 <option value="">$0 - $500.000.000</option>
-                <option value="$500.000.000 - $1.000.000.000">$500.000.000 - $1.000.000.000</option>
+                <option value="$500.000.000 - $1.000.000.000">
+                  $500.000.000 - $1.000.000.000
+                </option>
                 <option value="$1.000.000.000+">$1.000.000.000+</option>
               </select>
             </div>
@@ -236,8 +238,8 @@ function Home() {
               <div className="property-image">
                 <img src={property.image} alt={property.title} />
 
-                <button
-                  type="button"
+                <img
+                style={{width:26, height:26}}
                   className={`favorite-button ${
                     favorites.includes(property.id) ? "is-favorite" : ""
                   }`}
@@ -248,32 +250,38 @@ function Home() {
                       : "Agregar a favoritos"
                   }
                   aria-pressed={favorites.includes(property.id)}
-                >
-                  {favorites.includes(property.id) ? "♥" : "♡"}
-                </button>
+                  src={favorites.includes(property.id) ? "src/assets/icons/fav.png" : "src/assets/icons/add-fav.png"}
+                />
               </div>
 
               <div className="property-info">
                 <p className="property-price">{property.price}</p>
 
                 <p className="property-location">
-                  <span>⌖</span>
+                  <img
+                    src="src/assets/icons/ubicacion.png"
+                    alt="ubicación" style={{ marginBottom: "-2px", marginRight: "4px" }}
+                  />
                   {property.location}
                 </p>
 
                 <div className="property-features">
                   <span>
-                    <span className="feature-icon">⌂</span>
+                    <img
+                      src="src/assets/icons/habitaciones.png"
+                      alt="Habitaciones"
+                    />
                     {property.bedrooms}
                   </span>
 
                   <span>
-                    <span className="feature-icon">♧</span>
+                    <img src="src/assets/icons/baños.png" alt="Baños" />
+
                     {property.bathrooms}
                   </span>
 
                   <span>
-                    <span className="feature-icon">▱</span>
+                    <img src="src/assets/icons/tamaño.png" alt="Área" />
                     {property.area} m²
                   </span>
                 </div>
@@ -297,9 +305,10 @@ function Home() {
 
             <div>
               <p className="testimonial-text">
-                Encontramos nuestro hogar soñado con la ayuda del equipo de
-                Orven. El proceso fue sencillo y nos acompañaron en todo
-                momento.
+                Encontramos nuestro hogar soñado con la ayuda del <br />
+                equipo de Orven. El proceso fue sencillo y nos
+                <br />
+                acompañaron en todo momento.
               </p>
 
               <div className="client">
@@ -360,9 +369,8 @@ function Home() {
 
       {/* FOOTER */}
       <footer className="footer">
-        <a href="#inicio" className="brand footer-brand">
-          <span className="brand-icon">⌂</span>
-          <span>Orven</span>
+        <a href="#inicio">
+          <img className="logo" src="src/assets/Logo.png" />
         </a>
 
         <div className="footer-bottom">

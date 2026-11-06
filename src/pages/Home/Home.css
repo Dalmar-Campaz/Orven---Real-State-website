@@ -45,7 +45,6 @@ body {
   font: inherit;
 }
 
-
 /* =====================================
    NAVBAR
 ===================================== */
@@ -68,7 +67,7 @@ body {
   justify-content: space-between;
 }
 
-.logo{
+.logo {
   width: 150px;
 }
 
@@ -104,7 +103,6 @@ body {
   width: 32px;
   height: 32px;
 }
-
 
 /* =====================================
    HERO
@@ -152,7 +150,6 @@ body {
   font-size: 13px;
   margin: 0;
 }
-
 
 /* =====================================
    SEARCH FORM
@@ -254,7 +251,6 @@ body {
   stroke-linecap: round;
 }
 
-
 /* =====================================
    PROPERTIES SECTION
 ===================================== */
@@ -272,14 +268,18 @@ body {
 }
 
 .section-heading h2,
-.social-proof h2,
 .publish-section h2 {
   font-size: 19px;
   font-weight: 700;
   margin: 0;
   color: var(--primary-dark);
 }
-
+.social-proof h2 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 20px;
+  align-content: start;
+}
 .view-all {
   font-size: 11px;
   color: var(--muted);
@@ -308,7 +308,9 @@ body {
   background: white;
   border: 1px solid #e8e7df;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.025);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform,
+
 }
 
 .property-card:hover {
@@ -328,7 +330,7 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.3s;
+  transition: transform;
 }
 
 .property-card:hover .property-image img {
@@ -411,7 +413,6 @@ body {
   transition: background 0.2s;
 }
 
-
 /* =====================================
    TESTIMONIAL AND AGENT
 ===================================== */
@@ -420,19 +421,13 @@ body {
   background: var(--secondary-background);
   padding: 27px 7%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 55px;
-  align-items: center;
+grid-template-columns: repeat(2, minmax(400px, 1fr));
+  gap: 80px;
 }
 
 .testimonial,
 .featured-agent {
   min-width: 0;
-}
-
-.social-proof h2 {
-  font-size: 16px;
-  margin-bottom: 17px;
 }
 
 .testimonial-content {
@@ -449,7 +444,7 @@ body {
 
 .testimonial-text {
   max-width: 450px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.6;
   color: #565e54;
   margin: 0 0 12px;
@@ -462,8 +457,8 @@ body {
 }
 
 .client img {
-  width: 35px;
-  height: 35px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -475,7 +470,7 @@ body {
 }
 
 .client strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .client span {
@@ -490,8 +485,8 @@ body {
 }
 
 .agent-image {
-  width: 62px;
-  height: 62px;
+  width: 76px;
+  height: 76px;
   object-fit: cover;
   border-radius: 50%;
 }
@@ -504,11 +499,11 @@ body {
 }
 
 .agent-info strong {
-  font-size: 12px;
+  font-size: 15px;
 }
 
 .agent-info > span {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -526,7 +521,7 @@ body {
 }
 
 .agent-rating small {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
 }
 
@@ -543,7 +538,6 @@ body {
 .contact-agent:hover {
   background: white;
 }
-
 
 /* =====================================
    CALL TO ACTION
@@ -582,7 +576,6 @@ body {
   transition: background 0.2s;
 }
 
-
 /* =====================================
    FOOTER
 ===================================== */
@@ -595,14 +588,6 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-}
-
-.footer-brand {
-  font-size: 20px;
-}
-
-.footer-brand .brand-icon {
-  font-size: 29px;
 }
 
 .footer-bottom {
@@ -630,13 +615,11 @@ body {
   color: #898a80;
 }
 
-
 /* =====================================
    RESPONSIVE - TABLETS
 ===================================== */
 
 @media (max-width: 900px) {
-
   .properties-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -667,16 +650,13 @@ body {
   .agent-card {
     flex-wrap: wrap;
   }
-
 }
-
 
 /* =====================================
    RESPONSIVE - MOBILE
 ===================================== */
 
 @media (max-width: 600px) {
-
   .navbar {
     height: 65px;
   }
@@ -806,5 +786,4 @@ body {
     width: 100%;
     align-items: flex-start;
   }
-
 }
