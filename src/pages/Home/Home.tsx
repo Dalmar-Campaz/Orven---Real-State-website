@@ -1,4 +1,13 @@
 import { useState, type FormEvent } from "react";
+import baños from '../../assets/icons/baños.png';
+import addFav from '../../assets/icons/add-fav.png';
+import fav from '../../assets/icons/fav.png';
+import habitaciones from '../../assets/icons/habitaciones.png';
+import tamaño from '../../assets/icons/tamaño.png';
+import ubicacion from '../../assets/icons/ubicacion.png';
+import logo from '../../assets/Logo.png';
+import avatar from '../../assets/Avatar.png';
+
 import "./Home.css";
 
 interface Property {
@@ -85,7 +94,7 @@ function Home() {
       <header className="navbar">
         <div className="navbar-container">
           <a href="#inicio">
-            <img className="logo" src="src/assets/Logo.png" />
+            <img className="logo" src={logo} alt="Orven" />
           </a>
 
           <nav className="nav-links">
@@ -101,7 +110,7 @@ function Home() {
             <img
               className="account-button"
               aria-label="Mi cuenta"
-              src="src/assets/Avatar.png"
+              src={avatar}
             />
           </a>
         </div>
@@ -250,7 +259,7 @@ function Home() {
                       : "Agregar a favoritos"
                   }
                   aria-pressed={favorites.includes(property.id)}
-                  src={favorites.includes(property.id) ? "src/assets/icons/fav.png" : "src/assets/icons/add-fav.png"}
+                  src={favorites.includes(property.id) ? fav : addFav}
                 />
               </div>
 
@@ -259,7 +268,7 @@ function Home() {
 
                 <p className="property-location">
                   <img
-                    src="src/assets/icons/ubicacion.png"
+                    src={ubicacion}
                     alt="ubicación" style={{ marginBottom: "-2px", marginRight: "4px" }}
                   />
                   {property.location}
@@ -268,20 +277,20 @@ function Home() {
                 <div className="property-features">
                   <span>
                     <img
-                      src="src/assets/icons/habitaciones.png"
+                      src={habitaciones}
                       alt="Habitaciones"
                     />
                     {property.bedrooms}
                   </span>
 
                   <span>
-                    <img src="src/assets/icons/baños.png" alt="Baños" />
+                    <img src={baños} alt="Baños" />
 
                     {property.bathrooms}
                   </span>
 
                   <span>
-                    <img src="src/assets/icons/tamaño.png" alt="Área" />
+                    <img src={tamaño} alt="Área" />
                     {property.area} m²
                   </span>
                 </div>
@@ -370,7 +379,7 @@ function Home() {
       {/* FOOTER */}
       <footer className="footer">
         <a href="#inicio">
-          <img className="logo" src="src/assets/Logo.png" />
+          <img className="logo" src={logo} alt="Orven" />
         </a>
 
         <div className="footer-bottom">
