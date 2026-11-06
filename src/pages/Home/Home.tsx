@@ -286,7 +286,7 @@ function Home() {
                   </span>
                 </div>
 
-                <a href="#contacto" className="property-button">
+                <a className="property-button">
                   Ver detalles
                 </a>
               </div>
