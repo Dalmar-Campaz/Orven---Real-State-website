@@ -99,11 +99,6 @@ body {
   background: var(--primary);
 }
 
-.account-button {
-  width: 32px;
-  height: 32px;
-}
-
 /* =====================================
    HERO
 ===================================== */
@@ -222,7 +217,7 @@ body {
 
 .search-button {
   height: 42px;
-  padding: 0 15px;
+  padding: 0;
   border: none;
   border-radius: 5px;
   background: var(--primary);
@@ -376,10 +371,6 @@ body {
   color: var(--muted);
 }
 
-.property-location span {
-  margin-right: 5px;
-}
-
 .property-features {
   display: flex;
   align-items: center;
@@ -404,6 +395,7 @@ body {
 
 .property-button {
   width: 100%;
+  cursor: pointer;
   min-height: 29px;
   border-radius: 4px;
   display: flex;
@@ -578,11 +570,12 @@ grid-template-columns: repeat(2, minmax(400px, 1fr));
   transition: background 0.2s;
 }
 
-/* =====================================
+/*
    FOOTER
-===================================== */
+*/
 
 .footer {
+  padding: 20px 0 10px;
   width: min(1200px, 86%);
   min-height: 65px;
   margin: 0 auto;
@@ -617,9 +610,9 @@ grid-template-columns: repeat(2, minmax(400px, 1fr));
   color: #898a80;
 }
 
-/* =====================================
+/*
    RESPONSIVE - TABLETS
-===================================== */
+*/
 
 @media (max-width: 900px) {
   .properties-grid {
@@ -654,9 +647,9 @@ grid-template-columns: repeat(2, minmax(400px, 1fr));
   }
 }
 
-/* =====================================
+/*
    RESPONSIVE - MOBILE
-===================================== */
+ */
 
 @media (max-width: 600px) {
   .navbar {

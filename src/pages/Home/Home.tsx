@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { propertiesDB as properties} from "../../data/propiedades";
 import baños from '../../assets/icons/baños.png';
 import addFav from '../../assets/icons/add-fav.png';
 import fav from '../../assets/icons/fav.png';
@@ -6,67 +7,8 @@ import habitaciones from '../../assets/icons/habitaciones.png';
 import tamaño from '../../assets/icons/tamaño.png';
 import ubicacion from '../../assets/icons/ubicacion.png';
 import logo from '../../assets/Logo.png';
-import avatar from '../../assets/icons/avatar.png';
-
 import "./Home.css";
-
-interface Property {
-  id: number;
-  title: string;
-  location: string;
-  price: string;
-  bedrooms: number;
-  bathrooms: number;
-  area: number;
-  image: string;
-}
-
-const properties: Property[] = [
-  {
-    id: 1,
-    title: "Casa moderna con piscina",
-    location: "El Poblado, Medellín",
-    price: "$ 1.250.000.000",
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 280,
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    title: "Apartamento con vista a la ciudad",
-    location: "Chapinero, Bogotá",
-    price: "$ 650.000.000",
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 120,
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    title: "Casa campestre",
-    location: "La Calera, Cundinamarca",
-    price: "$ 980.000.000",
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 240,
-    image:
-      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    title: "Apartamento familiar",
-    location: "Envigado, Antioquia",
-    price: "$ 452.800.000",
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 85,
-    image:
-      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&auto=format&fit=crop",
-  },
-];
+import HomeNavbar from "../../component/HomeNavbar/HomeNavbar";
 
 function Home() {
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -91,30 +33,8 @@ function Home() {
   return (
     <div className="orven-page">
       {/* NAVBAR */}
-      <header className="navbar">
-        <div className="navbar-container">
-          <a href="#inicio">
-            <img className="logo" src={logo} alt="Orven" />
-          </a>
 
-          <nav className="nav-links">
-            <a href="#inicio" className="active">
-              Inicio
-            </a>
-            <a href="#propiedades">Propiedades</a>
-            <a href="#nosotros">Sobre Nosotros</a>
-            <a href="#contacto">Contacto</a>
-          </nav>
-
-          <a href="#cuenta">
-            <img
-              className="account-button"
-              aria-label="Mi cuenta"
-              src={avatar}
-            />
-          </a>
-        </div>
-      </header>
+      <HomeNavbar />
 
       {/* HERO */}
       <section className="hero" id="inicio">
@@ -135,7 +55,7 @@ function Home() {
         </div>
       </section>
 
-      {/* SEARCH */}
+      {/* APARTADO BUSQUEDA */}
       <section className="search-section">
         <form className="search-form" onSubmit={handleSearch}>
           <div className="search-field">
@@ -222,16 +142,16 @@ function Home() {
           </div>
 
           <button className="search-button" type="submit">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
+            {/* <svg viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="10.5" cy="10.5" r="6.5" />
               <path d="m16 16 5 5" />
-            </svg>
+            </svg> */}
             Buscar
           </button>
         </form>
       </section>
 
-      {/* FEATURED PROPERTIES */}
+      {/* CARACTERISTICAS PROPIEDADES */}
       <section className="properties-section" id="propiedades">
         <div className="section-heading">
           <h2>Propiedades Destacadas</h2>
@@ -305,7 +225,7 @@ function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIAL AND AGENT */}
+      {/* TESTIMONIALES Y AGENTES */}
       <section className="social-proof" id="nosotros">
         <div className="testimonial">
           <h2>Lo que dicen nuestros clientes</h2>
@@ -363,7 +283,7 @@ function Home() {
         </div>
       </section>
 
-      {/* CALL TO ACTION */}
+      {/*FORMULARIO*/}
       <section className="publish-section" id="contacto">
         <h2>¿Quieres publicar tu inmueble?</h2>
 
@@ -384,7 +304,7 @@ function Home() {
         </a>
 
         <div className="footer-bottom">
-          <div className="social-links">
+          {/* <div className="social-links">
             <a href="#contacto" aria-label="Facebook">
               f
             </a>
@@ -394,7 +314,7 @@ function Home() {
             <a href="#contacto" aria-label="LinkedIn">
               in
             </a>
-          </div>
+          </div> */}
 
           <p>© 2026 Orven. Todos los derechos reservados.</p>
         </div>
