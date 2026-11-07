@@ -66,7 +66,6 @@ const ArrowIcon = () => (
 );
 
 const FeatureIcon = ({ name }: { name: (typeof FEATURES)[number]["icon"] }) => {
-  const props = { ...svgProps, width: 34, height: 34, strokeWidth: 1.4 };
   switch (name) {
     case "home":
       return (

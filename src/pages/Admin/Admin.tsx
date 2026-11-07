@@ -6,7 +6,6 @@ import logo from "../../assets/LogoWhite.png";
 import home from "../../assets/icons/house.png";
 import houseVerde from "../../assets/icons/house-verde.png";
 import clipboard from "../../assets/icons/clipboard-list.png";
-import clipboardVerde from "../../assets/icons/clipboard-list-verde.png";
 import logOut from "../../assets/icons/log-out.png";
 import panel from "../../assets/icons/layout-grid.png";
 
