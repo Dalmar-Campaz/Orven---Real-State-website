@@ -336,7 +336,9 @@ body {
 .property-card:hover .property-image img {
   transform: scale(1.04);
 }
-
+.property-card .icon {
+  width: 13px; 
+}
 .favorite-button {
   width: 29px;
   height: 29px;

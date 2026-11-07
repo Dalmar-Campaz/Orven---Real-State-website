@@ -6,7 +6,7 @@ import habitaciones from '../../assets/icons/habitaciones.png';
 import tamaño from '../../assets/icons/tamaño.png';
 import ubicacion from '../../assets/icons/ubicacion.png';
 import logo from '../../assets/Logo.png';
-import avatar from '../../assets/Avatar.png';
+import avatar from '../../assets/icons/avatar.png';
 
 import "./Home.css";
 
@@ -269,7 +269,7 @@ function Home() {
                 <p className="property-location">
                   <img
                     src={ubicacion}
-                    alt="ubicación" style={{ marginBottom: "-2px", marginRight: "4px" }}
+                    alt="ubicación" style={{width: 11, marginBottom: "-2px", marginRight: "4px" }}
                   />
                   {property.location}
                 </p>
@@ -277,6 +277,7 @@ function Home() {
                 <div className="property-features">
                   <span>
                     <img
+                      className="icon"
                       src={habitaciones}
                       alt="Habitaciones"
                     />
@@ -284,13 +285,13 @@ function Home() {
                   </span>
 
                   <span>
-                    <img src={baños} alt="Baños" />
+                    <img className="icon" src={baños} alt="Baños" />
 
                     {property.bathrooms}
                   </span>
 
                   <span>
-                    <img src={tamaño} alt="Área" />
+                    <img className="icon" src={tamaño} alt="Área" />
                     {property.area} m²
                   </span>
                 </div>
