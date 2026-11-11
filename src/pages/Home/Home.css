@@ -104,6 +104,7 @@ body {
 ===================================== */
 
 .hero {
+  margin-top: 72px;
   height: 235px;
   position: relative;
   display: flex;
@@ -119,6 +120,9 @@ body {
 
   background-position: center 55%;
   background-size: cover;
+}
+section[id] {
+  scroll-margin-top: 90px;
 }
 
 .hero-content {
@@ -235,6 +239,7 @@ body {
 .property-button:hover,
 .publish-button:hover {
   background: var(--primary-dark);
+  cursor: pointer;
 }
 
 .search-button svg {
@@ -255,6 +260,10 @@ body {
   margin: 28px auto 38px;
 }
 
+.view-all-button:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 .section-heading {
   display: flex;
   justify-content: space-between;
@@ -303,9 +312,7 @@ body {
   background: white;
   border: 1px solid #e8e7df;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.025);
-  transition:
-    transform,
-
+  transition: transform;
 }
 
 .property-card:hover {
@@ -332,7 +339,7 @@ body {
   transform: scale(1.04);
 }
 .property-card .icon {
-  width: 13px; 
+  width: 13px;
 }
 .favorite-button {
   width: 29px;
@@ -415,7 +422,7 @@ body {
   background: var(--secondary-background);
   padding: 27px 7%;
   display: grid;
-grid-template-columns: repeat(2, minmax(400px, 1fr));
+  grid-template-columns: repeat(2, minmax(400px, 1fr));
   gap: 80px;
 }
 
@@ -520,17 +527,18 @@ grid-template-columns: repeat(2, minmax(400px, 1fr));
 }
 
 .contact-agent {
-  border: 1px solid #deddd4;
+  border: 2px solid #cecdc5;
   border-radius: 5px;
   padding: 9px 17px;
   background: transparent;
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
   transition: background 0.2s;
 }
 
 .contact-agent:hover {
   background: white;
+  cursor: pointer;
 }
 
 /* =====================================
@@ -557,6 +565,7 @@ grid-template-columns: repeat(2, minmax(400px, 1fr));
 }
 
 .publish-button {
+  border: none;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -566,7 +575,7 @@ grid-template-columns: repeat(2, minmax(400px, 1fr));
   border-radius: 4px;
   background: var(--primary);
   color: white !important;
-  font-size: 11px;
+  font-size: 11px !important;
   transition: background 0.2s;
 }
 

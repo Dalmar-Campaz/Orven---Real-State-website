@@ -1,0 +1,54 @@
+:root {
+  --primary: #6e7957;
+  --primary-dark: #253c34;
+  --background: #f8f7f2;
+  --secondary-background: #eeece3;
+  --text: #263c34;
+  --muted: #85877e;
+}
+.account-button {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  margin-right: 16px;
+}
+
+
+.login-button, .logout-button {
+  height: 28px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 5px;
+  background: var(--primary);
+  margin-right: 10px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.login-button:hover,
+.logout-button:hover {
+  background: var(--primary-dark);
+}
+
+.account-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1000;
+  min-width: 220px;
+  background-color: white;
+  border: 1px solid #eeece3;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}

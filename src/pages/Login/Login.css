@@ -2,7 +2,7 @@
 
 .login-page {
   --green-900: #1d3a33;
-  --green-800: #1e5244;
+  --green-800: #253c34;
   --green-600: #0f6b4f;
   --green-300: #78c5a1;
   --ink: #12121f;
@@ -59,8 +59,8 @@
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(90deg, rgba(29, 58, 51, 0.92) 0%, rgba(29, 58, 51, 0.55) 55%, rgba(29, 58, 51, 0) 100%),
-    linear-gradient(180deg, rgba(29, 58, 51, 0.55) 0%, rgba(29, 58, 51, 0) 40%, rgba(29, 58, 51, 0) 75%, rgba(29, 58, 51, 0.95) 100%);
+    linear-gradient(90deg, rgba(37, 60, 52, 0.92) 0%, rgba(37, 60, 52, 0.55) 55%, rgba(37, 60, 52, 0) 100%),
+    linear-gradient(180deg, rgba(37, 60, 52, 0.55) 0%, rgba(37, 60, 52, 0) 40%, rgba(37, 60, 52, 0.55) 75%, rgba(37, 60, 52, 0.95) 100%);
 }
 
 .login-hero__logo {
@@ -98,7 +98,7 @@
   margin: auto -76px 0;
   padding: 26px 76px 30px;
   display: flex;
-  background: rgba(29, 58, 51, 0.96);
+  background: #253c34;
 }
 
 .login-hero__features li {

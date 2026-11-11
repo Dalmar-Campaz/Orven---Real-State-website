@@ -1,18 +1,19 @@
 import { useState, type FormEvent } from "react";
-import { propertiesDB as properties} from "../../data/propiedades";
-import baños from '../../assets/icons/baños.png';
-import addFav from '../../assets/icons/add-fav.png';
-import fav from '../../assets/icons/fav.png';
-import habitaciones from '../../assets/icons/habitaciones.png';
-import tamaño from '../../assets/icons/tamaño.png';
-import ubicacion from '../../assets/icons/ubicacion.png';
-import logo from '../../assets/Logo.png';
+import { propertiesDB as properties } from "../../data/propiedades";
+import { useNavigate } from "react-router-dom";
+import baños from "../../assets/icons/baños.png";
+import addFav from "../../assets/icons/add-fav.png";
+import fav from "../../assets/icons/fav.png";
+import habitaciones from "../../assets/icons/habitaciones.png";
+import tamaño from "../../assets/icons/tamaño.png";
+import ubicacion from "../../assets/icons/ubicacion.png";
+import logo from "../../assets/Logo.png";
 import "./Home.css";
 import HomeNavbar from "../../component/HomeNavbar/HomeNavbar";
 
 function Home() {
   const [favorites, setFavorites] = useState<number[]>([]);
-
+  const navigate = useNavigate();
   // Agregar o quitar una propiedad de favoritos.
   const toggleFavorite = (id: number) => {
     setFavorites((current) =>
@@ -30,6 +31,24 @@ function Home() {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
+  function handleClickFormulario() {
+    navigate("/formulario");
+  }
+  function handleClickPropiedades() {
+    navigate("/propiedades");
+  }
+
+  const CIUDADES = [
+    { nombre: "Medellín" },
+    { nombre: "Rionegro" },
+    { nombre: "Envigado" },
+    { nombre: "Bogotá" },
+    { nombre: "Chía" },
+    { nombre: "Cali" },
+    { nombre: "Buenaventura" },
+    { nombre: "Barranquilla" },
+    { nombre: "Cartagena" },
+  ];
   return (
     <div className="orven-page">
       {/* NAVBAR */}
@@ -76,11 +95,17 @@ function Home() {
 
             <div className="field-content">
               <label htmlFor="location">Ubicación</label>
-              <input
-                id="location"
-                type="text"
-                placeholder="¿En qué ciudad o zona?"
-              />
+              <select id="location" defaultValue="">
+                <option value="">Seleccionar ubicación</option>
+                {CIUDADES.map((ciudad) => (
+                  <option
+                    key={ciudad.nombre}
+                    value={ciudad.nombre.toLowerCase()}
+                  >
+                    {ciudad.nombre}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -156,9 +181,9 @@ function Home() {
         <div className="section-heading">
           <h2>Propiedades Destacadas</h2>
 
-          <a href="#propiedades" className="view-all">
+          <div className="view-all-button" onClick={handleClickPropiedades}>
             Ver todas las propiedades <span>→</span>
-          </a>
+          </div>
         </div>
 
         <div className="properties-grid">
@@ -168,7 +193,7 @@ function Home() {
                 <img src={property.image} alt={property.title} />
 
                 <img
-                style={{width:26, height:26}}
+                  style={{ width: 26, height: 26 }}
                   className={`favorite-button ${
                     favorites.includes(property.id) ? "is-favorite" : ""
                   }`}
@@ -189,7 +214,12 @@ function Home() {
                 <p className="property-location">
                   <img
                     src={ubicacion}
-                    alt="ubicación" style={{width: 11, marginBottom: "-2px", marginRight: "4px" }}
+                    alt="ubicación"
+                    style={{
+                      width: 11,
+                      marginBottom: "-2px",
+                      marginRight: "4px",
+                    }}
                   />
                   {property.location}
                 </p>
@@ -216,9 +246,7 @@ function Home() {
                   </span>
                 </div>
 
-                <a className="property-button">
-                  Ver detalles
-                </a>
+                <a className="property-button">Ver detalles</a>
               </div>
             </article>
           ))}
@@ -276,9 +304,7 @@ function Home() {
               </div>
             </div>
 
-            <a href="#contacto" className="contact-agent">
-              Contactar
-            </a>
+            <a className="contact-agent">Contactar</a>
           </div>
         </div>
       </section>
@@ -292,9 +318,9 @@ function Home() {
           propiedad. Envíanos tu solicitud y da el primer paso.
         </p>
 
-        <a href="#contacto" className="publish-button">
+        <button onClick={handleClickFormulario} className="publish-button">
           Solicitar mi venta
-        </a>
+        </button>
       </section>
 
       {/* FOOTER */}
