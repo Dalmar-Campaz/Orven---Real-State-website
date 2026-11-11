@@ -6,6 +6,7 @@ import Home from "./pages/Home/Home";
 import { Login } from "./pages/Login/Login";
 import Admin from "./pages/Admin/Admin";
 import RegistrarPropiedad from "./pages/RegistrarPropiedad/RegistrarPropiedad";
+import Propiedades from "./pages/Propiedades/Propiedades";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
@@ -35,6 +36,9 @@ function AppRoutes() {
 
       {/*Ruta del formulario*/}
       <Route path="/formulario" element={<RegistrarPropiedad />} />
+
+      {/* Ruta de propiedades */}
+      <Route path="/propiedades" element={<Propiedades />} />
 
       {/* Ruta desconocida */}
       <Route path="*" element={<Navigate to="/" replace />} />
