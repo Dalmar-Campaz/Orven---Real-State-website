@@ -4,9 +4,9 @@
 
 El proyecto no utiliza un motor de base de datos ni una API. Los datos de ejemplo se definen en archivos TypeScript y varias pantallas mantienen sus propios arreglos en estado React.
 
-Hay persistencia limitada en el navegador mediante `localStorage` para la sesión y los favoritos de la página de propiedades. Esto no equivale a una base de datos compartida: los datos no se sincronizan entre navegadores o usuarios.
+Actualmente no existe un modelo único ni un Context que comparta las propiedades y solicitudes entre páginas. Los archivos `PropiedadesContext.tsx` y `types/propiedad.ts` existen, pero están vacíos.
 
-## 2. Propiedades definidas en `src/data/propiedades.ts`
+## 2. Propiedades iniciales en `src/data/propiedades.ts`
 
 El archivo exporta la interfaz `Property`:
 
@@ -19,18 +19,18 @@ El archivo exporta la interfaz `Property`:
 | `bedrooms` | `number` | Cantidad de habitaciones. |
 | `bathrooms` | `number` | Cantidad de baños. |
 | `area` | `number` | Área. |
-| `image` | `string` | URL de imagen. |
+| `image` | `string` | URL de una imagen. |
 
 El archivo exporta dos arreglos mutables de tipo `Property[]`:
 
-- `propertiesDB`: cuatro propiedades de ejemplo. La página `Home` importa este arreglo como `properties`.
-- `pendingPropertiesDB`: dos propiedades de ejemplo. Su nombre indica que son pendientes, pero el tipo `Property` no contiene un campo de estado ni información del solicitante.
+- `propertiesDB`: cuatro propiedades de ejemplo. La página `Home` importa este arreglo.
+- `pendingPropertiesDB`: dos propiedades de ejemplo. Su nombre indica que son pendientes, pero el tipo `Property` no contiene estado ni información del solicitante. Ninguna página actual importa este arreglo.
 
-Pese al sufijo `DB` de los nombres, estos arreglos son variables en memoria dentro del módulo; no son una base de datos y no guardan cambios en un almacenamiento persistente.
+Pese al sufijo `DB`, estos arreglos son datos en memoria dentro de un módulo TypeScript; no son una base de datos ni guardan cambios.
 
 ## 3. Solicitudes en el panel administrativo
 
-`src/pages/Admin/Admin.tsx` define su propia interfaz `Solicitud` y el arreglo `SOLICITUDES_INICIALES` con seis registros.
+`src/pages/Admin/Admin.tsx` define su propia interfaz `Solicitud` y el arreglo `SOLICITUDES_INICIALES`.
 
 | Campo | Tipo |
 |---|---|
@@ -52,7 +52,7 @@ Pese al sufijo `DB` de los nombres, estos arreglos son variables en memoria dent
 | `fotos` | `string[]` |
 | `motivoRechazo` | `string` opcional |
 
-El panel copia los registros al estado de React. Las acciones de aprobar y rechazar modifican ese estado local; al recargar la página, se restauran los registros iniciales. Este conjunto no está conectado con `pendingPropertiesDB` ni con el formulario de registro.
+El panel copia los registros al estado de React. Aprobar o rechazar modifica ese estado local; al recargar la página, se restauran los registros iniciales. Este conjunto no está conectado con `pendingPropertiesDB` ni con el formulario de registro.
 
 ## 4. Datos construidos por el formulario de registro
 
@@ -75,15 +75,15 @@ El panel copia los registros al estado de React. Las acciones de aprobar y recha
 | `descripcion` | `string` |
 | `imagenes` | `File[]` |
 
-El formulario limita la descripción a 1000 caracteres y las imágenes a un máximo de 10. Exige al menos una imagen y valida los campos principales antes de preparar el objeto.
+El formulario valida los campos principales, limita la descripción y las imágenes, y genera URL temporales de vista previa mediante `URL.createObjectURL()`. Las URL se liberan al retirar imágenes o desmontar el componente.
 
-La interfaz permite seleccionar imágenes y generar URL temporales de vista previa. Esas URL se liberan al retirar imágenes o desmontar el componente. No se observa una subida de archivos a un servidor.
+Los objetos `File` y las URL temporales no son una estrategia de persistencia JSON. No se observa una subida de archivos a un servidor ni un mecanismo alternativo de almacenamiento persistente para esas imágenes.
 
-El componente declara un callback opcional `onSubmit`, pero la ruta de `App.tsx` no se lo proporciona. En la configuración actual, no existe un destino persistente para la solicitud.
+El componente declara un callback opcional `onSubmit`, pero la ruta de `App.tsx` no se lo proporciona. Por tanto, la solicitud no llega a un almacenamiento ni al panel actual; el formulario puede mostrar confirmación aunque el callback no haya ejecutado ninguna operación.
 
-## 5. Modelo esperado por la página de propiedades
+## 5. Modelo esperado por el componente de catálogo
 
-`src/pages/Propiedades/Propiedades.tsx` define otra interfaz llamada `Propiedad`:
+`src/pages/Propiedades/Propiedades.tsx` define una interfaz independiente llamada `Propiedad`:
 
 | Campo | Tipo |
 |---|---|
@@ -102,25 +102,38 @@ El componente declara un callback opcional `onSubmit`, pero la ruta de `App.tsx`
 | `codigo` | `string` opcional |
 | `fecha` | `string` opcional |
 
-La pantalla recibe `propiedades: Propiedad[]` mediante una prop obligatoria. Su estructura no coincide con la interfaz `Property` de `src/data/propiedades.ts`; por ello, los arreglos actuales no se pueden pasar directamente sin transformar o unificar los modelos.
+La pantalla requiere `propiedades: Propiedad[]` mediante una prop obligatoria. Este tipo no coincide con `Property` de `src/data/propiedades.ts`: cambian nombres, ubicación, representación del precio y operación.
 
-Además, la ruta actual no proporciona la prop requerida.
+El componente tiene código para filtros, ordenamiento, paginación y favoritos, pero la ruta `/propiedades` está comentada. No recibe actualmente datos del catálogo y su CSS está vacío.
 
-## 6. Datos guardados en el navegador
+## 6. Sesión de usuario
+
+`src/context/AuthContext.tsx` define un usuario con:
+
+| Campo | Tipo |
+|---|---|
+| `email` | `string` |
+| `role` | `'admin' \| 'customer' \| null` |
+
+El contexto guarda el objeto serializado en `localStorage` bajo la clave `orven_user`. Es una sesión de demostración, no una autenticación validada por un servidor.
+
+## 7. Datos guardados en el navegador
 
 | Clave | Contenido | Uso |
 |---|---|---|
 | `orven_user` | JSON con `email` y `role` | Sesión simulada en `AuthContext`. |
-| `orven:favoritos` | Arreglo JSON de identificadores | Favoritos de `Propiedades`. |
+| `orven:favoritos` | Arreglo JSON de identificadores | Favoritos del componente no integrado `Propiedades`. |
 
-Los favoritos de `Home`, las solicitudes del panel administrativo y los datos introducidos en el formulario no se guardan en estas claves.
+Los favoritos de Home, las solicitudes del panel administrativo y los datos del formulario no se guardan en estas claves.
 
-## 7. Inconsistencias que conviene resolver
+## 8. Inconsistencias que deben resolverse
 
-1. Definir un modelo canónico de propiedad y adaptar `Home`, `Propiedades` y el panel a él.
-2. Definir un modelo de solicitud separado del modelo de propiedad publicada, con un estado explícito.
-3. Conectar el callback del formulario con el lugar donde se guardarán las solicitudes.
-4. Hacer que el panel administrativo lea y actualice el mismo conjunto de solicitudes.
-5. Decidir qué persistencia se espera para el prototipo (memoria, `localStorage` u otra solución aprobada por el curso) y documentar sus límites.
+1. Definir un modelo canónico de propiedad y adaptarlo a Home y al catálogo.
+2. Definir un modelo de solicitud separado del modelo de propiedad publicada, con estado explícito y datos del solicitante.
+3. Unificar el tipo de operación; el formulario actual solo admite `"Venta"`, mientras el catálogo contempla `"Venta" | "Arriendo"`.
+4. Acordar una representación para imágenes que sea compatible con la persistencia elegida.
+5. Conectar el formulario con el conjunto de solicitudes que administra Admin.
+6. Hacer que la aprobación transforme una solicitud en una propiedad publicada sin duplicar registros.
+7. Unificar los favoritos de Home y del catálogo cuando la página se integre.
 
-No se recomienda resolver estas inconsistencias mediante cambios de estructura de datos sin revisar primero los componentes que las consumen.
+No se debe tratar el Context, el modelo común ni la persistencia como implementados hasta que los archivos correspondientes contengan código y las páginas estén conectadas.
