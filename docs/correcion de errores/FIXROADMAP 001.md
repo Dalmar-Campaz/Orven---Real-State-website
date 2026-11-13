@@ -25,8 +25,8 @@
 - [x] Crear un commit de respaldo con el estado actual, o una rama de trabajo desde la que hacer las correcciones.
 - [x] Instalar las dependencias desde el archivo de bloqueo con `npm ci`.
 - [x] Ejecutar `npm run build` y guardar los errores iniciales.
-- [ ] Ejecutar `npm run lint` y guardar los avisos o errores iniciales.
-- [ ] Distinguir los errores que ya existían de los que aparezcan después de cada modificación.
+- [x] Ejecutar `npm run lint` y guardar los avisos o errores iniciales.
+- [x] Distinguir los errores que ya existían de los que aparezcan después de cada modificación.
 
 **Criterio para completar la fase:** existe un punto de retorno en Git y se conoce el estado inicial de compilación y lint.
 
