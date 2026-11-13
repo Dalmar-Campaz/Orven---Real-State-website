@@ -3,8 +3,6 @@
 > **Objetivo:** estabilizar y organizar el proyecto antes de integrar la página de «Ver todas las propiedades» y desarrollar las funcionalidades adicionales.
 >
 > **Alcance actual:** prototipo académico construido con React, TypeScript y Vite. No se incorporará una base de datos real ni dependencias nuevas sin una necesidad justificada y compatible con las indicaciones del profesor.
->
-> **Regla de trabajo:** avanzar en orden. Antes de modificar código, revisar qué hace actualmente; después de cada cambio, explicar por qué se hizo y comprobar que sigue funcionando. No marcar una tarea como terminada solo porque el archivo existe.
 
 ---
 
@@ -22,11 +20,11 @@
 
 **Objetivo:** conocer el estado real del repositorio antes de tocar archivos y poder revertir cambios si algo sale mal.
 
-- [ ] Confirmar que se está trabajando en el repositorio correcto y en la rama esperada (`main` o una rama de trabajo).
-- [ ] Revisar `git status` y guardar o resolver cualquier cambio local pendiente antes de empezar.
-- [ ] Crear un commit de respaldo con el estado actual, o una rama de trabajo desde la que hacer las correcciones.
-- [ ] Instalar las dependencias desde el archivo de bloqueo con `npm ci`.
-- [ ] Ejecutar `npm run build` y guardar los errores iniciales.
+- [x] Confirmar que se está trabajando en el repositorio correcto y en la rama esperada (`main` o una rama de trabajo).
+- [x] Revisar `git status` y guardar o resolver cualquier cambio local pendiente antes de empezar.
+- [x] Crear un commit de respaldo con el estado actual, o una rama de trabajo desde la que hacer las correcciones.
+- [x] Instalar las dependencias desde el archivo de bloqueo con `npm ci`.
+- [x] Ejecutar `npm run build` y guardar los errores iniciales.
 - [ ] Ejecutar `npm run lint` y guardar los avisos o errores iniciales.
 - [ ] Distinguir los errores que ya existían de los que aparezcan después de cada modificación.
 
