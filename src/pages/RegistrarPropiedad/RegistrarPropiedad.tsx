@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import "./RegistrarPropiedad.css";
 import logo from "../../assets/Logo.png";
-import AvatarProfile from "../../component/AvatarProfile/AvatarProfile";
+import AvatarProfile from "../../components/AvatarProfile/AvatarProfile";
 const banner = "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1800&auto=format&fit=crop";
 
 /* ---------- Tipos ---------- */

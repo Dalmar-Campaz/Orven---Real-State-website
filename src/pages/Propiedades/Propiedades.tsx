@@ -2,9 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Propiedades.css";
-import logo from "./assets/orven-logo.png";
-// Foto del banner superior (la maqueta no la trae como archivo suelto).
-import banner from "./assets/propiedades-banner.jpg";
+import logo from "../../assets/Logo.png";
+const banner = "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1800&auto=format&fit=crop"
 
 /* ---------- Tipos ----------
  * Estos son los campos que usa la página. Si tu archivo de datos usa otros

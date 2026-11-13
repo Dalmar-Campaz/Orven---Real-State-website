@@ -9,7 +9,7 @@ import tamaño from "../../assets/icons/tamaño.png";
 import ubicacion from "../../assets/icons/ubicacion.png";
 import logo from "../../assets/Logo.png";
 import "./Home.css";
-import HomeNavbar from "../../component/HomeNavbar/HomeNavbar";
+import HomeNavbar from "../../components/HomeNavbar/HomeNavbar";
 
 function Home() {
   const [favorites, setFavorites] = useState<number[]>([]);
