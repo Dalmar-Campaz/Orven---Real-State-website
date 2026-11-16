@@ -174,7 +174,8 @@
 
 .rp-grid {
   display: grid;
-  gap: 18px 20px;
+  gap: 10px 20px;
+  margin-bottom: 8px;
 }
 
 .rp-grid--2 {
@@ -212,7 +213,8 @@
 }
 
 .rp-group {
-  margin: 22px 0 8px;
+  font-weight: 500;
+  margin: 24px 0 15px;
 }
 
 .rp-field input[type="text"],

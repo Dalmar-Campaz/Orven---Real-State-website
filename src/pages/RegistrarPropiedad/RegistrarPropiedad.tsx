@@ -470,6 +470,60 @@ export function RegistrarPropiedad() {
             <form className="rp-form" onSubmit={enviar} noValidate>
               <h2>Información básica</h2>
 
+              <p className="rp-group">Datos de contacto</p>
+              <div className="rp-grid rp-grid--2">
+                <div className={claseCampo("nombre")}>
+                  <label htmlFor="nombre">Nombre completo *</label>
+                  <input
+                    id="nombre"
+                    type="text"
+                    autoComplete="name"
+                    value={form.nombre}
+                    onChange={(e) => set("nombre", e.target.value)}
+                    aria-invalid={!!errores.nombre}
+                  />
+                  {errores.nombre && (
+                    <span className="rp-error" role="alert">
+                      {errores.nombre}
+                    </span>
+                  )}
+                </div>
+                <div className={claseCampo("telefono")}>
+                  <label htmlFor="telefono">Teléfono *</label>
+                  <input
+                    id="telefono"
+                    type="text"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    value={form.telefono}
+                    onChange={(e) => set("telefono", e.target.value)}
+                    aria-invalid={!!errores.telefono}
+                  />
+                  {errores.telefono && (
+                    <span className="rp-error" role="alert">
+                      {errores.telefono}
+                    </span>
+                  )}
+                </div>
+                <div className={claseCampo("email")}>
+                  <label htmlFor="email">Correo electrónico *</label>
+                  <input
+                    id="email"
+                    type="text"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={(e) => set("email", e.target.value)}
+                    aria-invalid={!!errores.email}
+                  />
+                  {errores.email && (
+                    <span className="rp-error" role="alert">
+                      {errores.email}
+                    </span>
+                  )}
+                </div>
+              </div>
+
               <div className="rp-grid rp-grid--2">
                 <div className={claseCampo("titulo")}>
                   <label htmlFor="titulo">Título de la propiedad *</label>
@@ -681,60 +735,6 @@ export function RegistrarPropiedad() {
                   ))}
                 </ul>
               )}
-
-              <p className="rp-group">Datos de contacto</p>
-              <div className="rp-grid rp-grid--2">
-                <div className={claseCampo("nombre")}>
-                  <label htmlFor="nombre">Nombre completo *</label>
-                  <input
-                    id="nombre"
-                    type="text"
-                    autoComplete="name"
-                    value={form.nombre}
-                    onChange={(e) => set("nombre", e.target.value)}
-                    aria-invalid={!!errores.nombre}
-                  />
-                  {errores.nombre && (
-                    <span className="rp-error" role="alert">
-                      {errores.nombre}
-                    </span>
-                  )}
-                </div>
-                <div className={claseCampo("telefono")}>
-                  <label htmlFor="telefono">Teléfono *</label>
-                  <input
-                    id="telefono"
-                    type="text"
-                    inputMode="tel"
-                    autoComplete="tel"
-                    value={form.telefono}
-                    onChange={(e) => set("telefono", e.target.value)}
-                    aria-invalid={!!errores.telefono}
-                  />
-                  {errores.telefono && (
-                    <span className="rp-error" role="alert">
-                      {errores.telefono}
-                    </span>
-                  )}
-                </div>
-                <div className={claseCampo("email")}>
-                  <label htmlFor="email">Correo electrónico *</label>
-                  <input
-                    id="email"
-                    type="text"
-                    inputMode="email"
-                    autoComplete="email"
-                    value={form.email}
-                    onChange={(e) => set("email", e.target.value)}
-                    aria-invalid={!!errores.email}
-                  />
-                  {errores.email && (
-                    <span className="rp-error" role="alert">
-                      {errores.email}
-                    </span>
-                  )}
-                </div>
-              </div>
 
               {errorEnvio && (
                 <p className="rp-submit-error" role="alert">
