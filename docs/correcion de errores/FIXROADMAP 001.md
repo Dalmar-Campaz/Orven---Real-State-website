@@ -8,7 +8,7 @@
 
 ## Orden general
 
-- [ ] **Fase 0 — Preparar el proyecto y establecer un punto seguro.**
+- [x] **Fase 0 — Preparar el proyecto y establecer un punto seguro.**
 - [ ] **Fase 1 — Corregir los cimientos de la aplicación.**
 - [ ] **Fase 2 — Integrar la página diseñada de «Ver todas las propiedades».**
 - [ ] **Fase 3 — Implementar las funcionalidades de usuario.**
@@ -38,28 +38,27 @@
 
 ## 1.1 Estabilizar el proyecto y los archivos de entrada
 
-- [ ] Revisar `package.json` y confirmar qué scripts están disponibles (`dev`, `build`, `lint` y `preview`).
-- [ ] Corregir los errores de compilación existentes sin ocultarlos con `any`, desactivando TypeScript ni quitando comprobaciones.
-- [ ] Revisar todos los imports de imágenes, CSS y componentes para confirmar que las rutas y los archivos existen.
-- [ ] Revisar el estado de `src/pages/Propiedades/`: identificar qué partes son un intento incompleto de integración y cuáles pertenecen al diseño final que se integrará en la Fase 2.
-- [ ] Evitar rehacer ahora la página de «Ver todas las propiedades». Si su componente incompleto impide compilar, dejar temporalmente una pantalla mínima o aislar el código incompleto de forma que el resto del proyecto pueda ejecutarse. No descartar ni sobrescribir el diseño ya realizado.
-- [ ] Confirmar que `src/index.css` se importa desde el punto de entrada adecuado, o eliminarlo solo si se comprueba que no se necesita.
-- [ ] Revisar `index.html`: establecer el idioma español (`lang="es"`) y un título correcto para Orven.
-- [ ] Comprobar que no haya estilos globales duplicados o reglas de `body`, `#root` y `:root` repartidas sin una responsabilidad clara.
+- [x] Revisar `package.json` y confirmar qué scripts están disponibles (`dev`, `build`, `lint` y `preview`).
+- [x] Corregir los errores de compilación existentes sin ocultarlos con `any`, desactivando TypeScript ni quitando comprobaciones.
+- [x] Revisar todos los imports de imágenes, CSS y componentes para confirmar que las rutas y los archivos existen.
+- [x] Revisar el estado de `src/pages/Propiedades/`: identificar qué partes son un intento incompleto de integración y cuáles pertenecen al diseño final que se integrará en la Fase 2.
+- [x] Confirmar que `src/index.css` se importa desde el punto de entrada adecuado, o eliminarlo solo si se comprueba que no se necesita.
+- [x] Revisar `index.html`: establecer el idioma español (`lang="es"`) y un título correcto para Orven.
+- [x] Comprobar que no haya estilos globales duplicados o reglas de `body`, `#root` y `:root` repartidas sin una responsabilidad clara.
 
 **Criterio para completar:** la aplicación puede arrancar y compilar; los imports existentes están resueltos; la página aún no integrada no bloquea el trabajo del resto del proyecto.
 
 ## 1.2 Definir un modelo de datos común
 
-- [ ] Crear `src/types/propiedad.ts` (o una ubicación equivalente acordada) para declarar los tipos del dominio.
-- [ ] Definir un tipo **Propiedad** para los inmuebles que ya están publicados y pueden aparecer en el catálogo.
-- [ ] Definir un tipo **SolicitudPropiedad** separado para las publicaciones enviadas por usuarios y pendientes de revisión.
-- [ ] Definir los estados permitidos de una solicitud: pendiente, aprobada y rechazada.
-- [ ] Acordar el tipo de identificador y evitar generar identificadores duplicados.
-- [ ] Unificar nombres y tipos de campos: por ejemplo, `precio` debe tener un tipo consistente (preferiblemente número) y las imágenes deben tener una representación definida.
-- [ ] Revisar cómo se relacionan `Property` de `data/propiedades.ts`, `Solicitud` de `Admin.tsx`, `SolicitudPropiedad` del formulario y `Propiedad` de la página de catálogo.
-- [ ] Adaptar los datos iniciales al modelo común y eliminar tipos duplicados solo cuando ya no tengan consumidores.
-- [ ] Cambiar los arreglos de datos iniciales que no necesitan reasignación de `let` a `const`.
+- [x] Crear `src/types/propiedad.ts` (o una ubicación equivalente acordada) para declarar los tipos del dominio.
+- [x] Definir un tipo **Propiedad** para los inmuebles que ya están publicados y pueden aparecer en el catálogo.
+- [x] Definir un tipo **SolicitudPropiedad** separado para las publicaciones enviadas por usuarios y pendientes de revisión.
+- [x] Definir los estados permitidos de una solicitud: pendiente, aprobada y rechazada.
+- [x] Acordar el tipo de identificador y evitar generar identificadores duplicados.
+- [x] Unificar nombres y tipos de campos: por ejemplo, `precio` debe tener un tipo consistente (preferiblemente número) y las imágenes deben tener una representación definida.
+- [x] Revisar cómo se relacionan `Property` de `data/propiedades.ts`, `Solicitud` de `Admin.tsx`, `SolicitudPropiedad` del formulario y `Propiedad` de la página de catálogo.
+- [x] Adaptar los datos iniciales al modelo común y eliminar tipos duplicados solo cuando ya no tengan consumidores.
+- [x] Cambiar los arreglos de datos iniciales que no necesitan reasignación de `let` a `const`.
 - [ ] Decidir qué ocurre con las imágenes seleccionadas por el usuario. No guardar directamente objetos `File` ni URL temporales de `URL.createObjectURL()` en JSON esperando que sobrevivan a una recarga.
 - [ ] Documentar los campos, estados y decisiones del modelo en `docs/DATA_MODEL.md`.
 

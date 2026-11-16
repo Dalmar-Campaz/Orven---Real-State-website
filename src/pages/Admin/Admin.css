@@ -464,9 +464,11 @@
   flex-shrink: 0;
   position: sticky;
   top: 12px;
-  max-height: calc(100vh - 24px);
+  max-height: calc(100vh - 70px);
   overflow-y: auto;
-  padding: 24px 20px 20px;
+  padding: 0px 20px;
+  border-top: 24px solid #fff;
+  border-bottom: 20px solid #fff;
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 8px 30px rgba(20, 30, 60, 0.08);
@@ -476,7 +478,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  width: 100%;
+  padding-bottom: 20px;
+  margin-top: -10px;
 }
 
 .detail__head h2 {

@@ -8,146 +8,149 @@ import houseVerde from "../../assets/icons/house-verde.png";
 import clipboard from "../../assets/icons/clipboard-list.png";
 import logOut from "../../assets/icons/log-out.png";
 import panel from "../../assets/icons/layout-grid.png";
+import {solicitudesPropiedad as SOLICITUDES_INICIALES} from "../../data/propiedades";
+import type {SolicitudPropiedad} from "../../types/propiedad";
+import { formatoPrecio, ubicacionCorta } from "../../utils/formato";
 
 /* ---------- Tipos ---------- */
 type Estado = "Pendiente" | "Aprobada" | "Rechazada";
 type FiltroEstado = "Todos" | Estado;
 type Accion = "aprobar" | "rechazar" | null;
 
-interface Solicitud {
-  id: number;
-  titulo: string;
-  solicitante: string;
-  email: string;
-  telefono: string;
-  ubicacion: string; // ciudad corta para la tabla
-  ubicacionCompleta: string;
-  tipo: "Venta" | "Arriendo";
-  fecha: string;
-  estado: Estado;
-  precio: string;
-  descripcion: string;
-  habitaciones: number;
-  banos: number;
-  area: number;
-  fotos: string[];
-  motivoRechazo?: string;
-}
+// interface Solicitud {
+//   id: number;
+//   titulo: string;
+//   solicitante: string;
+//   email: string;
+//   telefono: string;
+//   ubicacion: string; // ciudad corta para la tabla
+//   ubicacionCompleta: string;
+//   tipo: "Venta" | "Arriendo";
+//   fecha: string;
+//   estado: Estado;
+//   precio: string;
+//   descripcion: string;
+//   habitaciones: number;
+//   banos: number;
+//   area: number;
+//   fotos: string[];
+//   motivoRechazo?: string;
+// }
 
-/* ---------- Datos simulados (reemplaza por tu array real) ---------- */
-const FOTO = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop"; // pon aquí la URL / import de una foto de ejemplo
+// /* ---------- Datos simulados (reemplaza por tu array real) ---------- */
+// const FOTO = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop"; // pon aquí la URL / import de una foto de ejemplo
 
-const SOLICITUDES_INICIALES: Solicitud[] = [
-  {
-    id: 1,
-    titulo: "Casa moderna con piscina",
-    solicitante: "Juan Pérez",
-    email: "juan.perez@email.com",
-    telefono: "300 123 4567",
-    ubicacion: "Medellín",
-    ubicacionCompleta: "Medellín, Antioquia",
-    tipo: "Venta",
-    fecha: "06/11/2026",
-    estado: "Pendiente",
-    precio: "$ 850.000.000",
-    descripcion:
-      "Hermosa casa de 2 pisos con piscina, jardín y excelentes acabados. Ubicada en una zona residencial tranquila de Medellín.",
-    habitaciones: 4,
-    banos: 3,
-    area: 280,
-    fotos: [FOTO, FOTO, FOTO, FOTO, FOTO],
-  },
-  {
-    id: 2,
-    titulo: "Apartamento en Laureles",
-    solicitante: "María López",
-    email: "maria.lopez@email.com",
-    telefono: "301 555 1020",
-    ubicacion: "Medellín",
-    ubicacionCompleta: "Medellín, Antioquia",
-    tipo: "Arriendo",
-    fecha: "06/11/2026",
-    estado: "Pendiente",
-    precio: "$ 3.200.000 / mes",
-    descripcion: "Apartamento luminoso en Laureles, cerca de parques y comercio.",
-    habitaciones: 3,
-    banos: 2,
-    area: 96,
-    fotos: [FOTO, FOTO, FOTO],
-  },
-  {
-    id: 3,
-    titulo: "Casa campestre",
-    solicitante: "Carlos Ruiz",
-    email: "carlos.ruiz@email.com",
-    telefono: "310 444 8899",
-    ubicacion: "Rionegro",
-    ubicacionCompleta: "Rionegro, Antioquia",
-    tipo: "Venta",
-    fecha: "05/11/2026",
-    estado: "Pendiente",
-    precio: "$ 620.000.000",
-    descripcion: "Casa campestre con amplias zonas verdes y chimenea.",
-    habitaciones: 5,
-    banos: 4,
-    area: 340,
-    fotos: [FOTO, FOTO],
-  },
-  {
-    id: 4,
-    titulo: "Apartamento moderno",
-    solicitante: "Ana Torres",
-    email: "ana.torres@email.com",
-    telefono: "320 777 2211",
-    ubicacion: "Bogotá",
-    ubicacionCompleta: "Bogotá, Cundinamarca",
-    tipo: "Arriendo",
-    fecha: "05/11/2026",
-    estado: "Aprobada",
-    precio: "$ 4.100.000 / mes",
-    descripcion: "Apartamento moderno con balcón y vista a la ciudad.",
-    habitaciones: 2,
-    banos: 2,
-    area: 78,
-    fotos: [FOTO, FOTO],
-  },
-  {
-    id: 5,
-    titulo: "Casa en El Poblado",
-    solicitante: "Diego Ramírez",
-    email: "diego.ramirez@email.com",
-    telefono: "315 909 3030",
-    ubicacion: "Medellín",
-    ubicacionCompleta: "Medellín, Antioquia",
-    tipo: "Venta",
-    fecha: "04/11/2026",
-    estado: "Rechazada",
-    precio: "$ 1.450.000.000",
-    descripcion: "Casa de lujo en El Poblado con acabados premium.",
-    habitaciones: 4,
-    banos: 5,
-    area: 410,
-    fotos: [FOTO, FOTO],
-  },
-  {
-    id: 6,
-    titulo: "Apartamento en Chapinero",
-    solicitante: "Valentina Gómez",
-    email: "valentina.gomez@email.com",
-    telefono: "311 200 6060",
-    ubicacion: "Bogotá",
-    ubicacionCompleta: "Bogotá, Cundinamarca",
-    tipo: "Arriendo",
-    fecha: "04/11/2026",
-    estado: "Pendiente",
-    precio: "$ 2.800.000 / mes",
-    descripcion: "Apartamento cómodo en Chapinero, ideal para profesionales.",
-    habitaciones: 2,
-    banos: 1,
-    area: 64,
-    fotos: [FOTO],
-  },
-];
+// const SOLICITUDES_INICIALES: Solicitud[] = [
+//   {
+//     id: 1,
+//     titulo: "Casa moderna con piscina",
+//     solicitante: "Juan Pérez",
+//     email: "juan.perez@email.com",
+//     telefono: "300 123 4567",
+//     ubicacion: "Medellín",
+//     ubicacionCompleta: "Medellín, Antioquia",
+//     tipo: "Venta",
+//     fecha: "06/11/2026",
+//     estado: "Pendiente",
+//     precio: "$ 850.000.000",
+//     descripcion:
+//       "Hermosa casa de 2 pisos con piscina, jardín y excelentes acabados. Ubicada en una zona residencial tranquila de Medellín.",
+//     habitaciones: 4,
+//     banos: 3,
+//     area: 280,
+//     fotos: [FOTO, FOTO, FOTO, FOTO, FOTO],
+//   },
+//   {
+//     id: 2,
+//     titulo: "Apartamento en Laureles",
+//     solicitante: "María López",
+//     email: "maria.lopez@email.com",
+//     telefono: "301 555 1020",
+//     ubicacion: "Medellín",
+//     ubicacionCompleta: "Medellín, Antioquia",
+//     tipo: "Arriendo",
+//     fecha: "06/11/2026",
+//     estado: "Pendiente",
+//     precio: "$ 3.200.000 / mes",
+//     descripcion: "Apartamento luminoso en Laureles, cerca de parques y comercio.",
+//     habitaciones: 3,
+//     banos: 2,
+//     area: 96,
+//     fotos: [FOTO, FOTO, FOTO],
+//   },
+//   {
+//     id: 3,
+//     titulo: "Casa campestre",
+//     solicitante: "Carlos Ruiz",
+//     email: "carlos.ruiz@email.com",
+//     telefono: "310 444 8899",
+//     ubicacion: "Rionegro",
+//     ubicacionCompleta: "Rionegro, Antioquia",
+//     tipo: "Venta",
+//     fecha: "05/11/2026",
+//     estado: "Pendiente",
+//     precio: "$ 620.000.000",
+//     descripcion: "Casa campestre con amplias zonas verdes y chimenea.",
+//     habitaciones: 5,
+//     banos: 4,
+//     area: 340,
+//     fotos: [FOTO, FOTO],
+//   },
+//   {
+//     id: 4,
+//     titulo: "Apartamento moderno",
+//     solicitante: "Ana Torres",
+//     email: "ana.torres@email.com",
+//     telefono: "320 777 2211",
+//     ubicacion: "Bogotá",
+//     ubicacionCompleta: "Bogotá, Cundinamarca",
+//     tipo: "Arriendo",
+//     fecha: "05/11/2026",
+//     estado: "Aprobada",
+//     precio: "$ 4.100.000 / mes",
+//     descripcion: "Apartamento moderno con balcón y vista a la ciudad.",
+//     habitaciones: 2,
+//     banos: 2,
+//     area: 78,
+//     fotos: [FOTO, FOTO],
+//   },
+//   {
+//     id: 5,
+//     titulo: "Casa en El Poblado",
+//     solicitante: "Diego Ramírez",
+//     email: "diego.ramirez@email.com",
+//     telefono: "315 909 3030",
+//     ubicacion: "Medellín",
+//     ubicacionCompleta: "Medellín, Antioquia",
+//     tipo: "Venta",
+//     fecha: "04/11/2026",
+//     estado: "Rechazada",
+//     precio: "$ 1.450.000.000",
+//     descripcion: "Casa de lujo en El Poblado con acabados premium.",
+//     habitaciones: 4,
+//     banos: 5,
+//     area: 410,
+//     fotos: [FOTO, FOTO],
+//   },
+//   {
+//     id: 6,
+//     titulo: "Apartamento en Chapinero",
+//     solicitante: "Valentina Gómez",
+//     email: "valentina.gomez@email.com",
+//     telefono: "311 200 6060",
+//     ubicacion: "Bogotá",
+//     ubicacionCompleta: "Bogotá, Cundinamarca",
+//     tipo: "Arriendo",
+//     fecha: "04/11/2026",
+//     estado: "Pendiente",
+//     precio: "$ 2.800.000 / mes",
+//     descripcion: "Apartamento cómodo en Chapinero, ideal para profesionales.",
+//     habitaciones: 2,
+//     banos: 1,
+//     area: 64,
+//     fotos: [FOTO],
+//   },
+// ];
 
 const POR_PAGINA = 6;
 const FILTROS: FiltroEstado[] = ["Todos", "Pendiente", "Aprobada", "Rechazada"];
@@ -263,7 +266,7 @@ export function AdminPanel() {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const [solicitudes, setSolicitudes] = useState<Solicitud[]>(
+  const [solicitudes, setSolicitudes] = useState<SolicitudPropiedad[]>(
     SOLICITUDES_INICIALES
   );
   const [busqueda, setBusqueda] = useState("");
@@ -292,7 +295,7 @@ export function AdminPanel() {
       const coincide =
         !q ||
         s.titulo.toLowerCase().includes(q) ||
-        s.solicitante.toLowerCase().includes(q);
+        s.solicitante.nombre.toLowerCase().includes(q);
       return coincide && (filtro === "Todos" || s.estado === filtro);
     });
   }, [solicitudes, busqueda, filtro]);
@@ -321,7 +324,7 @@ export function AdminPanel() {
 
   const cambiarFoto = (dir: 1 | -1) => {
     if (!seleccionada) return;
-    const total = seleccionada.fotos.length;
+    const total = seleccionada.imagenes.length;
     setFotoActiva((i) => (i + dir + total) % total);
   };
 
@@ -347,7 +350,7 @@ export function AdminPanel() {
     navigate("/login");
   };
 
-  const fotosExtra = seleccionada ? Math.max(0, seleccionada.fotos.length - 4) : 0;
+  const fotosExtra = seleccionada ? Math.max(0, seleccionada.imagenes.length - 4) : 0;
 
   return (
     <div className="admin">
@@ -487,20 +490,20 @@ export function AdminPanel() {
                             <span
                               className="prop__thumb"
                               style={
-                                s.fotos[0]
-                                  ? { backgroundImage: `url(${s.fotos[0]})` }
+                                s.imagenes[0]
+                                  ? { backgroundImage: `url(${s.imagenes[0]})` }
                                   : undefined
                               }
                             />
                             <div>
                               <strong>{s.titulo}</strong>
-                              <span>{s.solicitante}</span>
+                              <span>{s.solicitante.nombre}</span>
                             </div>
                           </div>
                         </td>
                         <td>
                           <span className="loc">
-                            <Icon name="pin" size={16} /> {s.ubicacion}
+                            <Icon name="pin" size={16} /> {ubicacionCorta(s)}
                           </span>
                         </td>
                         <td>{s.tipo}</td>
@@ -594,14 +597,14 @@ export function AdminPanel() {
                 <div
                   className="gallery__main"
                   style={
-                    seleccionada.fotos[fotoActiva]
+                    seleccionada.imagenes[fotoActiva]
                       ? {
-                          backgroundImage: `url(${seleccionada.fotos[fotoActiva]})`,
+                          backgroundImage: `url(${seleccionada.imagenes[fotoActiva]})`,
                         }
                       : undefined
                   }
                 >
-                  {seleccionada.fotos.length > 1 && (
+                  {seleccionada.imagenes.length > 1 && (
                     <>
                       <button
                         type="button"
@@ -624,14 +627,14 @@ export function AdminPanel() {
                 </div>
 
                 <div className="gallery__thumbs">
-                  {seleccionada.fotos.slice(0, 3).map((foto, i) => (
+                  {seleccionada.imagenes.slice(0, 3).map((imagen, i) => (
                     <button
                       key={i}
                       type="button"
                       className={`gallery__thumb ${i === fotoActiva ? "is-active" : ""}`}
-                      style={foto ? { backgroundImage: `url(${foto})` } : undefined}
+                      style={imagen ? { backgroundImage: `url(${imagen})` } : undefined}
                       onClick={() => setFotoActiva(i)}
-                      aria-label={`Ver foto ${i + 1}`}
+                      aria-label={`Ver imagen ${i + 1}`}
                     />
                   ))}
                   {fotosExtra > 0 && (
@@ -659,10 +662,10 @@ export function AdminPanel() {
                     <Icon name="tag" size={18} /> {seleccionada.tipo}
                   </li>
                   <li>
-                    <Icon name="dollar" size={18} /> {seleccionada.precio}
+                    <Icon name="dollar" size={18} /> {formatoPrecio(seleccionada.precio)}
                   </li>
                   <li>
-                    <Icon name="pin" size={18} /> {seleccionada.ubicacionCompleta}
+                    <Icon name="pin" size={18} /> {ubicacionCorta(seleccionada)} - {seleccionada.departamento}
                   </li>
                   <li>
                     <Icon name="bed" size={18} /> {seleccionada.habitaciones} Habitaciones
@@ -681,13 +684,13 @@ export function AdminPanel() {
               </h3>
               <ul className="contact">
                 <li>
-                  <Icon name="user" size={18} /> {seleccionada.solicitante}
+                  <Icon name="user" size={18} /> {seleccionada.solicitante.nombre}
                 </li>
                 <li>
-                  <Icon name="mail" size={18} /> {seleccionada.email}
+                  <Icon name="mail" size={18} /> {seleccionada.solicitante.email}
                 </li>
                 <li>
-                  <Icon name="phone" size={18} /> {seleccionada.telefono}
+                  <Icon name="phone" size={18} /> {seleccionada.solicitante.telefono}
                 </li>
               </ul>
 

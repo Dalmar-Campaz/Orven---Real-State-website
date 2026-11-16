@@ -1,19 +1,23 @@
 import { useState, type FormEvent } from "react";
-import { propertiesDB as properties } from "../../data/propiedades";
+import { usePropiedades } from "../../context/PropiedadesContext";
+import { formatoPrecio, ubicacionCorta } from "../../utils/formato";
 import { useNavigate } from "react-router-dom";
-import baños from "../../assets/icons/baños.png";
-import addFav from "../../assets/icons/add-fav.png";
-import fav from "../../assets/icons/fav.png";
-import habitaciones from "../../assets/icons/habitaciones.png";
-import tamaño from "../../assets/icons/tamaño.png";
-import ubicacion from "../../assets/icons/ubicacion.png";
+import bañosIcon from "../../assets/icons/baños.png";
+import addFavIcon from "../../assets/icons/add-fav.png";
+import favIcon from "../../assets/icons/fav.png";
+import habitacionesIcon from "../../assets/icons/habitaciones.png";
+import tamañoIcon from "../../assets/icons/tamaño.png";
+import ubicacionIcon from "../../assets/icons/ubicacion.png";
 import logo from "../../assets/Logo.png";
 import "./Home.css";
 import HomeNavbar from "../../components/HomeNavbar/HomeNavbar";
 
+
 function Home() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const navigate = useNavigate();
+  const { propiedades: properties} = usePropiedades();
+
   // Agregar o quitar una propiedad de favoritos.
   const toggleFavorite = (id: number) => {
     setFavorites((current) =>
@@ -156,7 +160,7 @@ function Home() {
 
             <div className="field-content">
               <label htmlFor="price">Precio</label>
-              <select id="property-type" defaultValue="">
+              <select id="price" defaultValue="">
                 <option value="">$0 - $500.000.000</option>
                 <option value="$500.000.000 - $1.000.000.000">
                   $500.000.000 - $1.000.000.000
@@ -190,7 +194,7 @@ function Home() {
           {properties.map((property) => (
             <article className="property-card" key={property.id}>
               <div className="property-image">
-                <img src={property.image} alt={property.title} />
+                <img src={property.imagenes[0]} alt={property.titulo} />
 
                 <img
                   style={{ width: 26, height: 26 }}
@@ -204,16 +208,16 @@ function Home() {
                       : "Agregar a favoritos"
                   }
                   aria-pressed={favorites.includes(property.id)}
-                  src={favorites.includes(property.id) ? fav : addFav}
+                  src={favorites.includes(property.id) ? favIcon : addFavIcon}
                 />
               </div>
 
               <div className="property-info">
-                <p className="property-price">{property.price}</p>
+                <p className="property-price">{formatoPrecio(property.precio)}</p>
 
                 <p className="property-location">
                   <img
-                    src={ubicacion}
+                    src={ubicacionIcon}
                     alt="ubicación"
                     style={{
                       width: 11,
@@ -221,27 +225,26 @@ function Home() {
                       marginRight: "4px",
                     }}
                   />
-                  {property.location}
+                  {ubicacionCorta(property)}
                 </p>
 
                 <div className="property-features">
                   <span>
                     <img
                       className="icon"
-                      src={habitaciones}
+                      src={habitacionesIcon}
                       alt="Habitaciones"
                     />
-                    {property.bedrooms}
+                    {property.habitaciones}
                   </span>
 
                   <span>
-                    <img className="icon" src={baños} alt="Baños" />
-
-                    {property.bathrooms}
+                    <img className="icon" src={bañosIcon} alt="Baños" />
+                    {property.banos}
                   </span>
 
                   <span>
-                    <img className="icon" src={tamaño} alt="Área" />
+                    <img className="icon" src={tamañoIcon} alt="Área" />
                     {property.area} m²
                   </span>
                 </div>

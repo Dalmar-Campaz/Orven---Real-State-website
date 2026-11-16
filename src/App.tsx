@@ -9,6 +9,7 @@ import RegistrarPropiedad from "./pages/RegistrarPropiedad/RegistrarPropiedad";
 // import Propiedades from "./pages/Propiedades/Propiedades";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { PropiedadesProvider } from "./context/PropiedadesContext";
 
 // Configuración de las rutas
 function AppRoutes() {
@@ -50,9 +51,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <PropiedadesProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </PropiedadesProvider>
     </AuthProvider>
   );
 }
