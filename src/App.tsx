@@ -6,21 +6,19 @@ import Home from "./pages/Home/Home";
 import { Login } from "./pages/Login/Login";
 import Admin from "./pages/Admin/Admin";
 import RegistrarPropiedad from "./pages/RegistrarPropiedad/RegistrarPropiedad";
-// import Propiedades from "./pages/Propiedades/Propiedades";
+import Propiedades from "./pages/Propiedades/Propiedades";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { PropiedadesProvider } from "./context/PropiedadesContext";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
-// Configuración de las rutas
 function AppRoutes() {
   const { user } = useAuth();
 
   return (
     <Routes>
-      {/* Página principal */}
       <Route path="/" element={<Home />} />
 
-      {/* Login */}
       <Route
         path="/login"
         element={
@@ -32,22 +30,23 @@ function AppRoutes() {
         }
       />
 
-      {/* Panel de administración */}
-      <Route path="/admin" element={<Admin />} />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <Admin />
+          </ProtectedRoute>
+        }
+      />
 
-      {/*Ruta del formulario*/}
       <Route path="/formulario" element={<RegistrarPropiedad />} />
+      <Route path="/propiedades" element={<Propiedades />} />
 
-      {/* Ruta de propiedades */}
-      {/* <Route path="/propiedades" element={<Propiedades />} /> */}
-
-      {/* Ruta desconocida */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
 
-// Aplicación principal
 export default function App() {
   return (
     <AuthProvider>
