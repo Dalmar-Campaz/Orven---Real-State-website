@@ -9,7 +9,7 @@
 ## Orden general
  
 - [x] **Fase 0 — Preparar el proyecto y establecer un punto seguro.**
-- [ ] **Fase 1 — Corregir los cimientos de la aplicación.**
+- [x] **Fase 1 — Corregir los cimientos de la aplicación.**
 - [ ] **Fase 2 — Integrar la página diseñada de «Ver todas las propiedades».**
 - [ ] **Fase 3 — Implementar las funcionalidades de usuario.**
 - [ ] **Fase 4 — Verificar, documentar y preparar la entrega.**
@@ -131,14 +131,14 @@
  
 ## 1.9 Pruebas de cierre de la Fase 1
  
-- [ ] Ejecutar `npm run build` y corregir todos los errores.
-- [ ] Ejecutar `npm run lint` y revisar los avisos relevantes.
-- [ ] Abrir Home y comprobar que muestra las propiedades iniciales marcadas como destacadas.
-- [ ] Registrar una solicitud de prueba y comprobar que aparece en Admin.
-- [ ] Aprobar una solicitud y comprobar que su estado cambia a `Aprobada` y que sus datos pasan a `propiedades` en el contexto y `localStorage`. Su visualización en la página pública se comprobará en la Fase 2.
-- [ ] Rechazar una solicitud y comprobar que conserva el motivo.
-- [ ] Recargar el navegador y comprobar la persistencia acordada.
-- [ ] Probar `/admin` sin sesión, con rol `customer` y con rol `admin`.
+- [x] Ejecutar `npm run build` y corregir todos los errores.
+- [x] Ejecutar `npm run lint` y revisar los avisos relevantes.
+- [x] Abrir Home y comprobar que muestra las propiedades iniciales marcadas como destacadas.
+- [x] Registrar una solicitud de prueba y comprobar que aparece en Admin.
+- [x] Aprobar una solicitud y comprobar que su estado cambia a `Aprobada` y que sus datos pasan a `propiedades` en el contexto y `localStorage`. Su visualización en la página pública se comprobará en la Fase 2.
+- [x] Rechazar una solicitud y comprobar que conserva el motivo.
+- [x] Recargar el navegador y comprobar la persistencia acordada.
+- [x] Probar `/admin` sin sesión, con rol `customer` y con rol `admin`.
 - [x] Actualizar `README.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` y `docs/DECISIONS.md` para que describan el comportamiento de esta rama.
 **Criterio para completar la Fase 1:** el flujo básico de datos es coherente, las rutas protegidas funcionan según lo acordado y build/lint no presentan errores pendientes conocidos.
  
@@ -243,7 +243,7 @@
 |---|---|---|
 | 2026-11-16 | 1.2 y 1.3 | Modelo común en `src/types/propiedad.ts` y `PropiedadesContext` implementados; `DATA_MODEL.md` actualizado. |
 | 2026-11-16 | 1.5, 1.6 y 1.7 | Formulario, Admin y Home conectados mediante `usePropiedades`. Se completaron en `finish-phase-1` los detalles de rechazo, galería, navegación del panel y filtrado de destacadas; quedan las pruebas manuales de 1.9. |
-| 2026-11-16 | Fase 1.4 y 1.8 | Persistencia local, validación del almacenamiento y protección de `/admin` implementadas en la rama `finish-phase-1`. Pendiente de build/lint y pruebas manuales en Codespaces. |
+| 2026-11-16 | Cierre de Fase 1 | Build, lint y pruebas manuales de persistencia, flujo de solicitudes, aprobación/rechazo y protección de `/admin` ejecutados y verificados por el usuario en Codespaces. Fase 1 completada; Fase 2 queda como siguiente etapa. |
 | 2026-11-16 | Admin y Home | Motivo de rechazo visible, galería corregida, navegación administrativa aclarada, propiedades destacadas filtradas y ruta temporal `/propiedades` habilitada. |
  
 ## Decisiones pendientes de confirmar
