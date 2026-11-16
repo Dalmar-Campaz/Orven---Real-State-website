@@ -17,6 +17,9 @@ function Home() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const navigate = useNavigate();
   const { propiedades } = usePropiedades();
+  const propiedadesDestacadas = propiedades.filter(
+    (propiedad) => propiedad.destacada
+  );
 
   // Agregar o quitar una propiedad de favoritos.
   const toggleFavorite = (id: number) => {
@@ -185,19 +188,23 @@ function Home() {
         <div className="section-heading">
           <h2>Propiedades Destacadas</h2>
 
-          <div className="view-all-button" onClick={handleClickPropiedades}>
+          <button
+            type="button"
+            className="view-all-button"
+            onClick={handleClickPropiedades}
+          >
             Ver todas las propiedades <span>→</span>
-          </div>
+          </button>
         </div>
 
         <div className="properties-grid">
-          {propiedades.map((property) => (
+          {propiedadesDestacadas.length > 0 ? propiedadesDestacadas.map((property) => (
             <article className="property-card" key={property.id}>
               <div className="property-image">
                 <img src={property.imagenes[0]} alt={property.titulo} />
 
-                <img
-                  style={{ width: 26, height: 26 }}
+                <button
+                  type="button"
                   className={`favorite-button ${
                     favorites.includes(property.id) ? "is-favorite" : ""
                   }`}
@@ -208,8 +215,12 @@ function Home() {
                       : "Agregar a favoritos"
                   }
                   aria-pressed={favorites.includes(property.id)}
-                  src={favorites.includes(property.id) ? favIcon : addFavIcon}
-                />
+                >
+                  <img
+                    src={favorites.includes(property.id) ? favIcon : addFavIcon}
+                    alt=""
+                  />
+                </button>
               </div>
 
               <div className="property-info">
@@ -249,10 +260,21 @@ function Home() {
                   </span>
                 </div>
 
-                <a className="property-button">Ver detalles</a>
+                <button
+                  type="button"
+                  className="property-button"
+                  disabled
+                  title="El detalle de cada propiedad se implementará en la Fase 3."
+                >
+                  Ver detalles (próximamente)
+                </button>
               </div>
             </article>
-          ))}
+          )) : (
+            <p className="properties-empty">
+              Por el momento no hay propiedades destacadas.
+            </p>
+          )}
         </div>
       </section>
 
@@ -307,7 +329,7 @@ function Home() {
               </div>
             </div>
 
-            <a className="contact-agent">Contactar</a>
+            <span className="contact-agent">Agente destacado</span>
           </div>
         </div>
       </section>
