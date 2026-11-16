@@ -242,8 +242,9 @@
 | Fecha | Fase / tarea | Resultado o notas |
 |---|---|---|
 | 2026-11-16 | 1.2 y 1.3 | Modelo común en `src/types/propiedad.ts` y `PropiedadesContext` implementados; `DATA_MODEL.md` actualizado. |
-| 2026-11-16 | 1.5, 1.6 y 1.7 (parcial) | Formulario, Admin y Home leen y escriben mediante `usePropiedades` (verificado leyendo el código). Pendiente: probar a mano el flujo formulario → Admin, mostrar el motivo de rechazo, corregir el contador de la galería, los botones sin acción del menú y calcular las destacadas. |
-| 2026-11-16 | Fase 1.4 y 1.8 | Persistencia local, validación del almacenamiento y protección de `/admin` implementadas en la rama `finish-phase-1`. Pendiente de build/lint y pruebas manuales en Codespaces. |\n| 2026-11-16 | Admin y Home | Motivo de rechazo visible, galería corregida, navegación administrativa aclarada, propiedades destacadas filtradas y ruta temporal `/propiedades` habilitada. |
+| 2026-11-16 | 1.5, 1.6 y 1.7 | Formulario, Admin y Home conectados mediante `usePropiedades`. Se completaron en `finish-phase-1` los detalles de rechazo, galería, navegación del panel y filtrado de destacadas; quedan las pruebas manuales de 1.9. |
+| 2026-11-16 | Fase 1.4 y 1.8 | Persistencia local, validación del almacenamiento y protección de `/admin` implementadas en la rama `finish-phase-1`. Pendiente de build/lint y pruebas manuales en Codespaces. |
+| 2026-11-16 | Admin y Home | Motivo de rechazo visible, galería corregida, navegación administrativa aclarada, propiedades destacadas filtradas y ruta temporal `/propiedades` habilitada. |
  
 ## Decisiones pendientes de confirmar
  
