@@ -4,30 +4,31 @@ import { useNavigate } from "react-router-dom";
 import "./RegistrarPropiedad.css";
 import logo from "../../assets/Logo.png";
 import AvatarProfile from "../../components/AvatarProfile/AvatarProfile";
-const banner =
-  "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1800&auto=format&fit=crop";
-import type {
-  DatosPropiedad,
-  Operacion,
-  SolicitudPropiedad,
-  TipoInmueble,
-} from "../../types/propiedad";
 import { usePropiedades } from "../../context/PropiedadesContext";
 import { useAuth } from "../../context/AuthContext";
 import { archivoADataUrl } from "../../utils/archivos";
+import type {
+  DatosPropiedad,
+  Operacion,
+  TipoInmueble,
+} from "../../types/propiedad";
 
-const TIPOS: TipoInmueble[] = ["Casa", "Apartamento"];
+const banner =
+  "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1800&auto=format&fit=crop";
 
+/* ---------- Tipos ---------- */
+// El estado del formulario guarda TEXTO: un <input> siempre entrega strings.
+// La conversión a número ocurre una sola vez, al enviar (ver `enviar`).
 interface FormState {
   titulo: string;
   tipo: TipoInmueble | "";
   operacion: Operacion;
-  precio: number;
+  precio: string; // solo dígitos
   ciudad: string;
   departamento: string;
-  habitaciones: number;
-  banos: number;
-  area: number;
+  habitaciones: string;
+  banos: string;
+  area: string;
   descripcion: string;
   nombre: string;
   telefono: string;
@@ -43,6 +44,9 @@ interface Imagen {
 }
 
 /* ---------- Datos ---------- */
+const TIPOS: TipoInmueble[] = ["Casa", "Apartamento"];
+
+const OPERACIONES: Operacion[] = ["Venta"];
 
 // Cada ciudad pertenece a un departamento (amplía la lista con tus datos).
 const CIUDADES = [
@@ -83,16 +87,19 @@ const PASOS = [
 const MAX_DESCRIPCION = 1000;
 const MAX_IMAGENES = 10;
 
+// Mismo patrón que Login.tsx; se unificará en la limpieza (utils).
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const INICIAL: FormState = {
   titulo: "",
   tipo: "",
   operacion: "Venta",
-  precio: 0,
+  precio: "",
   ciudad: "",
   departamento: "",
-  habitaciones: 0,
-  banos: 0,
-  area: 0,
+  habitaciones: "",
+  banos: "",
+  area: "",
   descripcion: "",
   nombre: "",
   telefono: "",
@@ -198,12 +205,17 @@ function Select({
 }
 
 /* ---------- Componente ---------- */
-
-export function RegistrarPropiedad({ onSubmit }: Props) {
+export function RegistrarPropiedad() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { crearSolicitud } = usePropiedades();
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const [form, setForm] = useState<FormState>(INICIAL);
+  // Si hay sesión, el correo del formulario empieza prellenado.
+  const [form, setForm] = useState<FormState>({
+    ...INICIAL,
+    email: user?.email ?? "",
+  });
   const [imagenes, setImagenes] = useState<Imagen[]>([]);
   const [errores, setErrores] = useState<Errores>({});
   const [enviando, setEnviando] = useState(false);
@@ -261,6 +273,9 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
     ? Number(form.precio).toLocaleString("es-CO")
     : "";
 
+  const cambiarPrecio = (e: ChangeEvent<HTMLInputElement>) =>
+    set("precio", e.target.value.replace(/\D/g, "").slice(0, 13));
+
   /* Imágenes */
   const agregarImagenes = (e: ChangeEvent<HTMLInputElement>) => {
     const archivos = Array.from(e.target.files ?? []).filter((f) =>
@@ -300,6 +315,12 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
       e.area = "Ingresa un área válida.";
     if (!form.descripcion.trim()) e.descripcion = req;
     if (imagenes.length === 0) e.imagenes = "Añade al menos una imagen.";
+
+    if (!form.nombre.trim()) e.nombre = req;
+    if (form.telefono.replace(/\D/g, "").length < 7)
+      e.telefono = "Ingresa un teléfono válido.";
+    if (!EMAIL_REGEX.test(form.email.trim()))
+      e.email = "El correo no tiene un formato válido.";
     return e;
   };
 
@@ -316,23 +337,39 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
       return;
     }
 
-    const solicitud: SolicitudPropiedad = {
-      titulo: form.titulo.trim(),
-      tipo: form.tipo,
-      operacion: form.operacion,
-      precio: Number(form.precio),
-      ciudad: form.ciudad,
-      departamento: form.departamento,
-      habitaciones: form.habitaciones,
-      banos: form.banos,
-      area: form.area,
-      descripcion: form.descripcion.trim(),
-      imagenes: imagenes.map((i) => i.file),
-    };
+    // `form.tipo` puede ser "" para TypeScript; la validación ya lo descartó,
+    // y esta comprobación estrecha el tipo a TipoInmueble.
+    const tipo = form.tipo;
+    if (!tipo) return;
 
     setEnviando(true);
     try {
-      await onSubmit?.(solicitud);
+      // Las previsualizaciones usan URLs temporales (blob:). Para guardar,
+      // convertimos cada archivo a una data URL, que no depende de nada externo.
+      const urls = await Promise.all(
+        imagenes.map((i) => archivoADataUrl(i.file)),
+      );
+
+      const datos: DatosPropiedad = {
+        titulo: form.titulo.trim(),
+        tipo,
+        operacion: form.operacion,
+        precio: Number(form.precio),
+        ciudad: form.ciudad,
+        departamento: form.departamento,
+        habitaciones: parseInt(form.habitaciones, 10),
+        banos: parseInt(form.banos, 10),
+        area: Number(form.area),
+        descripcion: form.descripcion.trim(),
+        imagenes: urls,
+      };
+
+      crearSolicitud(datos, {
+        nombre: form.nombre.trim(),
+        email: form.email.trim(),
+        telefono: form.telefono.trim(),
+      });
+
       setEnviado(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
@@ -347,7 +384,7 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
   const nuevaSolicitud = () => {
     imagenes.forEach((i) => URL.revokeObjectURL(i.url));
     setImagenes([]);
-    setForm(INICIAL);
+    setForm({ ...INICIAL, email: user?.email ?? "" });
     setErrores({});
     setEnviado(false);
   };
@@ -456,7 +493,9 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
                   <Select
                     label="Tipo de propiedad"
                     value={form.tipo}
-                    onChange={(v) => set("tipo", v)}
+                    onChange={(v) =>
+                      set("tipo", TIPOS.find((t) => t === v) ?? "")
+                    }
                     placeholder="Selecciona un tipo"
                     options={TIPOS}
                     error={errores.tipo}
@@ -642,6 +681,60 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
                   ))}
                 </ul>
               )}
+
+              <p className="rp-group">Datos de contacto</p>
+              <div className="rp-grid rp-grid--2">
+                <div className={claseCampo("nombre")}>
+                  <label htmlFor="nombre">Nombre completo *</label>
+                  <input
+                    id="nombre"
+                    type="text"
+                    autoComplete="name"
+                    value={form.nombre}
+                    onChange={(e) => set("nombre", e.target.value)}
+                    aria-invalid={!!errores.nombre}
+                  />
+                  {errores.nombre && (
+                    <span className="rp-error" role="alert">
+                      {errores.nombre}
+                    </span>
+                  )}
+                </div>
+                <div className={claseCampo("telefono")}>
+                  <label htmlFor="telefono">Teléfono *</label>
+                  <input
+                    id="telefono"
+                    type="text"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    value={form.telefono}
+                    onChange={(e) => set("telefono", e.target.value)}
+                    aria-invalid={!!errores.telefono}
+                  />
+                  {errores.telefono && (
+                    <span className="rp-error" role="alert">
+                      {errores.telefono}
+                    </span>
+                  )}
+                </div>
+                <div className={claseCampo("email")}>
+                  <label htmlFor="email">Correo electrónico *</label>
+                  <input
+                    id="email"
+                    type="text"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={(e) => set("email", e.target.value)}
+                    aria-invalid={!!errores.email}
+                  />
+                  {errores.email && (
+                    <span className="rp-error" role="alert">
+                      {errores.email}
+                    </span>
+                  )}
+                </div>
+              </div>
 
               {errorEnvio && (
                 <p className="rp-submit-error" role="alert">
