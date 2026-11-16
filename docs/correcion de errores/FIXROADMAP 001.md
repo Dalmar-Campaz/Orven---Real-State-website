@@ -133,9 +133,9 @@
  
 - [ ] Ejecutar `npm run build` y corregir todos los errores.
 - [ ] Ejecutar `npm run lint` y revisar los avisos relevantes.
-- [ ] Abrir Home y comprobar que carga el catálogo inicial.
+- [ ] Abrir Home y comprobar que muestra las propiedades iniciales marcadas como destacadas.
 - [ ] Registrar una solicitud de prueba y comprobar que aparece en Admin.
-- [ ] Aprobar una solicitud y comprobar que aparece en el catálogo.
+- [ ] Aprobar una solicitud y comprobar que su estado cambia a `Aprobada` y que sus datos pasan a `propiedades` en el contexto y `localStorage`. Su visualización en la página pública se comprobará en la Fase 2.
 - [ ] Rechazar una solicitud y comprobar que conserva el motivo.
 - [ ] Recargar el navegador y comprobar la persistencia acordada.
 - [ ] Probar `/admin` sin sesión, con rol `customer` y con rol `admin`.
