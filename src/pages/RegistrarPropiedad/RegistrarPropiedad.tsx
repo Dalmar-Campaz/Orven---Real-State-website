@@ -223,12 +223,16 @@ export function RegistrarPropiedad() {
   const [enviado, setEnviado] = useState(false);
 
   // Libera las URLs temporales de las imágenes al desmontar
-  const imagenesRef = useRef(imagenes);
+const imagenesRef = useRef(imagenes);
+
+useEffect(() => {
   imagenesRef.current = imagenes;
-  useEffect(
-    () => () => imagenesRef.current.forEach((i) => URL.revokeObjectURL(i.url)),
-    [],
-  );
+}, [imagenes]);
+
+useEffect(
+  () => () => imagenesRef.current.forEach((i) => URL.revokeObjectURL(i.url)),
+  [],
+);
 
   const set = <K extends keyof FormState>(campo: K, valor: FormState[K]) => {
     setForm((prev) => ({ ...prev, [campo]: valor }));

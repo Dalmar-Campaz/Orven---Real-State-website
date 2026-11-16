@@ -93,7 +93,7 @@
 - [x] Mostrar el mensaje de éxito únicamente después de que la operación de registro se haya completado correctamente.
 - [x] Mostrar un error si la operación falla.
 - [x] No mostrar «Solicitud enviada» si los datos no se han guardado en el mecanismo acordado.
-- [ ] Confirmar que la nueva solicitud aparece en el panel administrativo sin escribirla manualmente en `Admin.tsx`.
+- [x] Confirmar que la nueva solicitud aparece en el panel administrativo sin escribirla manualmente en `Admin.tsx`.
 **Criterio para completar:** una solicitud creada desde el formulario queda registrada en el estado compartido y puede consultarse desde el administrador.
  
 ## 1.6 Conectar el panel administrativo
@@ -131,14 +131,14 @@
  
 ## 1.9 Pruebas de cierre de la Fase 1
  
-- [ ] Ejecutar `npm run build` y corregir todos los errores.
-- [ ] Ejecutar `npm run lint` y revisar los avisos relevantes.
-- [ ] Abrir Home y comprobar que muestra las propiedades iniciales marcadas como destacadas.
-- [ ] Registrar una solicitud de prueba y comprobar que aparece en Admin.
-- [ ] Aprobar una solicitud y comprobar que su estado cambia a `Aprobada` y que sus datos pasan a `propiedades` en el contexto y `localStorage`. Su visualización en la página pública se comprobará en la Fase 2.
-- [ ] Rechazar una solicitud y comprobar que conserva el motivo.
-- [ ] Recargar el navegador y comprobar la persistencia acordada.
-- [ ] Probar `/admin` sin sesión, con rol `customer` y con rol `admin`.
+- [x] Ejecutar `npm run build` y corregir todos los errores.
+- [x] Ejecutar `npm run lint` y revisar los avisos relevantes.
+- [x] Abrir Home y comprobar que muestra las propiedades iniciales marcadas como destacadas.
+- [x] Registrar una solicitud de prueba y comprobar que aparece en Admin.
+- [x] Aprobar una solicitud y comprobar que su estado cambia a `Aprobada` y que sus datos pasan a `propiedades` en el contexto y `localStorage`. Su visualización en la página pública se comprobará en la Fase 2.
+- [x] Rechazar una solicitud y comprobar que conserva el motivo.
+- [x] Recargar el navegador y comprobar la persistencia acordada.
+- [x] Probar `/admin` sin sesión, con rol `customer` y con rol `admin`.
 - [x] Actualizar `README.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` y `docs/DECISIONS.md` para que describan el comportamiento de esta rama.
 **Criterio para completar la Fase 1:** el flujo básico de datos es coherente, las rutas protegidas funcionan según lo acordado y build/lint no presentan errores pendientes conocidos.
  
@@ -248,10 +248,9 @@
  
 ## Decisiones pendientes de confirmar
  
-- [ ] Confirmar con el profesor si `localStorage` está permitido como mecanismo de persistencia para simular la base de datos.
+- [x] Confirmar con el profesor si `localStorage` está permitido como mecanismo de persistencia para simular la base de datos.
 - [x] Definir la estrategia para almacenar imágenes seleccionadas: data URLs en `localStorage`, con manejo de cuota; IndexedDB queda como alternativa si se requieren imágenes mayores.
-- [ ] Confirmar el alcance final de Contacto y Nosotros. Recuperar contraseña se retiró del login conforme a la decisión comunicada.
-- [ ] Confirmar si los favoritos se comparten entre sesiones del mismo navegador o si se asocian al usuario simulado.
+
 ## Reglas para mantener el alcance bajo control
  
 1. No agregar una dependencia si React y TypeScript ya resuelven la necesidad.
