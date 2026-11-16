@@ -48,7 +48,9 @@ const hoy = () => new Date().toISOString().slice(0, 10);
 const esRegistro = (valor: unknown): valor is Record<string, unknown> =>
   typeof valor === "object" && valor !== null;
 
-const esDatosPropiedad = (valor: unknown): valor is DatosPropiedad => {
+const esDatosPropiedad = (
+  valor: unknown
+): valor is Record<string, unknown> & DatosPropiedad => {
   if (!esRegistro(valor)) return false;
 
   return (
