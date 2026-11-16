@@ -47,7 +47,6 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
   const aprobarSolicitud = (id: number) => {
     const solicitud = solicitudes.find((s) => s.id === id);
     if (!solicitud || solicitud.estado !== "Pendiente") return;
-    console.log(`Solicitud ${id} aprobada y propiedad agregada al catálogo.`, propiedades);
 
     // Quitamos los campos que solo pertenecen a una solicitud
     const { id: _id, fecha: _fecha, estado: _estado, solicitante: _sol, motivoRechazo: _mot, ...datos } = solicitud;
@@ -59,7 +58,6 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
     setSolicitudes((prev) =>
       prev.map((s) => (s.id === id ? { ...s, estado: "Aprobada" } : s))
     );
-    console.log(`Solicitud ${id} aprobada y propiedad agregada al catálogo.`, propiedades);
   };
 
   const rechazarSolicitud = (id: number, motivo?: string) => {
