@@ -131,7 +131,7 @@ export function Login() {
         ? "admin"
         : "customer";
 
-      login(email.trim(), role);
+      login(email.trim(), role, remember);
       navigate(role === "admin" ? "/admin" : "/");
     } catch (err) {
       setSubmitError(
@@ -255,13 +255,6 @@ export function Login() {
                 <span className="check__box" />
                 Recordar mi sesión
               </label>
-              <button
-                type="button"
-                className="link"
-                onClick={() => navigate("/recuperar")}
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
             </div>
 
             {submitError && (
@@ -276,12 +269,6 @@ export function Login() {
             </button>
           </form>
 
-          <p className="login-panel__footer">
-            ¿No tienes una cuenta?{" "}
-            <button type="button" className="link" onClick={() => navigate("/contacto")}>
-              Contáctanos
-            </button>
-          </p>
         </section>
       </div>
     </main>
