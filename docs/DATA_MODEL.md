@@ -1,131 +1,140 @@
 # Modelo de datos de Orven
- 
+
 ## 1. Almacenamiento actual
- 
-El proyecto no utiliza un motor de base de datos ni una API. Los datos de ejemplo se definen en un archivo TypeScript (`src/data/propiedades.ts`) y se cargan como estado inicial de `PropiedadesContext`. A partir de ahí, los cambios (solicitudes nuevas, aprobaciones, rechazos) viven solo en la memoria de la pestaña y **se pierden al recargar**.
- 
-El modelo de tipos está unificado en `src/types/propiedad.ts`. Home, Admin y el formulario consumen esos tipos mediante `usePropiedades`.
- 
+
+Orven no utiliza un motor de base de datos ni una API. Los datos iniciales se definen en `src/data/propiedades.ts`; después, `PropiedadesContext` mantiene y persiste las colecciones.
+
+La clave `orven_propiedades` de `localStorage` contiene un JSON versionado:
+
+| Campo | Contenido |
+|---|---|
+| `version` | Versión del formato persistido; actualmente `1`. |
+| `propiedades` | Array de propiedades publicadas. |
+| `solicitudes` | Array de solicitudes de publicación. |
+
+Al iniciar, el contexto intenta leer y validar el JSON. Si no existe o no coincide con el modelo, utiliza los datos de ejemplo. Los cambios se escriben en almacenamiento antes de actualizar el estado React. Si el navegador no permite guardar o la cuota está llena, la operación falla y la interfaz muestra un error.
+
+El evento `storage` permite que otras pestañas del mismo navegador/origen reciban los cambios. No sincroniza dispositivos ni usuarios.
+
 ## 2. Tipos en `src/types/propiedad.ts`
- 
+
 ### Tipos auxiliares
- 
+
 | Tipo | Valores |
 |---|---|
 | `TipoInmueble` | `"Casa" \| "Apartamento"` |
-| `Operacion` | `"Venta"` (por ahora solo se maneja venta, según el comentario del archivo) |
+| `Operacion` | `"Venta"` |
 | `EstadoSolicitud` | `"Pendiente" \| "Aprobada" \| "Rechazada"` |
- 
-### `DatosPropiedad`: lo que describe a un inmueble
- 
+
+### `DatosPropiedad`
+
 | Campo | Tipo | Notas |
 |---|---|---|
-| `titulo` | `string` | |
-| `tipo` | `TipoInmueble` | |
-| `operacion` | `Operacion` | |
-| `precio` | `number` | Número puro; el texto con formato se calcula con `formatoPrecio`. |
+| `titulo` | `string` | Nombre o título del inmueble. |
+| `tipo` | `TipoInmueble` | Casa o apartamento. |
+| `operacion` | `Operacion` | Actualmente solo venta. |
+| `precio` | `number` | Número puro; se formatea en la interfaz. |
 | `ciudad` | `string` | |
 | `departamento` | `string` | |
-| `sector` | `string` (opcional) | Si existe, `ubicacionCorta` muestra «sector, ciudad». |
+| `sector` | `string` opcional | |
 | `habitaciones` | `number` | |
 | `banos` | `number` | |
-| `area` | `number` | |
+| `area` | `number` | Metros cuadrados. |
 | `descripcion` | `string` | |
-| `imagenes` | `string[]` | URLs (en los datos de ejemplo) o data URL (en solicitudes creadas desde el formulario). |
- 
-### `Propiedad`: inmueble publicado
- 
+| `imagenes` | `string[]` | URLs externas o data URLs. |
+
+### `Propiedad`
+
 Extiende `DatosPropiedad` con:
- 
+
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id` | `number` | |
-| `fecha` | `string` | El comentario del tipo indica formato ISO, por ejemplo `"2026-11-06"`. |
-| `destacada` | `boolean` (opcional) | Existe en el modelo, pero ningún componente lo utiliza todavía. |
- 
-### `SolicitudPropiedad`: publicación pendiente de revisión
- 
+| `id` | `number` | Identificador de propiedad. |
+| `fecha` | `string` | Fecha en formato ISO `AAAA-MM-DD`. |
+| `destacada` | `boolean` opcional | Determina si se muestra en la sección destacada de Home. |
+
+### `SolicitudPropiedad`
+
 Extiende `DatosPropiedad` con:
- 
+
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id` | `number` | Independiente del id de las propiedades. |
-| `fecha` | `string` | |
-| `estado` | `EstadoSolicitud` | |
-| `solicitante` | `{ nombre: string; email: string; telefono: string }` | |
-| `motivoRechazo` | `string` (opcional) | Se asigna al rechazar. El panel no lo muestra todavía. |
- 
-`Propiedad` y `SolicitudPropiedad` son tipos separados: una solicitud pendiente no puede pasarse por una propiedad publicada.
- 
-## 3. Datos iniciales en `src/data/propiedades.ts`
- 
-- `propiedadesIniciales: Propiedad[]`: cuatro propiedades de ejemplo (ids 1 a 4), con precios numéricos y una imagen cada una. Dos tienen `sector`; tres tienen `destacada: true`, pero ese campo no se usa.
-- `solicitudesPropiedad: SolicitudPropiedad[]`: ocho solicitudes de ejemplo (ids 1 a 8): seis `Pendiente`, una `Aprobada` (id 6) y una `Rechazada` (id 7, sin `motivoRechazo`).
-Ambos son arreglos `const` en memoria dentro de un módulo; no son una base de datos ni guardan cambios. `PropiedadesContext` los copia a su estado al iniciar.
- 
-### Inconsistencias conocidas en los datos de ejemplo
- 
-1. **Formato de fecha mixto:** las solicitudes 1 y 2 (y las propiedades) usan ISO (`2026-11-05`); las solicitudes 3 a 8 usan `dd/mm/aaaa`. Admin muestra la cadena tal cual.
-2. **Solicitud 3:** el título es «Casa moderna con piscina» pero el `tipo` es `Apartamento`.
-3. **Solicitud 6 (`Aprobada`):** no existe una propiedad correspondiente en `propiedadesIniciales`; el estado no es coherente con el catálogo.
-4. **Ciudades fuera de la lista del formulario:** `Santa Marta` (solicitud 1) y `La Calera` (propiedad 3) no están en la lista `CIUDADES` de `RegistrarPropiedad`.
-5. **Imágenes repetidas:** varias solicitudes reutilizan la misma foto de ejemplo (`FOTO`).
+| `id` | `number` | Identificador de solicitud. |
+| `fecha` | `string` | Fecha en formato ISO `AAAA-MM-DD`. |
+| `estado` | `EstadoSolicitud` | Pendiente, aprobada o rechazada. |
+| `solicitante` | objeto | `nombre`, `email` y `telefono`, todos `string`. |
+| `motivoRechazo` | `string` opcional | Se conserva al rechazar. |
+
+Una solicitud no es una propiedad publicada. Solo al aprobar una solicitud se copian los datos comunes a una nueva `Propiedad`.
+
+## 3. Datos iniciales
+
+- `propiedadesIniciales: Propiedad[]`: cuatro propiedades de ejemplo.
+- `solicitudesPropiedad: SolicitudPropiedad[]`: ocho solicitudes de ejemplo; siete pendientes y una rechazada.
+- Las fechas del conjunto inicial se expresan como ISO `AAAA-MM-DD`.
+- Las imágenes de ejemplo utilizan URLs externas. Las imágenes agregadas desde el formulario son data URLs.
+
+Estos arreglos son constantes TypeScript, no una base de datos.
+
 ## 4. Reglas de `PropiedadesContext`
- 
-Documentadas con más detalle en `docs/ARCHITECTURE.md`. Resumen de las reglas de datos:
- 
-- Una solicitud nueva siempre nace `Pendiente`, con `fecha` de hoy (formato ISO, `AAAA-MM-DD`) y el id siguiente (máximo existente + 1). Se agrega al inicio de la lista.
-- Solo se puede aprobar o rechazar una solicitud **existente y pendiente**; en cualquier otro caso la operación no hace nada. Esto evita aprobar dos veces la misma solicitud y duplicar la propiedad.
-- Aprobar copia los datos del inmueble (sin `id`, `fecha`, `estado`, `solicitante` ni `motivoRechazo`) a una nueva `Propiedad` con id propio y fecha de hoy, y marca la solicitud como `Aprobada`. La solicitud se conserva.
-- Rechazar marca la solicitud como `Rechazada` y guarda el motivo si se proporcionó.
-## 5. Datos que construye el formulario de registro
- 
-`src/pages/RegistrarPropiedad/RegistrarPropiedad.tsx` mantiene su estado como texto (`FormState`): un `<input>` siempre entrega cadenas. Al enviar, convierte una sola vez y construye un `DatosPropiedad`:
- 
-| Campo del formulario | Resultado en `DatosPropiedad` |
+
+- Una solicitud nueva nace con estado `Pendiente`, fecha de hoy e id siguiente.
+- Solo se puede aprobar o rechazar una solicitud existente y pendiente.
+- Aprobar crea una propiedad nueva con su propio id y fecha, y marca la solicitud como `Aprobada`.
+- Rechazar marca la solicitud como `Rechazada` y guarda el motivo opcional.
+- Cada operación genera un nuevo estado completo y lo guarda como un único objeto JSON. La aplicación actualiza React solo cuando el guardado tuvo éxito.
+- Si se recibe una modificación en otra pestaña, el contexto actualiza su estado a partir del evento `storage`.
+
+## 5. Datos construidos por el formulario
+
+El formulario mantiene sus campos como texto y convierte los valores numéricos al enviar:
+
+| Campo del formulario | Resultado |
 |---|---|
-| `precio` (solo dígitos) | `Number(precio)` |
-| `habitaciones`, `banos` (`"1"` a `"8+"`) | `parseInt(valor, 10)`; `"8+"` se guarda como `8` |
+| `precio` | `Number(precio)` |
+| `habitaciones`, `banos` | `parseInt(valor, 10)`; `"8+"` se guarda como `8`. |
 | `area` | `Number(area)` |
-| `tipo` | `TipoInmueble` validado |
-| `operacion` | `"Venta"` (única opción) |
-| Imágenes seleccionadas (`File`) | `string[]` de data URL generadas con `archivoADataUrl` |
- 
-El nombre, teléfono y correo se envían como `solicitante` a `crearSolicitud`. El correo se prellena con el de la sesión cuando existe. La validación exige nombre, un teléfono con al menos 7 dígitos y un correo con formato válido.
- 
-Las vistas previas usan URLs temporales (`blob:`) generadas con `URL.createObjectURL()`, que se liberan al retirar una imagen o desmontar el componente. Son independientes de los datos guardados: lo que se guarda en la solicitud son las data URL, que no dependen de esas URLs temporales.
- 
+| Imágenes seleccionadas (`File`) | `string[]` de data URLs generadas mediante `archivoADataUrl`. |
+| Contacto | Objeto `solicitante` con nombre, teléfono y correo. |
+
+Las vistas previas utilizan URLs temporales `blob:`, que se liberan al quitar imágenes o desmontar el formulario. No se guardan esas URLs temporales; se guardan las data URLs.
+
+**Límite de imágenes:** las data URLs ocupan más espacio que el archivo original. `localStorage` tiene una cuota limitada que depende del navegador. Cuando no hay espacio o el almacenamiento está bloqueado, el contexto no cambia los datos y el formulario muestra el error. Para imágenes más grandes se debe evaluar IndexedDB o almacenamiento remoto en una fase futura.
+
 ## 6. Sesión de usuario
- 
-`src/context/AuthContext.tsx` define un usuario con:
- 
+
+`AuthContext` mantiene un objeto con correo y rol:
+
 | Campo | Tipo |
 |---|---|
 | `email` | `string` |
-| `role` | `'admin' \| 'customer' \| null` |
- 
-El contexto guarda el objeto serializado en `localStorage` bajo la clave `orven_user`. Es una sesión de demostración, no una autenticación validada por un servidor.
- 
-## 7. Datos guardados en el navegador
- 
-| Clave | Contenido | Uso |
+| `role` | `"admin" \| "customer"` |
+
+- Con «Recordar mi sesión» marcado, se utiliza `localStorage` con la clave `orven_user`.
+- Sin marcarlo, se utiliza `sessionStorage` con la clave `orven_user_session`.
+- El contexto valida el JSON al iniciar y tolera datos corruptos o almacenamiento no disponible.
+- No se guardan contraseñas.
+
+El login es una simulación frontend y no comprueba las credenciales contra un servidor.
+
+## 7. Claves del navegador
+
+| Almacenamiento | Clave | Contenido |
 |---|---|---|
-| `orven_user` | JSON con `email` y `role` | Sesión simulada en `AuthContext`. |
- 
-No hay otras claves. Propiedades, solicitudes, favoritos y datos del formulario no se guardan en `localStorage`.
- 
-## 8. Utilidades de datos
- 
-- `src/utils/formato.ts`: `formatoPrecio(n)` devuelve el precio con separador de miles en formato `es-CO` precedido de `$`; `ubicacionCorta(p)` devuelve «sector, ciudad» o solo la ciudad.
-- `src/utils/archivos.ts`: `archivoADataUrl(file)` lee un `File` y devuelve una `Promise` con su data URL; rechaza con un error si la lectura falla.
+| `localStorage` | `orven_propiedades` | JSON versionado con propiedades y solicitudes. |
+| `localStorage` | `orven_user` | Sesión cuando el usuario marca «Recordar mi sesión». |
+| `sessionStorage` | `orven_user_session` | Sesión limitada a la pestaña cuando no se marca la opción. |
+
+El almacenamiento solo pertenece al navegador y origen actuales. No representa una base de datos central ni sincroniza otros dispositivos. Los usuarios pueden modificar o borrar esos valores, por lo que no son confiables para seguridad.
+
+## 8. Utilidades
+
+- `src/utils/formato.ts`: `formatoPrecio` formatea valores según `es-CO`; `ubicacionCorta` devuelve sector y ciudad cuando hay sector.
+- `src/utils/archivos.ts`: `archivoADataUrl(file)` convierte un archivo a data URL y rechaza si la lectura falla.
+
 ## 9. Pendientes del modelo
- 
-1. Decidir qué datos deben persistir y cómo (`localStorage`, con manejo de JSON inválido y de almacenamiento lleno).
-2. Definir la estrategia de persistencia de las imágenes: una data URL ocupa mucho más que el archivo original y el límite de `localStorage` es reducido.
-3. Corregir las inconsistencias de los datos de ejemplo (sección 3) y unificar el formato de fecha.
-4. Ampliar `Operacion` (por ejemplo, `"Arriendo"`) solo si el alcance lo requiere; hoy el formulario y los datos solo contemplan `"Venta"`.
-5. Unificar la lista de ciudades y departamentos, hoy repetida en Home y en el formulario.
-6. Decidir cómo se guardarán los favoritos y si son del navegador o del usuario simulado.
-7. Mostrar `motivoRechazo` en el detalle de Admin y decidir si debe haber un motivo en la solicitud de ejemplo rechazada.
-No se debe documentar como implementada la persistencia de propiedades, solicitudes o favoritos hasta que exista código que la realice.
- 
+
+1. Definir en la Fase 3 si los favoritos pertenecen al usuario simulado y persistir solo sus identificadores.
+2. Evaluar IndexedDB o un servicio de imágenes si la cuota de `localStorage` resulta insuficiente para las imágenes del formulario.
+3. Unificar en una fuente compartida los catálogos de ciudades y departamentos, hoy repetidos en páginas distintas.
+4. Ampliar `Operacion` solo si el alcance incorpora arriendo.
