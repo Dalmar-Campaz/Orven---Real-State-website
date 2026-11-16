@@ -791,3 +791,42 @@ section[id] {
     align-items: flex-start;
   }
 }
+
+
+.view-all-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.view-all-button:hover {
+  text-decoration: underline;
+}
+
+.favorite-button {
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+
+.favorite-button img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.property-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.properties-empty {
+  grid-column: 1 / -1;
+  margin: 12px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
