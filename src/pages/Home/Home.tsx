@@ -174,10 +174,6 @@ function Home() {
           </div>
 
           <button className="search-button" type="submit">
-            {/* <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="10.5" cy="10.5" r="6.5" />
-              <path d="m16 16 5 5" />
-            </svg> */}
             Buscar
           </button>
         </form>

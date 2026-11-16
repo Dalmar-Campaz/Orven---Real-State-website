@@ -39,6 +39,7 @@ export const propiedadesIniciales: Propiedad[] = [
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop",
     ],
     fecha: "2026-11-02",
+    destacada: true,
   },
   {
     id: 3,

@@ -351,14 +351,12 @@ section[id] {
   border-radius: 50%;
   background: white;
   color: var(--primary-dark);
-  font-size: 19px;
   cursor: pointer;
-  display: grid;
-  place-items: center;
 }
 
-.favorite-button.is-favorite {
-  color: #d94d57;
+button.favorite-button img {
+ width: 24px;
+ height: 24px;
 }
 
 .property-info {
@@ -797,7 +795,7 @@ section[id] {
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--muted);
+  color: #263c34;
   font: inherit;
   font-size: 11px;
   cursor: pointer;
