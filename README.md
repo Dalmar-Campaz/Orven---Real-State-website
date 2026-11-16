@@ -1,21 +1,20 @@
 # Orven — plataforma inmobiliaria
-
+ 
 Orven es un proyecto académico de frontend para explorar propiedades y representar un flujo básico de publicación y revisión de inmuebles. Está construido con React, TypeScript y Vite.
-
-> **Estado actual:** prototipo frontend en desarrollo. No tiene backend ni base de datos. El catálogo, el formulario y el panel administrativo todavía no comparten un mismo flujo de datos. La página de «Ver todas las propiedades» tiene un componente en preparación, pero su ruta no está habilitada. Consulta el [plan de trabajo](docs/correcion%20de%20errores/FIXROADMAP%20001.md).
-
+ 
+> **Estado actual:** prototipo frontend en desarrollo. No tiene backend ni base de datos. Formulario, panel administrativo y página de inicio ya comparten una misma fuente de datos (`PropiedadesContext`), pero **esos datos viven solo en la memoria del navegador y se pierden al recargar la página**. La página «Ver todas las propiedades» aún no existe: su archivo y su CSS están vacíos y su ruta está deshabilitada. Consulta el [plan de trabajo](docs/correcion%20de%20errores/FIXROADMAP%20001.md).
+ 
 ## Funcionalidades y estado actual
-
-- **Inicio:** muestra cuatro propiedades destacadas desde `src/data/propiedades.ts`. El buscador todavía no filtra; al enviarlo, desplaza la vista a la sección de propiedades. Los favoritos de esta pantalla viven solo en el estado del componente.
+ 
+- **Inicio:** muestra todas las propiedades publicadas del catálogo compartido (hoy 4 de ejemplo, más las que apruebe el administrador durante la sesión). El buscador todavía no filtra: sus campos no se leen y, al enviarlo, solo desplaza la vista a la sección de propiedades. Los favoritos viven únicamente en el estado de la pantalla. El botón «Ver detalles» y el enlace «Ver todas las propiedades» no llevan a ninguna página funcional.
 - **Inicio de sesión:** valida el formato del correo y una longitud mínima de contraseña, y asigna un rol de demostración según el correo. No verifica credenciales con un servidor.
-- **Panel administrativo:** presenta solicitudes de ejemplo con búsqueda, filtros, paginación y acciones de aprobación/rechazo. Los cambios solo viven en el estado de la pantalla.
-- **Registro de propiedades:** valida los campos y permite previsualizar imágenes seleccionadas. La ruta actual no conecta el callback de envío con un almacenamiento, por lo que el mensaje de éxito no significa que la solicitud haya quedado guardada.
-- **Ver todas las propiedades:** existe un componente `Propiedades.tsx` con una implementación visual y lógica de filtros, orden, paginación y favoritos, pero la ruta `/propiedades` está comentada en `App.tsx`. Su CSS está vacío y el componente todavía no recibe datos del catálogo compartido.
-
-Estas funciones describen el comportamiento del código presente; no implican persistencia central, autenticación real ni sincronización entre páginas.
-
+- **Registro de propiedades (`/formulario`):** valida los campos (incluidos nombre, teléfono y correo de contacto), permite previsualizar imágenes y, al enviar, crea una solicitud *pendiente* en el estado compartido. Si hay sesión, el correo se prellena. Las imágenes se guardan como data URL dentro de la solicitud.
+- **Panel administrativo (`/admin`):** lee las solicitudes del estado compartido (las de ejemplo y las creadas desde el formulario) con búsqueda, filtro por estado, paginación y detalle. Aprobar una solicitud pendiente la convierte en propiedad publicada, y rechazarla guarda un motivo opcional. Los botones «Solicitudes» y «Propiedades» del menú lateral no tienen acción.
+- **Ver todas las propiedades:** no implementada. `src/pages/Propiedades/Propiedades.tsx` y `Propiedades.css` existen, pero están vacíos; la ruta `/propiedades` está comentada en `App.tsx`.
+Estas funciones describen el comportamiento del código presente. No implican persistencia, autenticación real ni sincronización entre usuarios o dispositivos.
+ 
 ## Tecnologías
-
+ 
 | Tecnología | Uso |
 |---|---|
 | React 19 | Construcción de interfaces |
@@ -24,51 +23,58 @@ Estas funciones describen el comportamiento del código presente; no implican pe
 | Vite 8 | Servidor de desarrollo y compilación |
 | CSS | Estilos |
 | Oxlint | Análisis estático configurado |
-
+ 
 Las versiones corresponden a los rangos declarados en `package.json`.
-
+ 
 ## Requisitos
-
+ 
 - Node.js compatible con Vite y Oxlint: `^20.19.0` o `>=22.12.0`, según los requisitos declarados en el archivo de bloqueo.
 - npm.
 - Git para clonar el repositorio.
-
 ## Instalación y ejecución
-
+ 
 Clona el repositorio:
-
+ 
 ```bash
 git clone https://github.com/Dalmar-Campaz/Orven---Real-State-website.git
 cd Orven---Real-State-website
 ```
-
+ 
 Instala las dependencias usando el archivo de bloqueo:
-
+ 
 ```bash
 npm ci
 ```
-
+ 
 Inicia el servidor de desarrollo:
-
+ 
 ```bash
 npm run dev
 ```
-
+ 
 Vite mostrará en la terminal la dirección local para abrir la aplicación.
-
+ 
 ## Scripts disponibles
-
+ 
 | Comando | Descripción |
 |---|---|
 | `npm run dev` | Inicia el servidor de desarrollo de Vite. |
 | `npm run build` | Ejecuta TypeScript (`tsc -b`) y después la compilación de Vite. |
 | `npm run lint` | Ejecuta Oxlint. |
 | `npm run preview` | Sirve localmente el resultado de una compilación previa. |
-
-Los comandos anteriores están definidos en `package.json`. El repositorio incluye `package-lock.json`, por lo que `npm ci` es el comando apropiado para instalar exactamente las dependencias bloqueadas.
-
+ 
+El proyecto no define un script de pruebas automatizadas.
+ 
+## Cuentas de demostración
+ 
+No hay usuarios registrados. En `/login`, cualquier correo con formato válido y una contraseña de al menos 6 caracteres inicia sesión:
+ 
+- `admin@orven.com` recibe el rol `admin` y es redirigido a `/admin`.
+- Cualquier otro correo recibe el rol `customer` y es redirigido a Home.
+La contraseña no se comprueba. Es una simulación académica, no autenticación real.
+ 
 ## Estructura actual
-
+ 
 ```text
 src/
 ├── assets/                    # Logos e iconos
@@ -77,52 +83,59 @@ src/
 │   └── HomeNavbar/
 ├── context/
 │   ├── AuthContext.tsx        # Sesión y rol de demostración
-│   └── PropiedadesContext.tsx # Archivo creado, aún vacío
+│   └── PropiedadesContext.tsx # Propiedades publicadas y solicitudes
 ├── data/
-│   └── propiedades.ts         # Datos de ejemplo
+│   └── propiedades.ts         # Datos iniciales: propiedades y solicitudes
 ├── pages/
 │   ├── Admin/
 │   ├── Home/
 │   ├── Login/
-│   ├── Propiedades/           # Componente en preparación; ruta deshabilitada
+│   ├── Propiedades/           # Archivos vacíos; ruta deshabilitada
 │   └── RegistrarPropiedad/
 ├── routes/
 │   └── ProtectedRoute.tsx     # Archivo creado, aún vacío
 ├── types/
-│   └── propiedad.ts           # Archivo creado, aún vacío
+│   └── propiedad.ts           # Modelo común: Propiedad y SolicitudPropiedad
 ├── utils/
-│   └── formato.ts             # Archivo creado, aún vacío
+│   ├── archivos.ts            # Convierte un File en data URL
+│   └── formato.ts             # Formato de precio y ubicación
 ├── App.tsx                    # Proveedores y rutas
-├── App.css
-├── index.css
+├── App.css                    # Vacío
+├── index.css                  # Estilos base, importado desde main.tsx
 └── main.tsx                   # Punto de entrada de React
 ```
-
-Los archivos indicados como «aún vacíos» existen en el repositorio, pero todavía no implementan esas responsabilidades.
-
+ 
 ## Documentación y planificación
-
-- [Arquitectura](docs/ARCHITECTURE.md): arranque, rutas, contexto y responsabilidades actuales.
-- [Modelo de datos](docs/DATA_MODEL.md): estructuras existentes, datos de ejemplo y persistencia.
+ 
+- [Arquitectura](docs/ARCHITECTURE.md): arranque, rutas, contextos y flujo de datos.
+- [Modelo de datos](docs/DATA_MODEL.md): tipos, datos de ejemplo, reglas del contexto y persistencia.
 - [Decisiones técnicas](docs/DECISIONS.md): decisiones observadas y alcance acordado.
-- [Plan de trabajo](docs/correcion%20de%20errores/FIXROADMAP%20001.md): checklist por fases para estabilizar el proyecto, integrar el catálogo y después implementar funcionalidades.
-
+- [Plan de trabajo](docs/correcion%20de%20errores/FIXROADMAP%20001.md): checklist por fases para estabilizar el proyecto.
 ## Limitaciones conocidas
-
+ 
 1. **No hay backend ni base de datos.** Los arreglos de TypeScript y el estado de React son datos locales de demostración.
-2. **Los modelos están fragmentados.** `data/propiedades.ts`, `Admin.tsx`, `RegistrarPropiedad.tsx` y `Propiedades.tsx` utilizan estructuras distintas para representar inmuebles o solicitudes.
-3. **No existe estado compartido de propiedades.** `PropiedadesContext.tsx` está vacío. Home, Admin y el formulario no comparten sus datos.
-4. **La ruta del catálogo está deshabilitada.** `App.tsx` tiene comentada la ruta `/propiedades`. El enlace «Ver todas las propiedades» de Home navega a esa URL, pero la ruta comodín la redirige a `/`.
-5. **El componente de catálogo no está integrado.** `Propiedades.tsx` exige una prop `propiedades`; todavía no hay un componente padre que le entregue el catálogo. `Propiedades.css` está vacío. El archivo importa el logo desde `src/assets/Logo.png`, que sí está presente en el repositorio.
-6. **El formulario no guarda solicitudes.** `RegistrarPropiedad` acepta un callback opcional `onSubmit`, pero `App.tsx` no se lo pasa. Si no recibe callback, el formulario puede mostrar confirmación sin almacenar los datos.
-7. **El panel usa datos independientes.** `Admin.tsx` define `SOLICITUDES_INICIALES` y modifica una copia en estado local; los cambios se pierden al recargar.
-8. **Los datos pendientes de ejemplo no se consumen.** `pendingPropertiesDB` está definido en `src/data/propiedades.ts`, pero ninguna página actual lo importa.
-9. **La autenticación es simulada y la ruta administrativa no está protegida.** `/admin` renderiza el panel sin comprobar el rol. El usuario se guarda en `localStorage` bajo `orven_user`; el rol no es una garantía de seguridad.
-10. **Los favoritos no comparten comportamiento.** Home los mantiene en estado React; el componente no integrado de Propiedades usa `localStorage` con `orven:favoritos`.
-11. **Hay destinos sin ruta declarada.** Entre ellos `/recuperar`, `/contacto`, `/nosotros` y `/propiedades/:id`. La ruta comodín redirige a Home.
-12. **Estilos globales:** `src/index.css` existe, pero no se importa desde los archivos TSX actuales. `src/App.css` y `src/pages/Propiedades/Propiedades.css` están vacíos.
-13. **Metadatos pendientes:** `index.html` conserva `lang="en"` y el título «Orven - Real State», aunque la interfaz está en español.
-
+2. **No hay persistencia de propiedades ni solicitudes.** `PropiedadesContext` guarda todo en memoria. Al recargar la página se restauran los datos de ejemplo y se pierden las solicitudes creadas y las decisiones del administrador. Solo la sesión se guarda, en `localStorage`.
+3. **Las imágenes del formulario se guardan como data URL** dentro del estado. Si más adelante se persisten en `localStorage`, el límite de almacenamiento del navegador puede agotarse; la estrategia está pendiente.
+4. **La página de catálogo no existe todavía.** `/propiedades` está comentada en `App.tsx`; el enlace «Ver todas las propiedades» de Home navega a esa URL y la ruta comodín lo redirige a `/`.
+5. **Home muestra todo el catálogo como «destacadas».** El campo `destacada` existe en el modelo, pero ningún componente lo utiliza.
+6. **El buscador de Home y los botones «Ver detalles» no funcionan.** Los selectores del buscador no se leen y «Ver detalles» es un enlace sin destino.
+7. **La autenticación es simulada y `/admin` no está protegida.** La ruta renderiza el panel sin comprobar sesión ni rol; `ProtectedRoute.tsx` está vacío. El rol sale del correo y se guarda en `localStorage` bajo `orven_user`; no es una garantía de seguridad.
+8. **`AuthContext` no maneja datos corruptos:** la lectura de `orven_user` usa `JSON.parse` sin `try/catch`.
+9. **«Recordar mi sesión» no tiene efecto.** El checkbox cambia un estado local del formulario; la sesión siempre se guarda en `localStorage`.
+10. **El motivo de rechazo se guarda, pero el panel no lo muestra.**
+11. **Galería del panel:** muestra 3 miniaturas pero calcula las fotos restantes como `total − 4`, por lo que el contador «+N» no coincide con las fotos ocultas.
+12. **Los botones «Solicitudes» y «Propiedades» del menú del panel no tienen acción.**
+13. **Datos de ejemplo con inconsistencias:** fechas en formatos distintos (ISO y `dd/mm/aaaa`), una solicitud con título de casa pero tipo `Apartamento` (id 3), una solicitud aprobada (id 6) sin su propiedad en el catálogo, y ciudades (`Santa Marta`, `La Calera`) que no existen en la lista del formulario.
+14. **Destinos sin ruta declarada:** `/recuperar`, `/contacto`, `/nosotros` y `/propiedades/:id`. La ruta comodín redirige a Home.
+15. **Código duplicado:** la lista de ciudades (Home y formulario) y la expresión regular de correo (Login y formulario).
+16. **Residuos de depuración:** `PropiedadesContext` conserva dos `console.log` en `aprobarSolicitud`, y `Admin.tsx` tiene un comentario con el antiguo arreglo `SOLICITUDES_INICIALES`.
+17. **Estilos globales repetidos:** `Home.css` redefine reglas de `html`, `body` y `#root` que ya están en `index.css`; `AvatarProfile.css` declara variables en `:root`. Todas las hojas CSS son globales (no CSS Modules).
+18. **`src/assets/Logo.png` pesa cerca de 1,1 MB** en la compilación.
 ## Verificación
-
-La disponibilidad de los comandos se comprobó contra `package.json`, la existencia de `package-lock.json` y los requisitos de Node declarados por las dependencias bloqueadas. No se ejecutaron `npm ci`, `npm run build` ni `npm run lint` durante esta revisión remota. Por tanto, no se afirma que la instalación, compilación o lint estén pasando actualmente.
+ 
+Última verificación automatizada, sobre el commit `759cf3b` (2026-11-16), con Node 22 y `npm ci`:
+ 
+- `npm run build`: compila sin errores.
+- `npm run lint`: 0 errores y 3 avisos. Dos son de `react/only-export-components` (los hooks `useAuth` y `usePropiedades` se exportan junto a su proveedor) y uno es de `react/refs` en `RegistrarPropiedad.tsx` (asigna `imagenesRef.current` durante el renderizado).
+No se ejecutó la aplicación en un navegador para esta verificación, y el proyecto no tiene pruebas automatizadas.
+ 
