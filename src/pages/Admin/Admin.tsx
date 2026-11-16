@@ -3,154 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Admin.css";
 import logo from "../../assets/LogoWhite.png";
-import home from "../../assets/icons/house.png";
-import houseVerde from "../../assets/icons/house-verde.png";
-import clipboard from "../../assets/icons/clipboard-list.png";
-import logOut from "../../assets/icons/log-out.png";
-import panel from "../../assets/icons/layout-grid.png";
-import {solicitudesPropiedad as SOLICITUDES_INICIALES} from "../../data/propiedades";
-import type {SolicitudPropiedad} from "../../types/propiedad";
+import homeIcon from "../../assets/icons/house.png";
+import houseVerdeIcon from "../../assets/icons/house-verde.png";
+import clipboardIcon from "../../assets/icons/clipboard-list.png";
+import logOutIcon from "../../assets/icons/log-out.png";
+import panelIcon from "../../assets/icons/layout-grid.png";
 import { formatoPrecio, ubicacionCorta } from "../../utils/formato";
+import { usePropiedades } from "../../context/PropiedadesContext";
 
 /* ---------- Tipos ---------- */
 type Estado = "Pendiente" | "Aprobada" | "Rechazada";
 type FiltroEstado = "Todos" | Estado;
 type Accion = "aprobar" | "rechazar" | null;
-
-// interface Solicitud {
-//   id: number;
-//   titulo: string;
-//   solicitante: string;
-//   email: string;
-//   telefono: string;
-//   ubicacion: string; // ciudad corta para la tabla
-//   ubicacionCompleta: string;
-//   tipo: "Venta" | "Arriendo";
-//   fecha: string;
-//   estado: Estado;
-//   precio: string;
-//   descripcion: string;
-//   habitaciones: number;
-//   banos: number;
-//   area: number;
-//   fotos: string[];
-//   motivoRechazo?: string;
-// }
-
-// /* ---------- Datos simulados (reemplaza por tu array real) ---------- */
-// const FOTO = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop"; // pon aquí la URL / import de una foto de ejemplo
-
-// const SOLICITUDES_INICIALES: Solicitud[] = [
-//   {
-//     id: 1,
-//     titulo: "Casa moderna con piscina",
-//     solicitante: "Juan Pérez",
-//     email: "juan.perez@email.com",
-//     telefono: "300 123 4567",
-//     ubicacion: "Medellín",
-//     ubicacionCompleta: "Medellín, Antioquia",
-//     tipo: "Venta",
-//     fecha: "06/11/2026",
-//     estado: "Pendiente",
-//     precio: "$ 850.000.000",
-//     descripcion:
-//       "Hermosa casa de 2 pisos con piscina, jardín y excelentes acabados. Ubicada en una zona residencial tranquila de Medellín.",
-//     habitaciones: 4,
-//     banos: 3,
-//     area: 280,
-//     fotos: [FOTO, FOTO, FOTO, FOTO, FOTO],
-//   },
-//   {
-//     id: 2,
-//     titulo: "Apartamento en Laureles",
-//     solicitante: "María López",
-//     email: "maria.lopez@email.com",
-//     telefono: "301 555 1020",
-//     ubicacion: "Medellín",
-//     ubicacionCompleta: "Medellín, Antioquia",
-//     tipo: "Arriendo",
-//     fecha: "06/11/2026",
-//     estado: "Pendiente",
-//     precio: "$ 3.200.000 / mes",
-//     descripcion: "Apartamento luminoso en Laureles, cerca de parques y comercio.",
-//     habitaciones: 3,
-//     banos: 2,
-//     area: 96,
-//     fotos: [FOTO, FOTO, FOTO],
-//   },
-//   {
-//     id: 3,
-//     titulo: "Casa campestre",
-//     solicitante: "Carlos Ruiz",
-//     email: "carlos.ruiz@email.com",
-//     telefono: "310 444 8899",
-//     ubicacion: "Rionegro",
-//     ubicacionCompleta: "Rionegro, Antioquia",
-//     tipo: "Venta",
-//     fecha: "05/11/2026",
-//     estado: "Pendiente",
-//     precio: "$ 620.000.000",
-//     descripcion: "Casa campestre con amplias zonas verdes y chimenea.",
-//     habitaciones: 5,
-//     banos: 4,
-//     area: 340,
-//     fotos: [FOTO, FOTO],
-//   },
-//   {
-//     id: 4,
-//     titulo: "Apartamento moderno",
-//     solicitante: "Ana Torres",
-//     email: "ana.torres@email.com",
-//     telefono: "320 777 2211",
-//     ubicacion: "Bogotá",
-//     ubicacionCompleta: "Bogotá, Cundinamarca",
-//     tipo: "Arriendo",
-//     fecha: "05/11/2026",
-//     estado: "Aprobada",
-//     precio: "$ 4.100.000 / mes",
-//     descripcion: "Apartamento moderno con balcón y vista a la ciudad.",
-//     habitaciones: 2,
-//     banos: 2,
-//     area: 78,
-//     fotos: [FOTO, FOTO],
-//   },
-//   {
-//     id: 5,
-//     titulo: "Casa en El Poblado",
-//     solicitante: "Diego Ramírez",
-//     email: "diego.ramirez@email.com",
-//     telefono: "315 909 3030",
-//     ubicacion: "Medellín",
-//     ubicacionCompleta: "Medellín, Antioquia",
-//     tipo: "Venta",
-//     fecha: "04/11/2026",
-//     estado: "Rechazada",
-//     precio: "$ 1.450.000.000",
-//     descripcion: "Casa de lujo en El Poblado con acabados premium.",
-//     habitaciones: 4,
-//     banos: 5,
-//     area: 410,
-//     fotos: [FOTO, FOTO],
-//   },
-//   {
-//     id: 6,
-//     titulo: "Apartamento en Chapinero",
-//     solicitante: "Valentina Gómez",
-//     email: "valentina.gomez@email.com",
-//     telefono: "311 200 6060",
-//     ubicacion: "Bogotá",
-//     ubicacionCompleta: "Bogotá, Cundinamarca",
-//     tipo: "Arriendo",
-//     fecha: "04/11/2026",
-//     estado: "Pendiente",
-//     precio: "$ 2.800.000 / mes",
-//     descripcion: "Apartamento cómodo en Chapinero, ideal para profesionales.",
-//     habitaciones: 2,
-//     banos: 1,
-//     area: 64,
-//     fotos: [FOTO],
-//   },
-// ];
 
 const POR_PAGINA = 6;
 const FILTROS: FiltroEstado[] = ["Todos", "Pendiente", "Aprobada", "Rechazada"];
@@ -264,11 +128,12 @@ const Icon = ({ name, size = 20 }: { name: IconName; size?: number }) => (
 /* ---------- Componente ---------- */
 export function AdminPanel() {
   const navigate = useNavigate();
+  const { solicitudes, aprobarSolicitud, rechazarSolicitud } = usePropiedades();
   const { logout } = useAuth();
 
-  const [solicitudes, setSolicitudes] = useState<SolicitudPropiedad[]>(
-    SOLICITUDES_INICIALES
-  );
+  // const [solicitudes, setSolicitudes] = useState<SolicitudPropiedad[]>(
+  //   SOLICITUDES_INICIALES
+  // );
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState<FiltroEstado>("Todos");
   const [pagina, setPagina] = useState(1);
@@ -330,18 +195,11 @@ export function AdminPanel() {
 
   const enviar = () => {
     if (!seleccionada || !accion) return;
-    setSolicitudes((prev) =>
-      prev.map((s) =>
-        s.id === seleccionada.id
-          ? {
-              ...s,
-              estado: accion === "aprobar" ? "Aprobada" : "Rechazada",
-              motivoRechazo:
-                accion === "rechazar" ? motivo.trim() || undefined : undefined,
-            }
-          : s
-      )
-    );
+    if (accion === "aprobar") {
+      aprobarSolicitud(seleccionada.id);
+    } else {
+      rechazarSolicitud(seleccionada.id, motivo.trim() || undefined);
+    }
     cerrarDetalle();
   };
 
@@ -360,21 +218,21 @@ export function AdminPanel() {
 
         <nav className="admin-nav">
           <button type="button" className="admin-nav__item is-active">
-            <img style={{ width: "20px", height: "20px" }} src={panel} alt="Panel Principal" /> Panel Principal
+            <img style={{ width: "20px", height: "20px" }} src={panelIcon} alt="Panel Principal" /> Panel Principal
           </button>
           <button type="button" className="admin-nav__item">
-            <img style={{ width: "20px", height: "20px" }} src={clipboard} alt="Solicitudes" /> Solicitudes
+            <img style={{ width: "20px", height: "20px" }} src={clipboardIcon} alt="Solicitudes" /> Solicitudes
             <span className="admin-nav__badge">{conteo.pendientes}</span>
           </button>
           <button type="button" className="admin-nav__item">
-            <img style={{ width: "20px", height: "20px" }} src={home} alt="Propiedades" /> Propiedades
+            <img style={{ width: "20px", height: "20px" }} src={homeIcon} alt="Propiedades" /> Propiedades
           </button>
           <button
             type="button"
             className="admin-nav__item"
             onClick={cerrarSesion}
           >
-            <img style={{ width: "20px", height: "20px" }} src={logOut} alt="Cerrar sesión" /> Cerrar sesión
+            <img style={{ width: "20px", height: "20px" }} src={logOutIcon} alt="Cerrar sesión" /> Cerrar sesión
           </button>
         </nav>
 
@@ -581,7 +439,7 @@ export function AdminPanel() {
             <aside className="detail" aria-label="Detalle de la solicitud">
               <div className="detail__head">
                 <h2>
-                  <img style={{ width: "20px", height: "20px" }} src={houseVerde} alt="Propiedades" /> Detalle de la solicitud
+                  <img style={{ width: "20px", height: "20px" }} src={houseVerdeIcon} alt="Propiedades" /> Detalle de la solicitud
                 </h2>
                 <button
                   type="button"
@@ -650,7 +508,7 @@ export function AdminPanel() {
               </div>
 
               <h3 className="detail__section">
-                <img style={{ width: "20px", height: "20px" }} src={houseVerde} alt="Propiedad" /> Detalles:
+                <img style={{ width: "20px", height: "20px" }} src={houseVerdeIcon} alt="Propiedad" /> Detalles:
               </h3>
               <div className="info">
                 <div className="info__text">

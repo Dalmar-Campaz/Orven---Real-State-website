@@ -4,14 +4,23 @@ import { useNavigate } from "react-router-dom";
 import "./RegistrarPropiedad.css";
 import logo from "../../assets/Logo.png";
 import AvatarProfile from "../../components/AvatarProfile/AvatarProfile";
-const banner = "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1800&auto=format&fit=crop";
+const banner =
+  "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1800&auto=format&fit=crop";
+import type {
+  DatosPropiedad,
+  Operacion,
+  SolicitudPropiedad,
+  TipoInmueble,
+} from "../../types/propiedad";
+import { usePropiedades } from "../../context/PropiedadesContext";
+import { useAuth } from "../../context/AuthContext";
+import { archivoADataUrl } from "../../utils/archivos";
 
-/* ---------- Tipos ---------- */
-export type Operacion = "Venta";
+const TIPOS: TipoInmueble[] = ["Casa", "Apartamento"];
 
-export interface SolicitudPropiedad {
+interface FormState {
   titulo: string;
-  tipo: string;
+  tipo: TipoInmueble | "";
   operacion: Operacion;
   precio: number;
   ciudad: string;
@@ -20,20 +29,9 @@ export interface SolicitudPropiedad {
   banos: number;
   area: number;
   descripcion: string;
-  imagenes: File[];
-}
-
-interface FormState {
-  titulo: string;
-  tipo: string;
-  operacion: Operacion;
-  precio: string; // solo dígitos
-  ciudad: string;
-  departamento: string;
-  habitaciones: string;
-  banos: string;
-  area: string;
-  descripcion: string;
+  nombre: string;
+  telefono: string;
+  email: string;
 }
 
 type Campo = keyof FormState | "imagenes";
@@ -45,12 +43,6 @@ interface Imagen {
 }
 
 /* ---------- Datos ---------- */
-const TIPOS = [
-  "Casa",
-  "Apartamento",
-];
-
-const OPERACIONES: Operacion[] = ["Venta"];
 
 // Cada ciudad pertenece a un departamento (amplía la lista con tus datos).
 const CIUDADES = [
@@ -66,7 +58,7 @@ const CIUDADES = [
 ];
 
 const DEPARTAMENTOS = Array.from(
-  new Set(CIUDADES.map((c) => c.departamento))
+  new Set(CIUDADES.map((c) => c.departamento)),
 ).sort((a, b) => a.localeCompare(b, "es"));
 
 const CONTADOR = ["1", "2", "3", "4", "5", "6", "7", "8+"];
@@ -74,11 +66,13 @@ const CONTADOR = ["1", "2", "3", "4", "5", "6", "7", "8+"];
 const PASOS = [
   {
     titulo: "Revisamos la información",
-    texto: "Verificamos que todos los datos sean correctos y cumplan con nuestros criterios.",
+    texto:
+      "Verificamos que todos los datos sean correctos y cumplan con nuestros criterios.",
   },
   {
     titulo: "Evaluamos la propiedad",
-    texto: "Confirmamos que la propiedad cumpla con nuestros estándares de calidad.",
+    texto:
+      "Confirmamos que la propiedad cumpla con nuestros estándares de calidad.",
   },
   {
     titulo: "Te notificamos",
@@ -93,13 +87,16 @@ const INICIAL: FormState = {
   titulo: "",
   tipo: "",
   operacion: "Venta",
-  precio: "",
+  precio: 0,
   ciudad: "",
   departamento: "",
-  habitaciones: "",
-  banos: "",
-  area: "",
+  habitaciones: 0,
+  banos: 0,
+  area: 0,
   descripcion: "",
+  nombre: "",
+  telefono: "",
+  email: "",
 };
 
 /* ---------- Iconos ---------- */
@@ -114,7 +111,6 @@ const svg = {
   strokeLinejoin: "round" as const,
   "aria-hidden": true,
 };
-
 
 const ArrowLeftIcon = () => (
   <svg {...svg} width={16} height={16}>
@@ -165,7 +161,14 @@ interface SelectProps {
   label: string;
 }
 
-function Select({ value, onChange, placeholder, options, error, label }: SelectProps) {
+function Select({
+  value,
+  onChange,
+  placeholder,
+  options,
+  error,
+  label,
+}: SelectProps) {
   return (
     <>
       <div className={`rp-select ${error ? "has-error" : ""}`}>
@@ -195,10 +198,6 @@ function Select({ value, onChange, placeholder, options, error, label }: SelectP
 }
 
 /* ---------- Componente ---------- */
-interface Props {
-  /** Se ejecuta con la solicitud ya validada. Si lanza un error, se muestra. */
-  onSubmit?: (solicitud: SolicitudPropiedad) => Promise<void> | void;
-}
 
 export function RegistrarPropiedad({ onSubmit }: Props) {
   const navigate = useNavigate();
@@ -216,7 +215,7 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
   imagenesRef.current = imagenes;
   useEffect(
     () => () => imagenesRef.current.forEach((i) => URL.revokeObjectURL(i.url)),
-    []
+    [],
   );
 
   const set = <K extends keyof FormState>(campo: K, valor: FormState[K]) => {
@@ -226,7 +225,7 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
 
   /* Ciudad ↔ Departamento */
   const ciudadesDisponibles = CIUDADES.filter(
-    (c) => !form.departamento || c.departamento === form.departamento
+    (c) => !form.departamento || c.departamento === form.departamento,
   ).map((c) => c.nombre);
 
   const cambiarCiudad = (nombre: string) => {
@@ -236,13 +235,17 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
       ciudad: nombre,
       departamento: ciudad ? ciudad.departamento : prev.departamento,
     }));
-    setErrores((prev) => ({ ...prev, ciudad: undefined, departamento: undefined }));
+    setErrores((prev) => ({
+      ...prev,
+      ciudad: undefined,
+      departamento: undefined,
+    }));
   };
 
   const cambiarDepartamento = (nombre: string) => {
     setForm((prev) => {
       const ciudadValida = CIUDADES.some(
-        (c) => c.nombre === prev.ciudad && c.departamento === nombre
+        (c) => c.nombre === prev.ciudad && c.departamento === nombre,
       );
       return {
         ...prev,
@@ -258,13 +261,10 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
     ? Number(form.precio).toLocaleString("es-CO")
     : "";
 
-  const cambiarPrecio = (e: ChangeEvent<HTMLInputElement>) =>
-    set("precio", e.target.value.replace(/\D/g, "").slice(0, 13));
-
   /* Imágenes */
   const agregarImagenes = (e: ChangeEvent<HTMLInputElement>) => {
     const archivos = Array.from(e.target.files ?? []).filter((f) =>
-      f.type.startsWith("image/")
+      f.type.startsWith("image/"),
     );
     e.target.value = "";
     if (archivos.length === 0) return;
@@ -290,12 +290,14 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
 
     if (!form.titulo.trim()) e.titulo = req;
     if (!form.tipo) e.tipo = "Selecciona un tipo.";
-    if (!form.precio || Number(form.precio) <= 0) e.precio = "Ingresa un precio válido.";
+    if (!form.precio || Number(form.precio) <= 0)
+      e.precio = "Ingresa un precio válido.";
     if (!form.ciudad) e.ciudad = "Selecciona una ciudad.";
     if (!form.departamento) e.departamento = "Selecciona un departamento.";
     if (!form.habitaciones) e.habitaciones = "Selecciona.";
     if (!form.banos) e.banos = "Selecciona.";
-    if (!form.area || Number(form.area) <= 0) e.area = "Ingresa un área válida.";
+    if (!form.area || Number(form.area) <= 0)
+      e.area = "Ingresa un área válida.";
     if (!form.descripcion.trim()) e.descripcion = req;
     if (imagenes.length === 0) e.imagenes = "Añade al menos una imagen.";
     return e;
@@ -321,9 +323,9 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
       precio: Number(form.precio),
       ciudad: form.ciudad,
       departamento: form.departamento,
-      habitaciones: parseInt(form.habitaciones, 10),
-      banos: parseInt(form.banos, 10),
-      area: Number(form.area),
+      habitaciones: form.habitaciones,
+      banos: form.banos,
+      area: form.area,
       descripcion: form.descripcion.trim(),
       imagenes: imagenes.map((i) => i.file),
     };
@@ -335,7 +337,7 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setErrorEnvio(
-        err instanceof Error ? err.message : "No pudimos enviar tu solicitud."
+        err instanceof Error ? err.message : "No pudimos enviar tu solicitud.",
       );
     } finally {
       setEnviando(false);
@@ -356,7 +358,13 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
     <div className="rp">
       {/* Encabezado */}
       <header className="rp-header">
-        <img style={{ cursor: "pointer" }} onClick={() => navigate("/")} src={logo} alt="Orven" className="rp-header__logo" />
+        <img
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/")}
+          src={logo}
+          alt="Orven"
+          className="rp-header__logo"
+        />
         <AvatarProfile />
       </header>
 
@@ -367,14 +375,19 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
       >
         <div className="rp-banner__overlay" />
         <div className="rp-banner__content">
-          <button type="button" className="rp-back" onClick={() => navigate("/")}>
+          <button
+            type="button"
+            className="rp-back"
+            onClick={() => navigate("/")}
+          >
             <ArrowLeftIcon /> Volver al inicio
           </button>
           <h1>Registrar propiedad</h1>
           <p>
             Completa el formulario con la información de la propiedad.
             <br />
-            Antes de publicarse, será revisada y aprobada por nuestro administrador.
+            Antes de publicarse, será revisada y aprobada por nuestro
+            administrador.
           </p>
         </div>
       </section>
@@ -396,14 +409,22 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
               </span>
               <h2>¡Solicitud enviada!</h2>
               <p>
-                Tu propiedad será revisada por nuestro administrador. Te notificaremos
-                por correo cuando sea aprobada.
+                Tu propiedad será revisada por nuestro administrador. Te
+                notificaremos por correo cuando sea aprobada.
               </p>
               <div className="rp-success__actions">
-                <button type="button" className="rp-btn rp-btn--ghost" onClick={nuevaSolicitud}>
+                <button
+                  type="button"
+                  className="rp-btn rp-btn--ghost"
+                  onClick={nuevaSolicitud}
+                >
                   Registrar otra propiedad
                 </button>
-                <button type="button" className="rp-btn" onClick={() => navigate("/")}>
+                <button
+                  type="button"
+                  className="rp-btn"
+                  onClick={() => navigate("/")}
+                >
                   Volver al inicio
                 </button>
               </div>
@@ -423,7 +444,11 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
                     onChange={(e) => set("titulo", e.target.value)}
                     aria-invalid={!!errores.titulo}
                   />
-                  {errores.titulo && <span className="rp-error" role="alert">{errores.titulo}</span>}
+                  {errores.titulo && (
+                    <span className="rp-error" role="alert">
+                      {errores.titulo}
+                    </span>
+                  )}
                 </div>
 
                 <div className={claseCampo("tipo")}>
@@ -440,7 +465,11 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
 
                 <div className="rp-field">
                   <label id="lbl-operacion">Operación *</label>
-                  <div className="rp-radios" role="radiogroup" aria-labelledby="lbl-operacion">
+                  <div
+                    className="rp-radios"
+                    role="radiogroup"
+                    aria-labelledby="lbl-operacion"
+                  >
                     {OPERACIONES.map((op) => (
                       <label key={op} className="rp-radio">
                         <input
@@ -471,7 +500,11 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
                       aria-invalid={!!errores.precio}
                     />
                   </div>
-                  {errores.precio && <span className="rp-error" role="alert">{errores.precio}</span>}
+                  {errores.precio && (
+                    <span className="rp-error" role="alert">
+                      {errores.precio}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -536,7 +569,11 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
                       onChange={(e) => set("area", e.target.value)}
                       aria-invalid={!!errores.area}
                     />
-                    {errores.area && <span className="rp-error" role="alert">{errores.area}</span>}
+                    {errores.area && (
+                      <span className="rp-error" role="alert">
+                        {errores.area}
+                      </span>
+                    )}
                   </div>
 
                   <div className={`${claseCampo("imagenes")} rp-upload`}>
@@ -557,7 +594,11 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
                     >
                       Adjuntar imagen <UploadIcon />
                     </button>
-                    {errores.imagenes && <span className="rp-error" role="alert">{errores.imagenes}</span>}
+                    {errores.imagenes && (
+                      <span className="rp-error" role="alert">
+                        {errores.imagenes}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -575,14 +616,21 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
                   <span className="rp-counter">
                     {form.descripcion.length}/{MAX_DESCRIPCION}
                   </span>
-                  {errores.descripcion && <span className="rp-error" role="alert">{errores.descripcion}</span>}
+                  {errores.descripcion && (
+                    <span className="rp-error" role="alert">
+                      {errores.descripcion}
+                    </span>
+                  )}
                 </div>
               </div>
 
               {imagenes.length > 0 && (
                 <ul className="rp-previews">
                   {imagenes.map((img) => (
-                    <li key={img.url} style={{ backgroundImage: `url(${img.url})` }}>
+                    <li
+                      key={img.url}
+                      style={{ backgroundImage: `url(${img.url})` }}
+                    >
                       <button
                         type="button"
                         onClick={() => quitarImagen(img.url)}
@@ -606,8 +654,8 @@ export function RegistrarPropiedad({ onSubmit }: Props) {
                   <InfoIcon />
                 </span>
                 <p>
-                  Tu propiedad será revisada por nuestro administrador antes de ser
-                  publicada en el sitio.
+                  Tu propiedad será revisada por nuestro administrador antes de
+                  ser publicada en el sitio.
                   <br />
                   Te notificaremos por correo cuando sea aprobada.
                 </p>

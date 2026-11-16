@@ -59,30 +59,29 @@
 - [x] Revisar cómo se relacionan `Property` de `data/propiedades.ts`, `Solicitud` de `Admin.tsx`, `SolicitudPropiedad` del formulario y `Propiedad` de la página de catálogo.
 - [x] Adaptar los datos iniciales al modelo común y eliminar tipos duplicados solo cuando ya no tengan consumidores.
 - [x] Cambiar los arreglos de datos iniciales que no necesitan reasignación de `let` a `const`.
-- [ ] Decidir qué ocurre con las imágenes seleccionadas por el usuario. No guardar directamente objetos `File` ni URL temporales de `URL.createObjectURL()` en JSON esperando que sobrevivan a una recarga.
+- [x] Decidir qué ocurre con las imágenes seleccionadas por el usuario. No guardar directamente objetos `File` ni URL temporales de `URL.createObjectURL()` en JSON esperando que sobrevivan a una recarga.
 - [ ] Documentar los campos, estados y decisiones del modelo en `docs/DATA_MODEL.md`.
 
 **Criterio para completar:** existe un modelo coherente para propiedades y otro para solicitudes; las páginas no mantienen interfaces incompatibles para representar el mismo concepto.
 
 ## 1.3 Crear el estado compartido de propiedades
 
-- [ ] Crear `src/context/PropiedadesContext.tsx`.
-- [ ] Inicializar el catálogo desde los datos de ejemplo de `src/data/propiedades.ts`.
-- [ ] Mantener en el contexto una colección de propiedades publicadas y otra de solicitudes.
-- [ ] Exponer un hook (por ejemplo, `usePropiedades`) para que las páginas consulten el contexto sin importar directamente los arreglos iniciales.
-- [ ] Implementar una función para crear una solicitud.
-- [ ] Implementar una función para aprobar una solicitud y convertirla en una propiedad publicada sin duplicarla.
-- [ ] Implementar una función para rechazar una solicitud y conservar, cuando corresponda, el motivo del rechazo.
-- [ ] Definir qué pasa si se intenta aprobar dos veces la misma solicitud o modificar una solicitud inexistente.
-- [ ] Envolver la aplicación con `PropiedadesProvider` desde el nivel adecuado de `App.tsx`.
-- [ ] Mantener `AuthContext` separado: uno gestiona la sesión y el otro los datos inmobiliarios.
-- [ ] No añadir Redux, Zustand, React Query ni otra librería de estado para este alcance.
+- [x] Crear `src/context/PropiedadesContext.tsx`.
+- [x] Inicializar el catálogo desde los datos de ejemplo de `src/data/propiedades.ts`.
+- [x] Mantener en el contexto una colección de propiedades publicadas y otra de solicitudes.
+- [x] Exponer un hook (por ejemplo, `usePropiedades`) para que las páginas consulten el contexto sin importar directamente los arreglos iniciales.
+- [x] Implementar una función para crear una solicitud.
+- [x] Implementar una función para aprobar una solicitud y convertirla en una propiedad publicada sin duplicarla.
+- [x] Implementar una función para rechazar una solicitud y conservar, cuando corresponda, el motivo del rechazo.
+- [x] Definir qué pasa si se intenta aprobar dos veces la misma solicitud o modificar una solicitud inexistente.
+- [x] Envolver la aplicación con `PropiedadesProvider` desde el nivel adecuado de `App.tsx`.
+- [x] Mantener `AuthContext` separado: uno gestiona la sesión y el otro los datos inmobiliarios.
+- [x] No añadir Redux, Zustand, React Query ni otra librería de estado para este alcance.
 
 **Criterio para completar:** dos componentes diferentes pueden leer la misma colección desde el contexto y ven las actualizaciones hechas por otro componente sin pasarse arreglos manualmente.
 
 ## 1.4 Decidir e implementar la persistencia local
 
-- [ ] Confirmar que el uso de `localStorage` es compatible con las indicaciones del profesor.
 - [ ] Decidir qué datos deben sobrevivir a una recarga: propiedades publicadas, solicitudes, sesión y, más adelante, favoritos.
 - [ ] Implementar la lectura inicial desde `localStorage` con manejo seguro de JSON inválido.
 - [ ] Implementar el guardado de los cambios relevantes del contexto.

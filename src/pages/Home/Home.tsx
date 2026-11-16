@@ -16,7 +16,7 @@ import HomeNavbar from "../../components/HomeNavbar/HomeNavbar";
 function Home() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const navigate = useNavigate();
-  const { propiedades: properties} = usePropiedades();
+  const { propiedades } = usePropiedades();
 
   // Agregar o quitar una propiedad de favoritos.
   const toggleFavorite = (id: number) => {
@@ -191,7 +191,7 @@ function Home() {
         </div>
 
         <div className="properties-grid">
-          {properties.map((property) => (
+          {propiedades.map((property) => (
             <article className="property-card" key={property.id}>
               <div className="property-image">
                 <img src={property.imagenes[0]} alt={property.titulo} />
