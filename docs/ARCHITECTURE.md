@@ -1,140 +1,121 @@
 # Arquitectura de Orven
- 
+
 ## 1. Visión general
- 
-Orven es una aplicación frontend de una sola página (SPA) construida con React, TypeScript y Vite. React Router DOM gestiona la navegación y dos Contexts de React comparten estado: `AuthContext` (sesión de demostración) y `PropiedadesContext` (propiedades publicadas y solicitudes de publicación).
- 
-No hay backend ni base de datos. El estado de propiedades y solicitudes vive en memoria y se reinicia al recargar la página; solo la sesión se guarda en `localStorage`.
- 
+
+Orven es una aplicación frontend de una sola página (SPA) construida con React, TypeScript y Vite. React Router DOM gestiona la navegación y dos Contexts comparten el estado:
+
+- `AuthContext`: sesión y rol de demostración.
+- `PropiedadesContext`: propiedades publicadas y solicitudes de publicación.
+
+No hay backend ni base de datos. La persistencia utiliza almacenamiento del navegador para que el prototipo conserve cambios después de una recarga.
+
 ## 2. Arranque de la aplicación
- 
+
 Flujo de entrada:
- 
-1. Vite carga `index.html` (`lang="es"`, título «Orven»), que contiene el elemento `#root` y carga `/src/main.tsx`.
-2. `src/main.tsx` importa `index.css`, crea la raíz con `ReactDOM.createRoot` y renderiza `App` dentro de `React.StrictMode`.
-3. `src/App.tsx` importa `App.css` (vacío) y monta, de afuera hacia adentro: `AuthProvider` → `PropiedadesProvider` → `BrowserRouter` → `AppRoutes`.
-4. `AppRoutes` consulta el usuario con `useAuth` y declara las rutas activas.
-Ambos proveedores están por fuera de `BrowserRouter`. Funciona porque ninguno usa hooks del router. Si alguno llegara a utilizar `useNavigate`, `useLocation` u otro hook del router, habría que colocar `BrowserRouter` por encima de ese proveedor.
- 
+
+1. Vite carga `index.html`, con idioma español y título «Orven».
+2. `src/main.tsx` importa `index.css`, crea la raíz de React y renderiza `App` dentro de `React.StrictMode`.
+3. `src/App.tsx` monta `AuthProvider` → `PropiedadesProvider` → `BrowserRouter` → `AppRoutes`.
+4. `AppRoutes` consulta la sesión con `useAuth` y declara las rutas.
+5. `ProtectedRoute` comprueba la sesión y el rol antes de mostrar el panel administrativo.
+
+Los proveedores están fuera de `BrowserRouter`; ninguno utiliza hooks del router.
+
 ## 3. Estructura actual
- 
-| Ruta | Responsabilidad y estado |
+
+| Ruta | Responsabilidad |
 |---|---|
 | `src/assets/` | Logos e iconos compartidos. |
-| `src/components/AvatarProfile/` | Menú de cuenta, sesión y cierre de sesión. |
-| `src/components/HomeNavbar/` | Barra de navegación de Home. |
-| `src/context/AuthContext.tsx` | Estado y persistencia de la sesión simulada. |
-| `src/context/PropiedadesContext.tsx` | Estado compartido de propiedades publicadas y solicitudes, con las operaciones para crear, aprobar y rechazar. |
-| `src/data/propiedades.ts` | Datos iniciales: `propiedadesIniciales` y `solicitudesPropiedad`. |
-| `src/types/propiedad.ts` | Modelo común: `DatosPropiedad`, `Propiedad` y `SolicitudPropiedad`. |
-| `src/utils/archivos.ts` | `archivoADataUrl`: convierte un `File` en data URL. |
-| `src/utils/formato.ts` | `formatoPrecio` y `ubicacionCorta`. |
-| `src/pages/` | Pantallas Home, Login, Admin y RegistrarPropiedad, y la carpeta Propiedades (archivos vacíos). |
-| `src/routes/ProtectedRoute.tsx` | Archivo existente, actualmente vacío; no protege rutas. |
+| `src/components/AvatarProfile/` | Menú de cuenta y cierre de sesión. |
+| `src/components/HomeNavbar/` | Navegación de Home. |
+| `src/context/AuthContext.tsx` | Sesión y rol de demostración. |
+| `src/context/PropiedadesContext.tsx` | Estado compartido, persistencia y operaciones de propiedades/solicitudes. |
+| `src/data/propiedades.ts` | Datos iniciales de ejemplo. |
+| `src/types/propiedad.ts` | Tipos del dominio. |
+| `src/utils/archivos.ts` | Conversión de archivos a data URL. |
+| `src/utils/formato.ts` | Formato de precio y ubicación. |
+| `src/routes/ProtectedRoute.tsx` | Restricción frontend por sesión y rol. |
+| `src/pages/` | Home, Login, Admin, formulario y pantalla temporal del catálogo. |
+| `src/App.tsx` | Proveedores y rutas. |
 | `src/main.tsx` | Punto de entrada de React. |
-| `src/App.tsx` | Composición de proveedores y definición de rutas. |
- 
-La carpeta de componentes se llama actualmente `components` (plural).
- 
-## 4. Rutas activas
- 
-Las rutas se encuentran en `src/App.tsx`.
- 
-| Ruta | Componente | Comportamiento actual |
+
+## 4. Rutas
+
+| Ruta | Componente | Comportamiento |
 |---|---|---|
-| `/` | `Home` | Página principal. |
-| `/login` | `Login` | Muestra el formulario si no hay usuario. Si ya existe sesión, redirige a `/admin` para rol `admin` y a `/` para los demás roles. |
-| `/admin` | `Admin` | Panel administrativo; no comprueba sesión ni rol antes de renderizar. |
-| `/formulario` | `RegistrarPropiedad` | Formulario de solicitud; crea la solicitud mediante `PropiedadesContext`. No exige sesión. |
-| Cualquier otra ruta | — | Redirige a `/` mediante `Navigate`. |
- 
-La ruta `/propiedades` está comentada, por lo que no está activa. Home conserva un enlace que navega a esa URL; al no existir la ruta, la ruta comodín devuelve al usuario a Home.
- 
-Hay otros destinos no declarados, entre ellos `/recuperar`, `/contacto`, `/nosotros` y `/propiedades/:id`.
- 
+| `/` | `Home` | Página principal; muestra propiedades destacadas. |
+| `/login` | `Login` | Formulario de acceso simulado. Si hay sesión, redirige según el rol. |
+| `/admin` | `ProtectedRoute` → `Admin` | Solo permite entrar al rol `admin`. |
+| `/formulario` | `RegistrarPropiedad` | Formulario de solicitud; no exige sesión. |
+| `/propiedades` | `Propiedades` | Pantalla temporal; el diseño definitivo se integra en la Fase 2. |
+| Cualquier otra ruta | — | Redirige a Home. |
+
+Un usuario sin sesión que visite `/admin` es enviado a `/login`. Un usuario `customer` es enviado a Home.
+
 ## 5. Sesión y roles
- 
-### AuthContext
- 
-`src/context/AuthContext.tsx` define:
- 
-- `UserRole`: `'admin' | 'customer' | null`.
-- `User`: correo y rol.
-- `AuthProvider`: mantiene el usuario en estado React y lo comparte mediante Context.
-- `useAuth`: hook de acceso al contexto; lanza un error si se utiliza fuera de `AuthProvider`.
-Al inicializarse, el proveedor intenta leer el objeto `orven_user` desde `localStorage`. `login` guarda el usuario serializado y `logout` elimina esa clave.
- 
-### Inicio de sesión
- 
-En `Login.tsx`, la validación comprueba el formato del correo y que la contraseña tenga al menos seis caracteres. La contraseña no se verifica con un servidor. El rol se asigna comparando el correo con `ADMIN_EMAILS`: `admin@orven.com` recibe `admin`; otros correos válidos reciben `customer`.
- 
-El checkbox «Recordar mi sesión» actualiza estado local del formulario, pero no cambia el mecanismo de persistencia: el contexto siempre usa `localStorage`.
- 
-**Seguridad:** guardar un rol en `localStorage` y decidirlo a partir del correo no constituye autenticación ni autorización segura. La ruta `/admin` no está protegida actualmente. `ProtectedRoute.tsx` existe, pero está vacío.
- 
-Además, la lectura de `orven_user` utiliza `JSON.parse` sin manejo de errores; un valor corrupto puede impedir la inicialización del contexto.
- 
+
+`AuthContext` expone `user`, `login(email, role, remember)` y `logout()`.
+
+- Con «Recordar mi sesión» marcado, la sesión se guarda en `localStorage` bajo `orven_user`.
+- Sin marcarlo, se guarda en `sessionStorage` bajo `orven_user_session`; desaparece al cerrar esa pestaña.
+- La lectura valida la estructura del JSON y tolera valores corruptos o almacenamiento no disponible.
+- La contraseña nunca se guarda.
+- Los cambios de `orven_user` en otra pestaña actualizan la sesión mediante el evento `storage`.
+
+El login asigna el rol `admin` al correo `admin@orven.com` y `customer` a los demás correos válidos. No hay comprobación de contraseñas ni servidor de identidad.
+
+**Seguridad:** el rol está en el navegador y puede modificarse. `ProtectedRoute` mejora la navegación del prototipo, pero no proporciona seguridad real ni reemplaza autorización en un backend.
+
 ## 6. PropiedadesContext
- 
-`src/context/PropiedadesContext.tsx` es la única fuente de verdad de los inmuebles. Inicializa su estado con los arreglos de `src/data/propiedades.ts` y expone mediante el hook `usePropiedades` (que lanza un error fuera de su proveedor):
- 
-| Valor o función | Qué hace |
+
+`src/context/PropiedadesContext.tsx` mantiene la única fuente de verdad para el catálogo y las solicitudes. El hook `usePropiedades` expone:
+
+| Valor o función | Responsabilidad |
 |---|---|
 | `propiedades` | Inmuebles publicados (`Propiedad[]`). |
-| `solicitudes` | Solicitudes de publicación (`SolicitudPropiedad[]`). |
-| `crearSolicitud(datos, solicitante)` | Agrega al inicio de la lista una solicitud con estado `Pendiente`, fecha de hoy e id siguiente. |
-| `aprobarSolicitud(id)` | Si la solicitud existe y está `Pendiente`, agrega una propiedad al catálogo (nuevo id y fecha de hoy) y marca la solicitud como `Aprobada`. En cualquier otro caso no hace nada. |
-| `rechazarSolicitud(id, motivo?)` | Si la solicitud existe y está `Pendiente`, la marca como `Rechazada` y guarda el motivo. En cualquier otro caso no hace nada. |
- 
-Los ids se generan con el máximo existente más uno, de forma independiente para propiedades y solicitudes. Los cambios solo viven en el estado React: no se guardan en `localStorage`.
- 
-## 7. Componentes reutilizables
- 
-- `AvatarProfile`: consulta la sesión; ofrece iniciar sesión cuando no hay usuario y, cuando sí lo hay, muestra el correo, permite cerrar sesión y muestra un acceso al panel si el rol es `admin`. Lo usan Home (mediante `HomeNavbar`) y el formulario de registro.
-- `HomeNavbar`: barra superior de Home; incluye el logo, enlaces de sección y `AvatarProfile`.
-Las páginas contienen componentes auxiliares internos, como selectores e iconos SVG.
- 
-## 8. Páginas y responsabilidades
- 
-- **Home:** muestra el hero, un formulario de búsqueda visual, las propiedades de `usePropiedades().propiedades` (todas, sin filtrar por `destacada`), favoritos en estado local, testimonios y una llamada a publicar. El buscador solo desplaza la vista a la sección de propiedades; no aplica filtros. «Ver todas» apunta a `/propiedades`, que no está activa, y «Ver detalles» es un enlace sin destino.
-- **Login:** valida campos en el navegador, asigna un rol de demostración y llama a `login`.
-- **Admin:** lee `solicitudes` del contexto y ofrece búsqueda, filtro por estado, paginación, detalle con galería y las acciones de aprobar y rechazar (con motivo opcional). Del menú lateral solo «Cerrar sesión» tiene acción. El motivo de rechazo se guarda, pero el detalle no lo muestra.
-- **RegistrarPropiedad:** mantiene el formulario como texto, valida, crea vistas previas locales de imágenes y, al enviar, convierte las imágenes a data URL, construye un `DatosPropiedad` y llama a `crearSolicitud` con los datos de contacto. El correo se prellena con el de la sesión. Muestra el mensaje de éxito solo después de crear la solicitud, y un error si falla la lectura de las imágenes.
-- **Propiedades:** `Propiedades.tsx` y `Propiedades.css` existen pero están vacíos; la ruta está comentada.
-## 9. Flujo de datos y persistencia
- 
+| `solicitudes` | Solicitudes (`SolicitudPropiedad[]`). |
+| `crearSolicitud(datos, solicitante)` | Crea una solicitud pendiente, asigna fecha e id. |
+| `aprobarSolicitud(id)` | Convierte una solicitud pendiente en propiedad y actualiza su estado. |
+| `rechazarSolicitud(id, motivo?)` | Marca la solicitud como rechazada y conserva el motivo opcional. |
+
+Solo se procesan solicitudes existentes y pendientes. La aprobación y el cambio de estado se guardan juntos para evitar que el catálogo y la solicitud queden desincronizados.
+
+## 7. Persistencia y sincronización
+
+`PropiedadesContext` conserva un único objeto JSON versionado bajo la clave `orven_propiedades`:
+
 ```text
-RegistrarPropiedad ──crearSolicitud──▶ solicitudes (Pendiente) ──▶ Admin
-                                                                    │
-                                          aprobarSolicitud / rechazarSolicitud
-                                                                    ▼
-Home ◀── propiedades (catálogo) ◀──── solicitud Aprobada (se copia como propiedad)
+{
+  version: 1,
+  propiedades: Propiedad[],
+  solicitudes: SolicitudPropiedad[]
+}
 ```
- 
-- `Home`, `Admin` y `RegistrarPropiedad` obtienen sus datos mediante `usePropiedades`; ninguna importa directamente los arreglos de `src/data/propiedades.ts`.
-- Una propiedad aprobada en Admin aparece en Home sin recargar, siempre que la navegación se haga dentro de la aplicación.
-- Al recargar la página (o escribir una URL a mano), el estado vuelve a los datos iniciales.
-- `AuthContext` persiste la sesión en `localStorage` bajo `orven_user`. No hay otra clave en uso.
-- Los favoritos de `Home` solo existen en estado React y se pierden al desmontar o recargar.
-## 10. Estilos
- 
-Los archivos CSS se encuentran junto a sus páginas o componentes y se importan directamente desde los TSX. Son hojas CSS normales, no CSS Modules; sus selectores pueden afectar globalmente al documento.
- 
-- `src/index.css` se importa desde `main.tsx`.
-- `src/App.css` se importa desde `App.tsx`, pero está vacío.
-- `src/pages/Propiedades/Propiedades.css` está vacío.
-- `Home.css` vuelve a declarar reglas de `html`, `body` y `#root`, que ya existen en `index.css`.
-- `Home.css` y `HomeNavbar.css` declaran ambas la clase `.navbar`.
-- `AvatarProfile.css` declara variables de color en `:root`, por lo que quedan disponibles en toda la aplicación.
-- Las demás páginas y componentes importan sus hojas CSS locales. Formulario, Admin y Login usan prefijos propios (`rp-`, `admin-`, `login-`) para sus clases principales.
-## 11. Integraciones pendientes
- 
-1. Decidir e implementar la persistencia local (propiedades, solicitudes y, más adelante, favoritos), incluida la estrategia para las imágenes.
-2. Implementar la protección de `/admin` para el rol administrativo.
-3. Mostrar el motivo de rechazo en el detalle de Admin, corregir el contador de la galería y resolver los botones del menú sin acción.
-4. Calcular las propiedades destacadas a partir del catálogo compartido.
-5. Implementar `Propiedades.tsx` y habilitar `/propiedades` conectada a `usePropiedades`.
-6. Resolver los destinos de navegación que aún no tienen rutas.
-7. Revisar el manejo de datos corruptos en `AuthContext`, los `console.log` de depuración y los estilos globales repetidos.
-Esta documentación describe el código inspeccionado en el commit `759cf3b`; no se realizaron cambios funcionales al elaborarla.
- 
+
+- La primera carga intenta leer y validar esa estructura. Si no existe o está corrupta, utiliza los datos de ejemplo.
+- Cada cambio se escribe en `localStorage` antes de actualizar el estado React.
+- Si el navegador rechaza el guardado, la operación lanza un error y no se confirma como exitosa.
+- El evento `storage` actualiza otras pestañas del mismo navegador/origen. No se dispara en la pestaña que realizó el cambio; esa pestaña actualiza React directamente.
+- La sincronización no cruza navegadores, perfiles, dispositivos ni usuarios.
+
+Las imágenes seleccionadas por el formulario se convierten a data URL. Las URL temporales `blob:` se utilizan solo para previsualizar y no se guardan. Las data URLs pueden consumir la cuota de `localStorage`; el formulario y el contexto muestran un error si no se puede guardar.
+
+## 8. Páginas y responsabilidades
+
+- **Home:** consulta el catálogo mediante `usePropiedades` y filtra los inmuebles con `destacada === true`. El buscador es visual y aún no aplica filtros. Los favoritos son temporales y locales a Home. Los botones de detalle están deshabilitados hasta la Fase 3.
+- **Login:** valida el formato de correo y la longitud mínima de contraseña; no comprueba credenciales contra un servidor. El checkbox controla el tipo de persistencia de sesión.
+- **Admin:** lee solicitudes del contexto, calcula contadores, filtra, pagina y permite ver detalles. Muestra motivos de rechazo; las acciones solo aparecen en solicitudes pendientes. La gestión de catálogo del menú está deshabilitada mientras no exista esa sección.
+- **RegistrarPropiedad:** valida el formulario, previsualiza archivos y convierte imágenes a data URL. Llama a `crearSolicitud`; muestra éxito solo si el contexto consigue persistirla.
+- **Propiedades:** pantalla temporal con enlace de regreso a Home. El diseño final y la lectura del catálogo corresponden a la Fase 2.
+
+## 9. Estilos
+
+Los CSS están junto a sus páginas/componentes y son hojas globales normales, no CSS Modules. Los selectores pueden afectar a otras partes de la SPA. `index.css` se importa desde `main.tsx`.
+
+## 10. Trabajo pendiente
+
+1. Verificar manualmente persistencia, flujo formulario → Admin y aprobación/rechazo.
+2. Ejecutar nuevamente build y lint en la rama actual.
+3. Completar el diseño de catálogo en la Fase 2.
+4. Implementar buscador, filtros, detalle individual y favoritos compartidos en la Fase 3.
+5. Revisar los enlaces y estados de UI durante las pruebas de cierre.

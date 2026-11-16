@@ -1,0 +1,46 @@
+.catalog-pending {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+  background: #f8f7f2;
+  color: #263c34;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.catalog-pending__content {
+  width: min(620px, 100%);
+  text-align: center;
+}
+
+.catalog-pending__eyebrow {
+  color: #6e7957;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.catalog-pending h1 {
+  margin: 12px 0;
+  color: #253c34;
+  font-size: clamp(28px, 5vw, 42px);
+}
+
+.catalog-pending p {
+  color: #656b63;
+  line-height: 1.6;
+}
+
+.catalog-pending a {
+  display: inline-flex;
+  margin-top: 18px;
+  padding: 12px 20px;
+  border-radius: 5px;
+  background: #6e7957;
+  color: #fff;
+  text-decoration: none;
+}
+
+.catalog-pending a:hover {
+  background: #253c34;
+}

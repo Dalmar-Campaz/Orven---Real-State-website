@@ -77,13 +77,13 @@
  
 ## 1.4 Decidir e implementar la persistencia local
  
-- [ ] Decidir qué datos deben sobrevivir a una recarga: propiedades publicadas, solicitudes, sesión y, más adelante, favoritos.
-- [ ] Implementar la lectura inicial desde `localStorage` con manejo seguro de JSON inválido.
-- [ ] Implementar el guardado de los cambios relevantes del contexto.
-- [ ] Manejar errores cuando el almacenamiento del navegador no esté disponible o esté lleno.
-- [ ] Evitar guardar contraseñas o asumir que los datos de `localStorage` son seguros o confiables.
-- [ ] Documentar explícitamente que `localStorage` solo conserva datos en ese navegador y no sincroniza información entre usuarios o dispositivos.
-- [ ] Definir la estrategia de persistencia de imágenes antes de permitir que el formulario dependa de ellas tras una recarga.
+- [x] Decidir qué datos deben sobrevivir a una recarga: propiedades publicadas, solicitudes y sesión; los favoritos quedan para la Fase 3.
+- [x] Implementar la lectura inicial desde `localStorage` con manejo seguro de JSON inválido.
+- [x] Implementar el guardado de los cambios relevantes del contexto.
+- [x] Manejar errores cuando el almacenamiento del navegador no esté disponible o esté lleno.
+- [x] Evitar guardar contraseñas y documentar que los datos de `localStorage` no son seguros ni confiables.
+- [x] Documentar que `localStorage` conserva datos en ese navegador y no sincroniza información entre usuarios o dispositivos; el evento `storage` sincroniza únicamente pestañas del mismo origen.
+- [x] Definir la estrategia de persistencia de imágenes: data URLs en el objeto local, con manejo de cuota agotada; evaluar IndexedDB si se requieren archivos más grandes.
 **Criterio para completar:** los datos que se decidió persistir se conservan tras recargar el mismo navegador y los errores de almacenamiento no dejan la aplicación inutilizable.
  
 ## 1.5 Conectar el formulario de registro
@@ -92,7 +92,7 @@
 - [x] Al enviar un formulario válido, llamar a la función del contexto que crea una solicitud.
 - [x] Mostrar el mensaje de éxito únicamente después de que la operación de registro se haya completado correctamente.
 - [x] Mostrar un error si la operación falla.
-- [ ] No mostrar «Solicitud enviada» si los datos no se han guardado en el mecanismo acordado.
+- [x] No mostrar «Solicitud enviada» si los datos no se han guardado en el mecanismo acordado.
 - [ ] Confirmar que la nueva solicitud aparece en el panel administrativo sin escribirla manualmente en `Admin.tsx`.
 **Criterio para completar:** una solicitud creada desde el formulario queda registrada en el estado compartido y puede consultarse desde el administrador.
  
@@ -101,45 +101,45 @@
 - [x] Eliminar el arreglo independiente `SOLICITUDES_INICIALES` de `Admin.tsx` cuando el contexto ya proporcione esos datos.
 - [x] Hacer que la tabla, filtros, contadores y detalle lean las solicitudes del contexto.
 - [x] Conectar las acciones de aprobar y rechazar con las funciones del contexto.
-- [ ] Conservar el motivo de rechazo y mostrarlo en el detalle cuando corresponda.
+- [x] Conservar el motivo de rechazo y mostrarlo en el detalle cuando corresponda.
 - [x] Confirmar que una solicitud aprobada deja de estar pendiente y pasa al catálogo de propiedades.
 - [x] Confirmar que una solicitud rechazada no aparece como propiedad publicada.
-- [ ] Revisar el cálculo de miniaturas y fotos restantes de la galería.
-- [ ] No dejar botones aparentes en el panel sin una acción definida; si una sección aún no existe, indicarlo o deshabilitarla claramente.
+- [x] Corregir el cálculo de miniaturas y fotos restantes de la galería (3 miniaturas visibles; el resto se cuenta desde la cuarta foto).
+- [x] No dejar botones aparentes en el panel sin una acción definida; la navegación a secciones pendientes queda deshabilitada e identificada.
 **Criterio para completar:** el panel administra las mismas solicitudes que crea el formulario y las decisiones se reflejan en el catálogo.
  
 ## 1.7 Conectar Home y preparar la ruta de catálogo
  
 - [x] Hacer que `Home` obtenga las propiedades publicadas desde `usePropiedades`.
-- [ ] Calcular las propiedades destacadas a partir del catálogo compartido.
+- [x] Calcular las propiedades destacadas a partir del catálogo compartido usando `destacada === true`.
 - [x] Evitar importar `propertiesDB` directamente desde cada página.
-- [ ] Mantener la ruta de «Ver todas las propiedades» preparada, pero sin implementar todavía el diseño completo reservado para la Fase 2.
-- [ ] Revisar las rutas que apuntan a páginas todavía inexistentes y definir cuáles deben crearse después y cuáles deben retirarse temporalmente.
+- [x] Mantener activa `/propiedades` con una pantalla temporal, sin implementar todavía el diseño completo reservado para la Fase 2.
+- [x] Revisar los destinos sin ruta: se retiró el acceso a recuperar contraseña y se dejó la ruta de catálogo temporal; el detalle individual queda para la Fase 3.
 **Criterio para completar:** Home refleja los datos del catálogo compartido y no mantiene una copia independiente.
  
 ## 1.8 Proteger las rutas y revisar la sesión
  
-- [ ] Crear `ProtectedRoute.tsx` (o un componente equivalente) para restringir las páginas que requieren sesión o rol.
-- [ ] Proteger `/admin` para que solo el rol `admin` pueda acceder.
-- [ ] Decidir qué debe ocurrir si un usuario no autenticado intenta entrar a `/admin` (por ejemplo, redirigir a `/login`).
-- [ ] Decidir qué debe ocurrir si un usuario `customer` intenta entrar a `/admin` (por ejemplo, redirigir a Home o mostrar acceso denegado).
-- [ ] Revisar el `JSON.parse` de `AuthContext` y manejar datos corruptos o inesperados en `localStorage`.
-- [ ] Verificar que el botón «Cerrar sesión» borre la sesión y actualice la navegación.
-- [ ] Aclarar el comportamiento del checkbox «Recordar mi sesión»: implementarlo de verdad o quitarlo. Actualmente la sesión se guarda siempre en `localStorage`.
-- [ ] Documentar que esta autenticación es una simulación frontend y que no constituye seguridad real sin un backend.
+- [x] Crear `ProtectedRoute.tsx` para restringir las páginas que requieren sesión o rol.
+- [x] Proteger `/admin` para que solo el rol `admin` pueda acceder.
+- [x] Redirigir a `/login` cuando alguien sin sesión intenta entrar a `/admin`.
+- [x] Redirigir a Home cuando un usuario `customer` intenta entrar a `/admin`.
+- [x] Revisar el `JSON.parse` de `AuthContext` y manejar datos corruptos o inesperados en el almacenamiento local.
+- [x] Verificar en el código que «Cerrar sesión» elimina las claves de sesión y actualiza el estado de autenticación.
+- [x] Implementar «Recordar mi sesión»: marcado usa `localStorage`; desmarcado usa `sessionStorage`.
+- [x] Documentar que esta autenticación es una simulación frontend y no constituye seguridad real sin backend.
 **Criterio para completar:** los roles se comprueban al entrar a rutas protegidas y el contexto tolera una sesión local inválida sin impedir el arranque.
  
 ## 1.9 Pruebas de cierre de la Fase 1
  
 - [ ] Ejecutar `npm run build` y corregir todos los errores.
 - [ ] Ejecutar `npm run lint` y revisar los avisos relevantes.
-- [ ] Abrir Home y comprobar que carga el catálogo inicial.
+- [ ] Abrir Home y comprobar que muestra las propiedades iniciales marcadas como destacadas.
 - [ ] Registrar una solicitud de prueba y comprobar que aparece en Admin.
-- [ ] Aprobar una solicitud y comprobar que aparece en el catálogo.
+- [ ] Aprobar una solicitud y comprobar que su estado cambia a `Aprobada` y que sus datos pasan a `propiedades` en el contexto y `localStorage`. Su visualización en la página pública se comprobará en la Fase 2.
 - [ ] Rechazar una solicitud y comprobar que conserva el motivo.
 - [ ] Recargar el navegador y comprobar la persistencia acordada.
 - [ ] Probar `/admin` sin sesión, con rol `customer` y con rol `admin`.
-- [ ] Actualizar `README.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` y `docs/DECISIONS.md` para que describan el comportamiento real.
+- [x] Actualizar `README.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` y `docs/DECISIONS.md` para que describan el comportamiento de esta rama.
 **Criterio para completar la Fase 1:** el flujo básico de datos es coherente, las rutas protegidas funcionan según lo acordado y build/lint no presentan errores pendientes conocidos.
  
 ---
@@ -242,14 +242,15 @@
 | Fecha | Fase / tarea | Resultado o notas |
 |---|---|---|
 | 2026-11-16 | 1.2 y 1.3 | Modelo común en `src/types/propiedad.ts` y `PropiedadesContext` implementados; `DATA_MODEL.md` actualizado. |
-| 2026-11-16 | 1.5, 1.6 y 1.7 (parcial) | Formulario, Admin y Home leen y escriben mediante `usePropiedades` (verificado leyendo el código). Pendiente: probar a mano el flujo formulario → Admin, mostrar el motivo de rechazo, corregir el contador de la galería, los botones sin acción del menú y calcular las destacadas. |
-| 2026-11-16 | Verificación | Commit `759cf3b`: `npm run build` sin errores; `npm run lint` con 0 errores y 3 avisos. |
+| 2026-11-16 | 1.5, 1.6 y 1.7 | Formulario, Admin y Home conectados mediante `usePropiedades`. Se completaron en `finish-phase-1` los detalles de rechazo, galería, navegación del panel y filtrado de destacadas; quedan las pruebas manuales de 1.9. |
+| 2026-11-16 | Fase 1.4 y 1.8 | Persistencia local, validación del almacenamiento y protección de `/admin` implementadas en la rama `finish-phase-1`. Pendiente de build/lint y pruebas manuales en Codespaces. |
+| 2026-11-16 | Admin y Home | Motivo de rechazo visible, galería corregida, navegación administrativa aclarada, propiedades destacadas filtradas y ruta temporal `/propiedades` habilitada. |
  
 ## Decisiones pendientes de confirmar
  
 - [ ] Confirmar con el profesor si `localStorage` está permitido como mecanismo de persistencia para simular la base de datos.
-- [ ] Definir la estrategia para almacenar imágenes seleccionadas en el formulario.
-- [ ] Confirmar el alcance de las páginas auxiliares (Contacto, Nosotros y Recuperar contraseña).
+- [x] Definir la estrategia para almacenar imágenes seleccionadas: data URLs en `localStorage`, con manejo de cuota; IndexedDB queda como alternativa si se requieren imágenes mayores.
+- [ ] Confirmar el alcance final de Contacto y Nosotros. Recuperar contraseña se retiró del login conforme a la decisión comunicada.
 - [ ] Confirmar si los favoritos se comparten entre sesiones del mismo navegador o si se asocian al usuario simulado.
 ## Reglas para mantener el alcance bajo control
  

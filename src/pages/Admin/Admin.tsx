@@ -131,9 +131,6 @@ export function AdminPanel() {
   const { solicitudes, aprobarSolicitud, rechazarSolicitud } = usePropiedades();
   const { logout } = useAuth();
 
-  // const [solicitudes, setSolicitudes] = useState<SolicitudPropiedad[]>(
-  //   SOLICITUDES_INICIALES
-  // );
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState<FiltroEstado>("Todos");
   const [pagina, setPagina] = useState(1);
@@ -142,6 +139,7 @@ export function AdminPanel() {
   const [fotoActiva, setFotoActiva] = useState(0);
   const [accion, setAccion] = useState<Accion>(null);
   const [motivo, setMotivo] = useState("");
+  const [errorOperacion, setErrorOperacion] = useState("");
 
   /* Conteos de las tarjetas */
   const conteo = useMemo(
@@ -179,12 +177,14 @@ export function AdminPanel() {
     setFotoActiva(0);
     setAccion(null);
     setMotivo("");
+    setErrorOperacion("");
   };
 
   const cerrarDetalle = () => {
     setSeleccionadaId(null);
     setAccion(null);
     setMotivo("");
+    setErrorOperacion("");
   };
 
   const cambiarFoto = (dir: 1 | -1) => {
@@ -195,12 +195,21 @@ export function AdminPanel() {
 
   const enviar = () => {
     if (!seleccionada || !accion) return;
-    if (accion === "aprobar") {
-      aprobarSolicitud(seleccionada.id);
-    } else {
-      rechazarSolicitud(seleccionada.id, motivo.trim() || undefined);
+
+    try {
+      if (accion === "aprobar") {
+        aprobarSolicitud(seleccionada.id);
+      } else {
+        rechazarSolicitud(seleccionada.id, motivo.trim() || undefined);
+      }
+      cerrarDetalle();
+    } catch (err) {
+      setErrorOperacion(
+        err instanceof Error
+          ? err.message
+          : "No se pudo guardar la decisión. Inténtalo de nuevo."
+      );
     }
-    cerrarDetalle();
   };
 
   const cerrarSesion = () => {
@@ -208,7 +217,7 @@ export function AdminPanel() {
     navigate("/login");
   };
 
-  const fotosExtra = seleccionada ? Math.max(0, seleccionada.imagenes.length - 4) : 0;
+  const fotosExtra = seleccionada ? Math.max(0, seleccionada.imagenes.length - 3) : 0;
 
   return (
     <div className="admin">
@@ -217,15 +226,33 @@ export function AdminPanel() {
         <img className="admin-sidebar__logo" src={logo} alt="Orven" />
 
         <nav className="admin-nav">
-          <button type="button" className="admin-nav__item is-active">
-            <img style={{ width: "20px", height: "20px" }} src={panelIcon} alt="Panel Principal" /> Panel Principal
+          <button
+            type="button"
+            className="admin-nav__item is-active"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            <img style={{ width: "20px", height: "20px" }} src={panelIcon} alt="" /> Panel Principal
           </button>
-          <button type="button" className="admin-nav__item">
-            <img style={{ width: "20px", height: "20px" }} src={clipboardIcon} alt="Solicitudes" /> Solicitudes
+          <button
+            type="button"
+            className="admin-nav__item"
+            onClick={() =>
+              document.getElementById("admin-requests")?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              })
+            }
+          >
+            <img style={{ width: "20px", height: "20px" }} src={clipboardIcon} alt="" /> Solicitudes
             <span className="admin-nav__badge">{conteo.pendientes}</span>
           </button>
-          <button type="button" className="admin-nav__item">
-            <img style={{ width: "20px", height: "20px" }} src={homeIcon} alt="Propiedades" /> Propiedades
+          <button
+            type="button"
+            className="admin-nav__item"
+            disabled
+            title="La gestión del catálogo estará disponible en una fase posterior."
+          >
+            <img style={{ width: "20px", height: "20px" }} src={homeIcon} alt="" /> Propiedades (próximamente)
           </button>
           <button
             type="button"
@@ -247,7 +274,7 @@ export function AdminPanel() {
 
         <div className="admin-body">
           <main className="admin-main">
-            <h1>Panel de administración</h1>
+            <h1 id="admin-overview">Panel de administración</h1>
             <p className="admin-main__subtitle">
               Gestiona las solicitudes de publicación y las propiedades de Orven.
             </p>
@@ -281,7 +308,7 @@ export function AdminPanel() {
             </section>
 
             {/* Tabla */}
-            <section className="table-card">
+            <section className="table-card" id="admin-requests">
               <div className="table-card__head">
                 <h2>
                   <Icon name="clipboard" size={22} /> Solicitudes recibidas
@@ -552,51 +579,79 @@ export function AdminPanel() {
                 </li>
               </ul>
 
-              <h3 className="detail__section detail__section--divided">
-                <Icon name="checkCircle" size={20} /> Acciones
-              </h3>
-              <div className="actions">
-                <button
-                  type="button"
-                  className={`btn-approve ${accion === "aprobar" ? "is-active" : ""}`}
-                  onClick={() => setAccion("aprobar")}
-                >
-                  <Icon name="check" size={18} /> Aprobar solicitud
-                </button>
-                <button
-                  type="button"
-                  className={`btn-reject ${accion === "rechazar" ? "is-active" : ""}`}
-                  onClick={() => setAccion("rechazar")}
-                >
-                  <Icon name="x" size={18} /> Rechazar solicitud
-                </button>
-              </div>
+              {seleccionada.estado === "Pendiente" ? (
+                <>
+                  <h3 className="detail__section detail__section--divided">
+                    <Icon name="checkCircle" size={20} /> Acciones
+                  </h3>
+                  <div className="actions">
+                    <button
+                      type="button"
+                      className={`btn-approve ${accion === "aprobar" ? "is-active" : ""}`}
+                      onClick={() => {
+                        setAccion("aprobar");
+                        setErrorOperacion("");
+                      }}
+                    >
+                      <Icon name="check" size={18} /> Aprobar solicitud
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn-reject ${accion === "rechazar" ? "is-active" : ""}`}
+                      onClick={() => {
+                        setAccion("rechazar");
+                        setErrorOperacion("");
+                      }}
+                    >
+                      <Icon name="x" size={18} /> Rechazar solicitud
+                    </button>
+                  </div>
 
-              {accion === "rechazar" && (
-                <label className="reason">
-                  <span>Motivo del rechazo (opcional)</span>
-                  <textarea
-                    rows={3}
-                    placeholder="Ej: Información incompleta en la descripción..."
-                    value={motivo}
-                    onChange={(e) => setMotivo(e.target.value)}
-                  />
-                </label>
+                  {accion === "rechazar" && (
+                    <label className="reason">
+                      <span>Motivo del rechazo (opcional)</span>
+                      <textarea
+                        rows={3}
+                        placeholder="Ej: Información incompleta en la descripción..."
+                        value={motivo}
+                        onChange={(e) => setMotivo(e.target.value)}
+                      />
+                    </label>
+                  )}
+                </>
+              ) : (
+                <div className="request-status" role="status">
+                  <strong>Solicitud {seleccionada.estado.toLowerCase()}.</strong>
+                  {seleccionada.estado === "Rechazada" && (
+                    <p>
+                      <strong>Motivo del rechazo:</strong>{" "}
+                      {seleccionada.motivoRechazo || "No se registró un motivo."}
+                    </p>
+                  )}
+                </div>
               )}
 
-              <div className="detail__footer">
-                <button type="button" className="btn-cancel" onClick={cerrarDetalle}>
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  className="btn-send"
-                  disabled={!accion}
-                  onClick={enviar}
-                >
-                  Enviar
-                </button>
-              </div>
+              {errorOperacion && (
+                <p className="detail-error" role="alert">
+                  {errorOperacion}
+                </p>
+              )}
+
+              {seleccionada.estado === "Pendiente" && (
+                <div className="detail__footer">
+                  <button type="button" className="btn-cancel" onClick={cerrarDetalle}>
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-send"
+                    disabled={!accion}
+                    onClick={enviar}
+                  >
+                    Enviar
+                  </button>
+                </div>
+              )}
             </aside>
           )}
         </div>
