@@ -28,7 +28,7 @@ interface EstadoAlmacenado extends EstadoPropiedades {
 interface PropiedadesContextType extends EstadoPropiedades {
   crearSolicitud: (
     datos: DatosPropiedad,
-    solicitante: SolicitudPropiedad["solicitante"]
+    solicitante: SolicitudPropiedad["solicitante"],
   ) => void;
   aprobarSolicitud: (id: number) => void;
   rechazarSolicitud: (id: number, motivo?: string) => void;
@@ -37,7 +37,7 @@ interface PropiedadesContextType extends EstadoPropiedades {
 const CLAVE_ALMACENAMIENTO = "orven_propiedades";
 
 const PropiedadesContext = createContext<PropiedadesContextType | undefined>(
-  undefined
+  undefined,
 );
 
 const siguienteId = (lista: { id: number }[]) =>
@@ -49,7 +49,7 @@ const esRegistro = (valor: unknown): valor is Record<string, unknown> =>
   typeof valor === "object" && valor !== null;
 
 const esDatosPropiedad = (
-  valor: unknown
+  valor: unknown,
 ): valor is Record<string, unknown> & DatosPropiedad => {
   if (!esRegistro(valor)) return false;
 
@@ -84,9 +84,7 @@ const esPropiedad = (valor: unknown): valor is Propiedad => {
   );
 };
 
-const esSolicitudPropiedad = (
-  valor: unknown
-): valor is SolicitudPropiedad => {
+const esSolicitudPropiedad = (valor: unknown): valor is SolicitudPropiedad => {
   if (!esRegistro(valor) || !esDatosPropiedad(valor)) return false;
 
   const solicitante = valor.solicitante;
@@ -157,27 +155,23 @@ const guardarEstado = (estado: EstadoPropiedades) => {
   try {
     window.localStorage.setItem(
       CLAVE_ALMACENAMIENTO,
-      JSON.stringify(contenido)
+      JSON.stringify(contenido),
     );
   } catch {
     throw new Error(
-      "No se pudieron guardar los cambios en este navegador. El almacenamiento puede estar lleno o deshabilitado. Reduce el tamaño de las imágenes e inténtalo de nuevo."
+      "No se pudieron guardar los cambios en este navegador. El almacenamiento puede estar lleno o deshabilitado. Reduce el tamaño de las imágenes e inténtalo de nuevo.",
     );
   }
 };
 
-export const PropiedadesProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
   const [estado, setEstado] = useState<EstadoPropiedades>(cargarEstado);
   const estadoRef = useRef(estado);
 
   // Primero se persiste y después se actualiza React. Así el formulario no
   // puede mostrar éxito cuando el navegador rechazó el guardado.
   const actualizarEstado = (
-    actualizar: (actual: EstadoPropiedades) => EstadoPropiedades
+    actualizar: (actual: EstadoPropiedades) => EstadoPropiedades,
   ) => {
     const siguiente = actualizar(estadoRef.current);
     if (siguiente === estadoRef.current) return;
@@ -220,7 +214,7 @@ export const PropiedadesProvider = ({
 
   const crearSolicitud: PropiedadesContextType["crearSolicitud"] = (
     datos,
-    solicitante
+    solicitante,
   ) => {
     actualizarEstado((actual) => {
       const nueva: SolicitudPropiedad = {
@@ -251,7 +245,6 @@ export const PropiedadesProvider = ({
         motivoRechazo: _motivo,
         ...datos
       } = solicitud;
-
       return {
         propiedades: [
           ...actual.propiedades,
@@ -262,7 +255,7 @@ export const PropiedadesProvider = ({
           },
         ],
         solicitudes: actual.solicitudes.map((item) =>
-          item.id === id ? { ...item, estado: "Aprobada" } : item
+          item.id === id ? { ...item, estado: "Aprobada" } : item,
         ),
       };
     });
@@ -282,7 +275,7 @@ export const PropiedadesProvider = ({
                 estado: "Rechazada",
                 motivoRechazo: motivo?.trim() || undefined,
               }
-            : item
+            : item,
         ),
       };
     });
@@ -307,7 +300,7 @@ export const usePropiedades = () => {
   const context = useContext(PropiedadesContext);
   if (!context) {
     throw new Error(
-      "usePropiedades debe usarse dentro de un PropiedadesProvider"
+      "usePropiedades debe usarse dentro de un PropiedadesProvider",
     );
   }
   return context;
