@@ -20,7 +20,7 @@ Este documento distingue decisiones implementadas de limitaciones y propuestas f
 
 - **Estado:** implementada.
 - **Decisión:** declarar las rutas de la SPA en `src/App.tsx`.
-- **Consecuencias:** navegación sin recargar la aplicación. `/propiedades` dispone de una pantalla temporal hasta la integración del diseño en la Fase 2.
+- **Consecuencias:** navegación sin recargar la aplicación. `/propiedades` muestra el catálogo público conectado al contexto compartido.
 
 ## D-004 — Mantener los estilos junto a páginas y componentes
 
@@ -100,9 +100,18 @@ Este documento distingue decisiones implementadas de limitaciones y propuestas f
 
 ## D-016 — Mantener el catálogo temporal hasta la Fase 2
 
-- **Estado:** implementada como paso provisional.
-- **Decisión:** mantener `/propiedades` activa con un aviso y enlace de regreso, sin integrar todavía el diseño final.
-- **Evidencia:** `src/pages/Propiedades/Propiedades.tsx`.
+- **Estado:** reemplazada por D-017.
+- **Decisión histórica:** mantener `/propiedades` activa con un aviso y enlace de regreso mientras se estabilizaba el modelo y el estado compartido.
+- **Evidencia:** commits de cierre de la Fase 1.
+
+## D-017 — Integrar el catálogo público desde el diseño aprobado
+
+- **Estado:** implementada en `phase-2-catalog`.
+- **Contexto:** la Fase 1 dejó lista una fuente compartida de propiedades publicadas; el catálogo temporal debía sustituirse por la página diseñada.
+- **Decisión:** construir `/propiedades` tomando como referencia la página 2 del PDF de diseño y consumir `propiedades` mediante `usePropiedades`. Cada tarjeta usa los datos existentes del modelo: tipo, título, ubicación, departamento, precio, habitaciones, baños, área e imagen principal.
+- **Controles pendientes:** búsqueda, filtros, ordenamiento, vista de mapa, paginación, favoritos y navegación al detalle se muestran deshabilitados y quedan para la Fase 3. La opción «Arriendo» también permanece deshabilitada porque `Operacion` solo admite actualmente `Venta`.
+- **Consecuencias:** las propiedades aprobadas en Admin aparecen automáticamente en el catálogo, sin un arreglo paralelo ni registros ficticios. No se modificó el modelo de datos.
+- **Evidencia:** `src/pages/Propiedades/Propiedades.tsx`, `src/pages/Propiedades/Propiedades.css`, `src/context/PropiedadesContext.tsx`.
 
 ## Plantilla para nuevas decisiones
 
