@@ -1,34 +1,19 @@
-import { useState, type FormEvent } from "react";
+import { type FormEvent } from "react";
 import { usePropiedades } from "../../context/PropiedadesContext";
-import { formatoPrecio, ubicacionCorta } from "../../utils/formato";
 import { useNavigate } from "react-router-dom";
-import bañosIcon from "../../assets/icons/baños.png";
-import addFavIcon from "../../assets/icons/add-fav.png";
-import favIcon from "../../assets/icons/fav.png";
-import habitacionesIcon from "../../assets/icons/habitaciones.png";
-import tamañoIcon from "../../assets/icons/tamaño.png";
-import ubicacionIcon from "../../assets/icons/ubicacion.png";
-import logo from "../../assets/Logo.png";
 import "./Home.css";
 import HomeNavbar from "../../components/HomeNavbar/HomeNavbar";
+import logo from "../../assets/Logo.png";
+import TarjetaPropiedad from "../../components/TarjetaPropiedad/TarjetaPropiedad";
 
 
 function Home() {
-  const [favorites, setFavorites] = useState<number[]>([]);
   const navigate = useNavigate();
-  const { propiedades } = usePropiedades();
+  const { propiedades, favoritos, alternarFavorito } = usePropiedades();
   const propiedadesDestacadas = propiedades.filter(
     (propiedad) => propiedad.destacada
   );
 
-  // Agregar o quitar una propiedad de favoritos.
-  const toggleFavorite = (id: number) => {
-    setFavorites((current) =>
-      current.includes(id)
-        ? current.filter((favoriteId) => favoriteId !== id)
-        : [...current, id],
-    );
-  };
   // Llevar al usuario a las propiedades después de buscar.
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -195,77 +180,12 @@ function Home() {
 
         <div className="properties-grid">
           {propiedadesDestacadas.length > 0 ? propiedadesDestacadas.map((property) => (
-            <article className="property-card" key={property.id}>
-              <div className="property-image">
-                <img src={property.imagenes[0]} alt={property.titulo} />
-
-                <button
-                  type="button"
-                  className={`favorite-button ${
-                    favorites.includes(property.id) ? "is-favorite" : ""
-                  }`}
-                  onClick={() => toggleFavorite(property.id)}
-                  aria-label={
-                    favorites.includes(property.id)
-                      ? "Quitar de favoritos"
-                      : "Agregar a favoritos"
-                  }
-                  aria-pressed={favorites.includes(property.id)}
-                >
-                  <img
-                    src={favorites.includes(property.id) ? favIcon : addFavIcon}
-                    alt=""
-                  />
-                </button>
-              </div>
-
-              <div className="property-info">
-                <p className="property-price">{formatoPrecio(property.precio)}</p>
-
-                <p className="property-location">
-                  <img
-                    src={ubicacionIcon}
-                    alt="ubicación"
-                    style={{
-                      width: 11,
-                      marginBottom: "-2px",
-                      marginRight: "4px",
-                    }}
-                  />
-                  {ubicacionCorta(property)}
-                </p>
-
-                <div className="property-features">
-                  <span>
-                    <img
-                      className="icon"
-                      src={habitacionesIcon}
-                      alt="Habitaciones"
-                    />
-                    {property.habitaciones}
-                  </span>
-
-                  <span>
-                    <img className="icon" src={bañosIcon} alt="Baños" />
-                    {property.banos}
-                  </span>
-
-                  <span>
-                    <img className="icon" src={tamañoIcon} alt="Área" />
-                    {property.area} m²
-                  </span>
-                </div>
-
-                <button
-                  type="button"
-                  className="property-button"
-                  disabled
-                  title="El detalle de cada propiedad se implementará en la Fase 3."
-                >
-                  Ver detalles (próximamente)
-                </button>
-              </div>
-            </article>
+            <TarjetaPropiedad
+              key={property.id}
+              propiedad={property}
+              favoritos={favoritos}
+              onToggleFavorito={alternarFavorito}
+            />
           )) : (
             <p className="properties-empty">
               Por el momento no hay propiedades destacadas.

@@ -399,6 +399,7 @@ useEffect(
     <div className="rp">
       {/* Encabezado */}
       <header className="rp-header">
+        <div className="rp-header-container">
         <img
           style={{ cursor: "pointer" }}
           onClick={() => navigate("/")}
@@ -407,6 +408,7 @@ useEffect(
           className="rp-header__logo"
         />
         <AvatarProfile />
+        </div>
       </header>
 
       {/* Banner */}

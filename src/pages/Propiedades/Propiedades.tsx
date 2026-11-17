@@ -1,18 +1,13 @@
 import { Link } from "react-router-dom";
 import HomeNavbar from "../../components/HomeNavbar/HomeNavbar";
 import { usePropiedades } from "../../context/PropiedadesContext";
-import bañosIcon from "../../assets/icons/baños.png";
-import habitacionesIcon from "../../assets/icons/habitaciones.png";
-import tamañoIcon from "../../assets/icons/tamaño.png";
-import ubicacionIcon from "../../assets/icons/ubicacion.png";
-import addFavIcon from "../../assets/icons/add-fav.png";
 import shieldCheckIcon from "../../assets/icons/shield-check.png";
 import gridIcon from "../../assets/icons/layout-grid.png";
-import { formatoPrecio, ubicacionCorta } from "../../utils/formato";
+import TarjetaPropiedad from "../../components/TarjetaPropiedad/TarjetaPropiedad";
 import "./Propiedades.css";
 
 export default function Propiedades() {
-  const { propiedades } = usePropiedades();
+  const { propiedades, favoritos, alternarFavorito } = usePropiedades();
   const totalPropiedades = propiedades.length;
 
   return (
@@ -108,10 +103,6 @@ export default function Propiedades() {
             </div>
 
             <div className="catalog-filters__bottom">
-              <button className="catalog-more-filters" type="button" disabled>
-                <span aria-hidden="true">☷</span>
-                Más filtros
-              </button>
               <button className="catalog-clear-filters" type="button" disabled>
                 Limpiar filtros
               </button>
@@ -156,75 +147,12 @@ export default function Propiedades() {
             {totalPropiedades > 0 ? (
               <div className="catalog-grid">
                 {propiedades.map((propiedad) => (
-                  <article className="catalog-card" key={propiedad.id}>
-                    <div className="catalog-card__image">
-                      {propiedad.imagenes[0] ? (
-                        <img src={propiedad.imagenes[0]} alt={propiedad.titulo} />
-                      ) : (
-                        <div className="catalog-card__no-image">
-                          Imagen no disponible
-                        </div>
-                      )}
-
-                      {propiedad.destacada && (
-                        <span className="catalog-card__featured">Destacada</span>
-                      )}
-
-                      <button
-                        className="catalog-card__favorite"
-                        type="button"
-                        disabled
-                        title="Los favoritos estarán disponibles en la Fase 3."
-                        aria-label="Agregar a favoritos; función disponible en la Fase 3"
-                      >
-                        <img src={addFavIcon} alt="" />
-                      </button>
-                    </div>
-
-                    <div className="catalog-card__body">
-                      <div className="catalog-card__meta">
-                        <span>{propiedad.tipo}</span>
-                        <span>ORV-{String(propiedad.id).padStart(4, "0")}</span>
-                      </div>
-
-                      <h3>{propiedad.titulo}</h3>
-
-                      <p className="catalog-card__location">
-                        <img src={ubicacionIcon} alt="" />
-                        {ubicacionCorta(propiedad)}, {propiedad.departamento}
-                      </p>
-
-                      <p className="catalog-card__price">
-                        {formatoPrecio(propiedad.precio)}
-                      </p>
-
-                      <div className="catalog-card__features" aria-label="Características de la propiedad">
-                        <span>
-                          <img src={habitacionesIcon} alt="" />
-                          {propiedad.habitaciones} hab.
-                        </span>
-                        <span>
-                          <img src={bañosIcon} alt="" />
-                          {propiedad.banos} baños
-                        </span>
-                        <span>
-                          <img src={tamañoIcon} alt="" />
-                          {propiedad.area} m²
-                        </span>
-                      </div>
-
-                      <div className="catalog-card__footer">
-                        <button
-                          type="button"
-                          disabled
-                          title="El detalle de cada propiedad se implementará en la Fase 3."
-                        >
-                          Ver propiedad
-                        </button>
-                        <span aria-hidden="true">→</span>
-                      </div>
-                    </div>
-                  </article>
+                  <TarjetaPropiedad
+                    key={propiedad.id}
+                    propiedad={propiedad}
+                    favoritos={favoritos}
+                    onToggleFavorito={alternarFavorito}
+                  />
                 ))}
               </div>
             ) : (

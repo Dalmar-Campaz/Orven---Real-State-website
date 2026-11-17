@@ -26,6 +26,8 @@ interface EstadoAlmacenado extends EstadoPropiedades {
 }
 
 interface PropiedadesContextType extends EstadoPropiedades {
+  favoritos: number[];
+  alternarFavorito: (id: number) => void;
   crearSolicitud: (
     datos: DatosPropiedad,
     solicitante: SolicitudPropiedad["solicitante"],
@@ -35,6 +37,7 @@ interface PropiedadesContextType extends EstadoPropiedades {
 }
 
 const CLAVE_ALMACENAMIENTO = "orven_propiedades";
+const CLAVE_FAVORITOS = "orven_favoritos";
 
 const PropiedadesContext = createContext<PropiedadesContextType | undefined>(
   undefined,
@@ -132,6 +135,23 @@ const leerEstadoSerializado = (contenido: string): EstadoPropiedades | null => {
   }
 };
 
+const leerFavoritosSerializados = (contenido: string): number[] | null => {
+  try {
+    const valor: unknown = JSON.parse(contenido);
+    if (!Array.isArray(valor)) return null;
+
+    const ids = valor.filter(
+      (id): id is number =>
+        typeof id === "number" && Number.isSafeInteger(id) && id > 0,
+    );
+    if (ids.length !== valor.length) return null;
+
+    return [...new Set(ids)];
+  } catch {
+    return null;
+  }
+};
+
 const cargarEstado = (): EstadoPropiedades => {
   try {
     const contenido = window.localStorage.getItem(CLAVE_ALMACENAMIENTO);
@@ -149,6 +169,22 @@ const cargarEstado = (): EstadoPropiedades => {
   return estadoInicial();
 };
 
+const cargarFavoritos = (): number[] => {
+  try {
+    const contenido = window.localStorage.getItem(CLAVE_FAVORITOS);
+    if (contenido === null) return [];
+
+    const favoritos = leerFavoritosSerializados(contenido);
+    if (favoritos) return favoritos;
+
+    window.localStorage.removeItem(CLAVE_FAVORITOS);
+  } catch {
+    // El almacenamiento puede estar bloqueado por el navegador.
+  }
+
+  return [];
+};
+
 const guardarEstado = (estado: EstadoPropiedades) => {
   const contenido: EstadoAlmacenado = { version: 1, ...estado };
 
@@ -164,9 +200,21 @@ const guardarEstado = (estado: EstadoPropiedades) => {
   }
 };
 
+const guardarFavoritos = (favoritos: number[]) => {
+  try {
+    window.localStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(favoritos));
+  } catch {
+    throw new Error(
+      "No se pudieron guardar los favoritos en este navegador. Comprueba que el almacenamiento esté habilitado e inténtalo de nuevo.",
+    );
+  }
+};
+
 export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
   const [estado, setEstado] = useState<EstadoPropiedades>(cargarEstado);
   const estadoRef = useRef(estado);
+  const [favoritos, setFavoritos] = useState<number[]>(cargarFavoritos);
+  const favoritosRef = useRef(favoritos);
 
   // Primero se persiste y después se actualiza React. Así el formulario no
   // puede mostrar éxito cuando el navegador rechazó el guardado.
@@ -181,16 +229,49 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
     setEstado(siguiente);
   };
 
+  const alternarFavorito = (id: number) => {
+    const siguientes = favoritosRef.current.includes(id)
+      ? favoritosRef.current.filter((favoritoId) => favoritoId !== id)
+      : [...favoritosRef.current, id];
+
+    guardarFavoritos(siguientes);
+    favoritosRef.current = siguientes;
+    setFavoritos(siguientes);
+  };
+
   useEffect(() => {
     const sincronizarPestanas = (evento: StorageEvent) => {
       try {
         if (
           evento.storageArea !== window.localStorage ||
-          (evento.key !== CLAVE_ALMACENAMIENTO && evento.key !== null)
+          (evento.key !== CLAVE_ALMACENAMIENTO &&
+            evento.key !== CLAVE_FAVORITOS &&
+            evento.key !== null)
         ) {
           return;
         }
       } catch {
+        return;
+      }
+
+      if (evento.key === null) {
+        const inicial = estadoInicial();
+        estadoRef.current = inicial;
+        setEstado(inicial);
+        favoritosRef.current = [];
+        setFavoritos([]);
+        return;
+      }
+
+      if (evento.key === CLAVE_FAVORITOS) {
+        const actualizados =
+          evento.newValue === null
+            ? []
+            : leerFavoritosSerializados(evento.newValue);
+        if (!actualizados) return;
+
+        favoritosRef.current = actualizados;
+        setFavoritos(actualizados);
         return;
       }
 
@@ -286,6 +367,8 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
       value={{
         propiedades: estado.propiedades,
         solicitudes: estado.solicitudes,
+        favoritos,
+        alternarFavorito,
         crearSolicitud,
         aprobarSolicitud,
         rechazarSolicitud,
