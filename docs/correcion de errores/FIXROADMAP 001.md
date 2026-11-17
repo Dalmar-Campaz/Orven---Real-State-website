@@ -145,26 +145,28 @@
 ---
  
 # Fase 2 — Integrar la página diseñada de «Ver todas las propiedades»
- 
-**Objetivo:** incorporar a React el diseño que ya está preparado, conectándolo al modelo y al contexto establecidos en la Fase 1. Esta fase integra la página; las funcionalidades avanzadas se implementan en la Fase 3.
- 
-- [ ] Localizar y revisar el diseño final (archivo, maqueta o referencia) antes de escribir el componente.
-- [ ] Comparar el diseño con el código que actualmente existe en `src/pages/Propiedades/` y decidir qué se puede reutilizar.
-- [ ] Confirmar y organizar los assets que necesita el diseño; corregir las rutas de importación.
-- [ ] Implementar `Propiedades.tsx` y su CSS a partir del diseño aprobado.
-- [ ] Conectar la página a `usePropiedades` para leer la lista real del catálogo compartido.
-- [ ] Mostrar los datos básicos de cada propiedad desde el modelo común, sin crear un arreglo paralelo dentro de la página.
-- [ ] Conectar la navegación desde Home hacia «Ver todas las propiedades».
-- [ ] Confirmar que la ruta `/propiedades` carga directamente y también al actualizar el navegador.
-- [ ] Comprobar que el diseño se adapta a pantallas pequeñas y grandes.
-- [ ] Mantener los controles que todavía no tengan lógica como elementos claramente pendientes, no como controles que aparenten funcionar.
-- [ ] Revisar accesibilidad básica: botones reales para acciones, enlaces con destino, etiquetas para controles y textos alternativos útiles.
-- [ ] Ejecutar `npm run build` y `npm run lint` después de integrar la página.
-- [ ] Actualizar la arquitectura y el README si cambian rutas, componentes o capacidades.
-**Criterio para completar la fase:** la página reproduce el diseño elegido, usa los datos compartidos y muestra las propiedades del catálogo sin mantener información duplicada.
- 
+
+**Objetivo:** incorporar a React el diseño de la página 2 del PDF, conectándolo al modelo y al contexto establecidos en la Fase 1. Las funcionalidades avanzadas se implementan en la Fase 3.
+
+- [x] Localizar y revisar la página 2 del PDF de diseño como referencia visual.
+- [x] Comparar el diseño con la pantalla temporal de `src/pages/Propiedades/` y sustituirla por la página del catálogo.
+- [x] Revisar los assets disponibles y reutilizar los recursos ya vinculados al modelo de propiedades y al estilo visual de Home; no se creó un catálogo paralelo de imágenes.
+- [x] Implementar la estructura y los estilos responsive de `Propiedades.tsx` y `Propiedades.css`: navegación, hero, filtros visuales, encabezado de resultados, tarjetas y paginación.
+- [x] Conectar la página a `usePropiedades` para leer la lista real del catálogo compartido.
+- [x] Mostrar los datos de cada propiedad desde el modelo común, sin crear un arreglo paralelo dentro de la página.
+- [x] Conservar la navegación desde Home y corregir los enlaces de la barra de navegación para usar las rutas de la SPA.
+- [ ] Confirmar en Codespaces que `/propiedades` carga directamente y también después de actualizar el navegador.
+- [ ] Comprobar visualmente el diseño en pantallas grandes, tabletas y móviles.
+- [x] Mantener búsqueda, filtros, orden, mapa, paginación, favoritos y detalle deshabilitados e identificados como funciones de la Fase 3.
+- [x] Revisar accesibilidad básica en el código: navegación etiquetada, controles con etiquetas, botones deshabilitados cuando no tienen acción e imágenes con textos alternativos.
+- [ ] Ejecutar `npm run build` y `npm run lint` en Codespaces después de integrar la página.
+- [x] Actualizar README, arquitectura y decisiones técnicas para reflejar el catálogo integrado.
+
+**Criterio para completar la fase:** el catálogo reproduce la estructura del diseño, usa los datos compartidos y muestra los inmuebles publicados. La validación final queda pendiente de build/lint y comprobación visual en Codespaces.
+
 ---
- 
+
+
 # Fase 3 — Implementar funcionalidades de usuario
  
 **Objetivo:** convertir los elementos visuales de la aplicación en interacciones funcionales. Implementar una funcionalidad por vez y probarla antes de continuar.
@@ -245,6 +247,7 @@
 | 2026-11-16 | 1.5, 1.6 y 1.7 | Formulario, Admin y Home conectados mediante `usePropiedades`. Se completaron en `finish-phase-1` los detalles de rechazo, galería, navegación del panel y filtrado de destacadas; quedan las pruebas manuales de 1.9. |
 | 2026-11-16 | Cierre de Fase 1 | Build, lint y pruebas manuales de persistencia, flujo de solicitudes, aprobación/rechazo y protección de `/admin` ejecutados y verificados por el usuario en Codespaces. Fase 1 completada; Fase 2 queda como siguiente etapa. |
 | 2026-11-16 | Admin y Home | Motivo de rechazo visible, galería corregida, navegación administrativa aclarada, propiedades destacadas filtradas y ruta temporal `/propiedades` habilitada. |
+| 2026-11-17 | Implementación de Fase 2 | Catálogo integrado según la página 2 del PDF, conectado a `PropiedadesContext` y documentado. Pendientes build/lint y validación visual en Codespaces. |
  
 ## Decisiones pendientes de confirmar
  

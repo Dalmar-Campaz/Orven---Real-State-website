@@ -35,7 +35,7 @@ Los proveedores están fuera de `BrowserRouter`; ninguno utiliza hooks del route
 | `src/utils/archivos.ts` | Conversión de archivos a data URL. |
 | `src/utils/formato.ts` | Formato de precio y ubicación. |
 | `src/routes/ProtectedRoute.tsx` | Restricción frontend por sesión y rol. |
-| `src/pages/` | Home, Login, Admin, formulario y pantalla temporal del catálogo. |
+| `src/pages/` | Home, Login, Admin, formulario y catálogo público de propiedades. |
 | `src/App.tsx` | Proveedores y rutas. |
 | `src/main.tsx` | Punto de entrada de React. |
 
@@ -47,7 +47,7 @@ Los proveedores están fuera de `BrowserRouter`; ninguno utiliza hooks del route
 | `/login` | `Login` | Formulario de acceso simulado. Si hay sesión, redirige según el rol. |
 | `/admin` | `ProtectedRoute` → `Admin` | Solo permite entrar al rol `admin`. |
 | `/formulario` | `RegistrarPropiedad` | Formulario de solicitud; no exige sesión. |
-| `/propiedades` | `Propiedades` | Pantalla temporal; el diseño definitivo se integra en la Fase 2. |
+| `/propiedades` | `Propiedades` | Catálogo público conectado a `PropiedadesContext`; muestra los inmuebles publicados. |
 | Cualquier otra ruta | — | Redirige a Home. |
 
 Un usuario sin sesión que visite `/admin` es enviado a `/login`. Un usuario `customer` es enviado a Home.
@@ -106,7 +106,7 @@ Las imágenes seleccionadas por el formulario se convierten a data URL. Las URL 
 - **Login:** valida el formato de correo y la longitud mínima de contraseña; no comprueba credenciales contra un servidor. El checkbox controla el tipo de persistencia de sesión.
 - **Admin:** lee solicitudes del contexto, calcula contadores, filtra, pagina y permite ver detalles. Muestra motivos de rechazo; las acciones solo aparecen en solicitudes pendientes. La gestión de catálogo del menú está deshabilitada mientras no exista esa sección.
 - **RegistrarPropiedad:** valida el formulario, previsualiza archivos y convierte imágenes a data URL. Llama a `crearSolicitud`; muestra éxito solo si el contexto consigue persistirla.
-- **Propiedades:** pantalla temporal con enlace de regreso a Home. El diseño final y la lectura del catálogo corresponden a la Fase 2.
+- **Propiedades:** reproduce la página de catálogo del diseño aprobado. Lee `propiedades` desde `usePropiedades`, muestra el conteo real y construye cada tarjeta con los campos del modelo común. La imagen principal es la primera disponible. Los controles de búsqueda, filtros, orden, vista de mapa, paginación, favoritos y detalle están presentes como elementos deshabilitados y se reservan para la Fase 3.
 
 ## 9. Estilos
 
@@ -116,6 +116,6 @@ Los CSS están junto a sus páginas/componentes y son hojas globales normales, n
 
 1. Verificar manualmente persistencia, flujo formulario → Admin y aprobación/rechazo.
 2. Ejecutar nuevamente build y lint en la rama actual.
-3. Completar el diseño de catálogo en la Fase 2.
+3. Implementar búsqueda, filtros, ordenamiento, paginación, detalle y favoritos en la Fase 3.
 4. Implementar buscador, filtros, detalle individual y favoritos compartidos en la Fase 3.
 5. Revisar los enlaces y estados de UI durante las pruebas de cierre.

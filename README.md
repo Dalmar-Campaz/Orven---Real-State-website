@@ -2,7 +2,7 @@
 
 Orven es un proyecto académico de frontend para explorar propiedades y representar un flujo básico de publicación y revisión de inmuebles. Está construido con React, TypeScript y Vite.
 
-> **Estado actual:** prototipo frontend en desarrollo. No tiene backend ni base de datos. El formulario, el panel administrativo y Home comparten los datos mediante `PropiedadesContext`. Las propiedades publicadas y las solicitudes se guardan en `localStorage`; la página de catálogo tiene por ahora una pantalla temporal y su diseño final se integrará en la Fase 2.
+> **Estado actual:** prototipo frontend en desarrollo. No tiene backend ni base de datos. El formulario, el panel administrativo, Home y el catálogo comparten los datos mediante `PropiedadesContext`. Las propiedades publicadas y las solicitudes se guardan en `localStorage`; el catálogo ya muestra los inmuebles publicados desde esa fuente compartida.
 
 ## Funcionalidades y estado actual
 
@@ -10,7 +10,7 @@ Orven es un proyecto académico de frontend para explorar propiedades y represen
 - **Inicio de sesión:** valida el formato del correo y una longitud mínima de contraseña, y asigna un rol de demostración según el correo. «Recordar mi sesión» utiliza `localStorage`; sin marcarlo, utiliza `sessionStorage`. No verifica credenciales con un servidor.
 - **Registro de propiedades (`/formulario`):** valida los campos, permite previsualizar imágenes y crea una solicitud pendiente a través del contexto. Las imágenes seleccionadas se convierten a data URL y se guardan junto con la solicitud. Si el almacenamiento falla, se muestra un error y no se confirma el envío.
 - **Panel administrativo (`/admin`):** protegido para el rol `admin`. Lee las solicitudes compartidas, con búsqueda, filtro, paginación y detalle. Aprobar una solicitud la convierte en propiedad publicada; rechazarla guarda el motivo y este aparece en el detalle. Las opciones de navegación aún no implementadas se muestran deshabilitadas.
-- **Catálogo (`/propiedades`):** contiene una pantalla temporal que informa que el diseño final se integrará en la Fase 2.
+- **Catálogo (`/propiedades`):** reproduce la página de propiedades del diseño aprobado, muestra todas las propiedades publicadas desde `PropiedadesContext` y presenta sus imágenes, ubicación, precio y características. Búsqueda, filtros, ordenamiento, mapa, paginación, favoritos y detalle permanecen deshabilitados hasta la Fase 3.
 
 ## Persistencia y límites
 
@@ -102,7 +102,7 @@ src/
 │   ├── Admin/
 │   ├── Home/
 │   ├── Login/
-│   ├── Propiedades/           # Pantalla temporal; el diseño se integra en Fase 2
+│   ├── Propiedades/           # Catálogo público conectado a PropiedadesContext
 │   └── RegistrarPropiedad/
 ├── routes/
 │   └── ProtectedRoute.tsx
@@ -129,7 +129,7 @@ src/
 1. No hay backend ni base de datos. El almacenamiento pertenece al navegador actual.
 2. Los datos del navegador pueden borrarse manualmente y no deben considerarse confiables.
 3. Las data URLs de imágenes pueden agotar la cuota de almacenamiento. El contexto maneja el error y evita confirmar una operación que no se pudo guardar.
-4. El catálogo está en una pantalla temporal; el diseño final aún no está integrado.
+4. El catálogo ya está integrado y muestra los registros publicados. Los controles de búsqueda, filtros, orden, mapa, paginación, favoritos y detalle se habilitarán en la Fase 3.
 5. El buscador de Home aún no filtra resultados.
 6. Los favoritos todavía no están en un contexto común ni se guardan entre recargas.
 7. El detalle individual de las propiedades está reservado para la Fase 3.
