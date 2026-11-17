@@ -13,27 +13,39 @@ export default function HomeNavbar({
   return (
     <header className="navbar">
       <div className="navbar-container">
-        <Link to="/#inicio" aria-label="Orven, volver al inicio">
-          <img className="logo" src={logo} alt="Orven" />
-        </Link>
+        {activePage === "home" ? (
+          <a href="#inicio" aria-label="Orven, volver al inicio">
+            <img className="logo" src={logo} alt="Orven" />
+          </a>
+        ) : (
+          <Link to="/" aria-label="Orven, volver al inicio">
+            <img className="logo" src={logo} alt="Orven" />
+          </Link>
+        )}
 
         <nav className="nav-links" aria-label="Navegación principal">
-          <Link
-            to="/"
-            className={activePage === "home" ? "active" : undefined}
-            aria-current={activePage === "home" ? "page" : undefined}
-          >
-            Inicio
-          </Link>
-          <Link
-            to="/propiedades"
-            className={activePage === "properties" ? "active" : undefined}
-            aria-current={activePage === "properties" ? "page" : undefined}
-          >
-            Propiedades
-          </Link>
-          <Link to="/#nosotros">Sobre Nosotros</Link>
-          <Link to="/#contacto">Contacto</Link>
+          {activePage === "home" ? (
+            <a href="#inicio" className="active" aria-current="page">
+              Inicio
+            </a>
+          ) : (
+            <Link to="/">Inicio</Link>
+          )}
+
+          {activePage === "properties" ? (
+            <a href="#propiedades" className="active" aria-current="page">
+              Propiedades
+            </a>
+          ) : (
+            <Link to="/propiedades">Propiedades</Link>
+          )}
+
+          <a href={activePage === "home" ? "#nosotros" : "/#nosotros"}>
+            Sobre Nosotros
+          </a>
+          <a href={activePage === "home" ? "#contacto" : "/#contacto"}>
+            Contacto
+          </a>
         </nav>
 
         <AvatarProfile />
