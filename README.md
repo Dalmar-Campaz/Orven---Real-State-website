@@ -136,4 +136,4 @@ src/
 6. Los favoritos se comparten entre Home y el catálogo y se guardan en `localStorage`; actualmente son globales para el navegador/origen y no se asocian al usuario simulado. Todavía no existe una sección dedicada de favoritos.
 7. El detalle individual de las propiedades está reservado para la Fase 3.
 8. El rol administrativo se simula a partir del correo. La protección de rutas es una restricción de navegación del frontend, no seguridad de backend.
-9. El proyecto no tiene pruebas automatizadas. El build y lint deben volver a ejecutarse después de integrar esta rama.
+9. El proyecto no tiene pruebas automatizadas. Ejecuta `npm run build` y `npm run lint` después de los cambios para comprobar compilación y análisis estático.
