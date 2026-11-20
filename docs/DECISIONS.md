@@ -42,8 +42,9 @@ Este documento distingue decisiones implementadas de limitaciones y propuestas f
 
 ## D-007 — Estabilizar los cimientos antes de integrar el catálogo y las funciones avanzadas
 
-- **Estado:** vigente como orden de trabajo.
+- **Estado:** cumplida como secuencia de trabajo.
 - **Decisión:** completar el modelo, el estado compartido, la persistencia y la protección de rutas antes de integrar el diseño final de catálogo y las funciones de usuario.
+- **Resultado:** los cimientos se implementaron antes de integrar el catálogo público en `/propiedades`. Las funciones avanzadas que siguen pendientes se detallan en la arquitectura.
 - **Evidencia:** plan de trabajo en `docs/correcion de errores/FIXROADMAP 001.md`.
 
 ## D-008 — Separar propiedades publicadas y solicitudes
@@ -106,13 +107,20 @@ Este documento distingue decisiones implementadas de limitaciones y propuestas f
 
 ## D-017 — Integrar el catálogo público desde el diseño aprobado
 
-- **Estado:** implementada en `phase-2-catalog`.
+- **Estado:** implementada; el catálogo está activo en `/propiedades` en la rama `main`.
 - **Contexto:** la Fase 1 dejó lista una fuente compartida de propiedades publicadas; el catálogo temporal debía sustituirse por la página diseñada.
-- **Decisión:** construir `/propiedades` tomando como referencia la página 2 del PDF de diseño y consumir `propiedades` mediante `usePropiedades`. Cada tarjeta usa los datos existentes del modelo: tipo, título, ubicación, departamento, precio, habitaciones, baños, área e imagen principal.
-- **Controles pendientes:** búsqueda, filtros, ordenamiento, vista de mapa, paginación, favoritos y navegación al detalle se muestran deshabilitados y quedan para la Fase 3. La opción «Arriendo» también permanece deshabilitada porque `Operacion` solo admite actualmente `Venta`.
+- **Decisión:** construir `/propiedades` tomando como referencia la página 2 del PDF de diseño y consumir `propiedades` mediante `usePropiedades`. Las tarjetas muestran la imagen principal, precio, ubicación corta (sector y ciudad cuando hay sector), habitaciones, baños y área.
+- **Controles pendientes:** búsqueda, filtros, ordenamiento, vista de mapa, paginación y navegación al detalle se muestran deshabilitados y quedan para la Fase 3. El botón de favoritos de cada tarjeta sí funciona y persiste sus IDs mediante `PropiedadesContext`. La opción «Arriendo» también permanece deshabilitada porque `Operacion` solo admite actualmente `Venta`.
 - **Consecuencias:** las propiedades aprobadas en Admin aparecen automáticamente en el catálogo, sin un arreglo paralelo ni registros ficticios. No se modificó el modelo de datos.
 - **Evidencia:** `src/pages/Propiedades/Propiedades.tsx`, `src/pages/Propiedades/Propiedades.css`, `src/context/PropiedadesContext.tsx`.
 
+## D-018 — Compartir y persistir favoritos mediante PropiedadesContext
+
+- **Estado:** implementada.
+- **Contexto:** Home y el catálogo reutilizan `TarjetaPropiedad`, que ofrece una acción para agregar o quitar una propiedad de favoritos.
+- **Decisión:** mantener los IDs favoritos en `PropiedadesContext` como `number[]`, exponerlos mediante `favoritos` y modificarlos con `alternarFavorito(id)`. Persistir el arreglo por separado en `localStorage` bajo la clave `orven_favoritos`.
+- **Consecuencias:** el estado se comparte entre Home y el catálogo, sobrevive recargas y se sincroniza entre pestañas del mismo origen. No está asociado al usuario simulado; todos los usuarios del mismo navegador/origen comparten el arreglo.
+- **Evidencia:** `src/context/PropiedadesContext.tsx`, `src/components/TarjetaPropiedad/TarjetaPropiedad.tsx`, `src/pages/Home/Home.tsx`, `src/pages/Propiedades/Propiedades.tsx`.
 ## Plantilla para nuevas decisiones
 
 ```md
