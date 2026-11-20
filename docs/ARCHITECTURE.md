@@ -28,6 +28,7 @@ Los proveedores están fuera de `BrowserRouter`; ninguno utiliza hooks del route
 | `src/assets/` | Logos e iconos compartidos. |
 | `src/components/AvatarProfile/` | Menú de cuenta y cierre de sesión. |
 | `src/components/HomeNavbar/` | Navegación de Home. |
+| `src/components/TarjetaPropiedad/` | Tarjeta reutilizada en Home y el catálogo; incluye el control de favoritos. |
 | `src/context/AuthContext.tsx` | Sesión y rol de demostración. |
 | `src/context/PropiedadesContext.tsx` | Estado compartido, persistencia y operaciones de propiedades/solicitudes. |
 | `src/data/propiedades.ts` | Datos iniciales de ejemplo. |
@@ -74,6 +75,8 @@ El login asigna el rol `admin` al correo `admin@orven.com` y `customer` a los de
 |---|---|
 | `propiedades` | Inmuebles publicados (`Propiedad[]`). |
 | `solicitudes` | Solicitudes (`SolicitudPropiedad[]`). |
+| `favoritos` | Identificadores de propiedades favoritas (`number[]`). |
+| `alternarFavorito(id)` | Agrega o quita un identificador y persiste el arreglo de favoritos. |
 | `crearSolicitud(datos, solicitante)` | Crea una solicitud pendiente, asigna fecha e id. |
 | `aprobarSolicitud(id)` | Convierte una solicitud pendiente en propiedad y actualiza su estado. |
 | `rechazarSolicitud(id, motivo?)` | Marca la solicitud como rechazada y conserva el motivo opcional. |
@@ -95,18 +98,19 @@ Solo se procesan solicitudes existentes y pendientes. La aprobación y el cambio
 - La primera carga intenta leer y validar esa estructura. Si no existe o está corrupta, utiliza los datos de ejemplo.
 - Cada cambio se escribe en `localStorage` antes de actualizar el estado React.
 - Si el navegador rechaza el guardado, la operación lanza un error y no se confirma como exitosa.
-- El evento `storage` actualiza otras pestañas del mismo navegador/origen. No se dispara en la pestaña que realizó el cambio; esa pestaña actualiza React directamente.
-- La sincronización no cruza navegadores, perfiles, dispositivos ni usuarios.
+- El evento `storage` actualiza otras pestañas del mismo navegador/origen para `orven_propiedades` y `orven_favoritos`. No se dispara en la pestaña que realizó el cambio; esa pestaña actualiza React directamente.
+- Los favoritos se guardan por separado bajo `orven_favoritos` como un arreglo JSON de IDs numéricos; no forman parte del objeto versionado `orven_propiedades`.
+- La sincronización no cruza navegadores, perfiles ni dispositivos. Los favoritos son globales para el origen del navegador y no están asociados al usuario simulado.
 
 Las imágenes seleccionadas por el formulario se convierten a data URL. Las URL temporales `blob:` se utilizan solo para previsualizar y no se guardan. Las data URLs pueden consumir la cuota de `localStorage`; el formulario y el contexto muestran un error si no se puede guardar.
 
 ## 8. Páginas y responsabilidades
 
-- **Home:** consulta el catálogo mediante `usePropiedades` y filtra los inmuebles con `destacada === true`. El buscador es visual y aún no aplica filtros. Los favoritos son temporales y locales a Home. Los botones de detalle están deshabilitados hasta la Fase 3.
+- **Home:** consulta el catálogo mediante `usePropiedades` y filtra los inmuebles con `destacada === true`. El formulario de búsqueda no aplica filtros; al enviarlo desplaza la página hasta la sección de destacadas. Los favoritos se comparten mediante `PropiedadesContext` y persisten en `localStorage`. Los botones de detalle están deshabilitados hasta la Fase 3.
 - **Login:** valida el formato de correo y la longitud mínima de contraseña; no comprueba credenciales contra un servidor. El checkbox controla el tipo de persistencia de sesión.
 - **Admin:** lee solicitudes del contexto, calcula contadores, filtra, pagina y permite ver detalles. Muestra motivos de rechazo; las acciones solo aparecen en solicitudes pendientes. La gestión de catálogo del menú está deshabilitada mientras no exista esa sección.
 - **RegistrarPropiedad:** valida el formulario, previsualiza archivos y convierte imágenes a data URL. Llama a `crearSolicitud`; muestra éxito solo si el contexto consigue persistirla.
-- **Propiedades:** reproduce la página de catálogo del diseño aprobado. Lee `propiedades` desde `usePropiedades`, muestra el conteo real y construye cada tarjeta con los campos del modelo común. La imagen principal es la primera disponible. Los controles de búsqueda, filtros, orden, vista de mapa, paginación, favoritos y detalle están presentes como elementos deshabilitados y se reservan para la Fase 3.
+- **Propiedades:** reproduce la página de catálogo del diseño aprobado. Lee `propiedades` desde `usePropiedades` y muestra el conteo real. Las tarjetas presentan la primera imagen, el precio formateado, la ubicación corta (sector y ciudad cuando hay sector) y las habitaciones, baños y área. El botón de favoritos funciona y usa el mismo estado persistente que Home. Los controles de búsqueda, filtros, orden, vista de mapa, paginación y detalle permanecen deshabilitados y se reservan para la Fase 3.
 
 ## 9. Estilos
 
@@ -114,8 +118,8 @@ Los CSS están junto a sus páginas/componentes y son hojas globales normales, n
 
 ## 10. Trabajo pendiente
 
-1. Verificar manualmente persistencia, flujo formulario → Admin y aprobación/rechazo.
+1. Verificar manualmente la persistencia, el flujo formulario → Admin, la aprobación/rechazo y la sincronización entre pestañas.
 2. Ejecutar nuevamente build y lint en la rama actual.
-3. Implementar búsqueda, filtros, ordenamiento, paginación, detalle y favoritos en la Fase 3.
-4. Implementar buscador, filtros, detalle individual y favoritos compartidos en la Fase 3.
+3. Implementar búsqueda, filtros, ordenamiento, vista de mapa, paginación y detalle individual del catálogo.
+4. Decidir si los favoritos deben asociarse al usuario simulado y si se necesita una sección dedicada; hoy el botón de las tarjetas ya funciona y el arreglo se comparte globalmente en el navegador.
 5. Revisar los enlaces y estados de UI durante las pruebas de cierre.
