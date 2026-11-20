@@ -4,7 +4,7 @@
 
 Orven no utiliza un motor de base de datos ni una API. Los datos iniciales se definen en `src/data/propiedades.ts`; después, `PropiedadesContext` mantiene y persiste las colecciones.
 
-La clave `orven_propiedades` de `localStorage` contiene un JSON versionado:
+La clave `orven_propiedades` de `localStorage` contiene un JSON versionado con las propiedades publicadas y las solicitudes. Los favoritos se almacenan por separado bajo `orven_favoritos` como un arreglo JSON de identificadores numéricos (`number[]`):
 
 | Campo | Contenido |
 |---|---|
@@ -84,6 +84,8 @@ Estos arreglos son constantes TypeScript, no una base de datos.
 - Rechazar marca la solicitud como `Rechazada` y guarda el motivo opcional.
 - Cada operación genera un nuevo estado completo y lo guarda como un único objeto JSON. La aplicación actualiza React solo cuando el guardado tuvo éxito.
 - Si se recibe una modificación en otra pestaña, el contexto actualiza su estado a partir del evento `storage`.
+- `favoritos` contiene los IDs de las propiedades marcadas; `alternarFavorito(id)` agrega o quita un ID y guarda el arreglo en `orven_favoritos`.
+- Los favoritos se comparten entre las páginas que consumen el contexto y entre pestañas del mismo origen, pero no se separan por cuenta de usuario.
 
 ## 5. Datos construidos por el formulario
 
@@ -124,6 +126,7 @@ El login es una simulación frontend y no comprueba las credenciales contra un s
 | `localStorage` | `orven_propiedades` | JSON versionado con propiedades y solicitudes. |
 | `localStorage` | `orven_user` | Sesión cuando el usuario marca «Recordar mi sesión». |
 | `sessionStorage` | `orven_user_session` | Sesión limitada a la pestaña cuando no se marca la opción. |
+| `localStorage` | `orven_favoritos` | Arreglo JSON de IDs de propiedades favoritas; compartido en el navegador/origen y no asociado a una cuenta. |
 
 El almacenamiento solo pertenece al navegador y origen actuales. No representa una base de datos central ni sincroniza otros dispositivos. Los usuarios pueden modificar o borrar esos valores, por lo que no son confiables para seguridad.
 
@@ -134,7 +137,7 @@ El almacenamiento solo pertenece al navegador y origen actuales. No representa u
 
 ## 9. Pendientes del modelo
 
-1. Definir en la Fase 3 si los favoritos pertenecen al usuario simulado y persistir solo sus identificadores.
+1. Decidir si los favoritos deben asociarse al usuario simulado. Actualmente ya se persisten solo sus identificadores en `orven_favoritos`, pero el arreglo es global para el navegador/origen.
 2. Evaluar IndexedDB o un servicio de imágenes si la cuota de `localStorage` resulta insuficiente para las imágenes del formulario.
 3. Unificar en una fuente compartida los catálogos de ciudades y departamentos, hoy repetidos en páginas distintas.
 4. Ampliar `Operacion` solo si el alcance incorpora arriendo.
