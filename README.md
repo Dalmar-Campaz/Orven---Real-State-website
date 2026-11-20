@@ -6,19 +6,20 @@ Orven es un proyecto académico de frontend para explorar propiedades y represen
 
 ## Funcionalidades y estado actual
 
-- **Inicio:** muestra las propiedades marcadas como destacadas en el catálogo compartido. El buscador aún es visual y no aplica filtros. Los favoritos actuales solo viven en el estado local de Home; todavía no son compartidos ni persistentes. «Ver detalles» está deshabilitado hasta la Fase 3.
+- **Inicio:** muestra las propiedades marcadas como destacadas en el catálogo compartido. El formulario de búsqueda no aplica filtros; al enviarlo desplaza la página hasta la sección de propiedades destacadas. Los botones de favoritos de las tarjetas usan el estado compartido y persistente de `PropiedadesContext`. «Ver detalles» está deshabilitado hasta la Fase 3.
 - **Inicio de sesión:** valida el formato del correo y una longitud mínima de contraseña, y asigna un rol de demostración según el correo. «Recordar mi sesión» utiliza `localStorage`; sin marcarlo, utiliza `sessionStorage`. No verifica credenciales con un servidor.
 - **Registro de propiedades (`/formulario`):** valida los campos, permite previsualizar imágenes y crea una solicitud pendiente a través del contexto. Las imágenes seleccionadas se convierten a data URL y se guardan junto con la solicitud. Si el almacenamiento falla, se muestra un error y no se confirma el envío.
 - **Panel administrativo (`/admin`):** protegido para el rol `admin`. Lee las solicitudes compartidas, con búsqueda, filtro, paginación y detalle. Aprobar una solicitud la convierte en propiedad publicada; rechazarla guarda el motivo y este aparece en el detalle. Las opciones de navegación aún no implementadas se muestran deshabilitadas.
-- **Catálogo (`/propiedades`):** reproduce la página de propiedades del diseño aprobado, muestra todas las propiedades publicadas desde `PropiedadesContext` y presenta sus imágenes, ubicación, precio y características. Búsqueda, filtros, ordenamiento, mapa, paginación, favoritos y detalle permanecen deshabilitados hasta la Fase 3.
+- **Catálogo (`/propiedades`):** reproduce la página de propiedades del diseño aprobado y muestra todas las propiedades publicadas desde `PropiedadesContext`. Las tarjetas presentan imagen principal, precio, ubicación corta y características. El botón de favoritos de cada tarjeta funciona; búsqueda, filtros, ordenamiento, mapa, paginación y detalle siguen deshabilitados hasta la Fase 3.
 
 ## Persistencia y límites
 
 - `orven_propiedades` guarda un único objeto JSON versionado con las propiedades publicadas y las solicitudes.
+- `orven_favoritos` guarda por separado un arreglo JSON de identificadores de propiedades favoritas (`number[]`).
 - `orven_user` guarda la sesión cuando «Recordar mi sesión» está marcado.
 - `orven_user_session` guarda la sesión solo en la pestaña actual cuando el checkbox está desmarcado.
 - Las contraseñas no se guardan.
-- Los cambios de propiedades y solicitudes se sincronizan entre pestañas del mismo navegador mediante el evento `storage`. Este mecanismo no sincroniza usuarios, navegadores ni dispositivos.
+- Los cambios de propiedades, solicitudes y favoritos se sincronizan entre pestañas del mismo navegador mediante el evento `storage`. Este mecanismo no sincroniza navegadores, perfiles ni dispositivos; los favoritos tampoco están asociados a una cuenta de usuario.
 - Las imágenes del formulario se almacenan como data URL dentro de los datos locales. Son prácticas para el prototipo, pero pueden consumir rápidamente la cuota disponible; si el navegador rechaza el guardado, la operación no se aplica y el formulario muestra un error. Para imágenes más grandes, una fase futura debería evaluar IndexedDB o un servicio de imágenes.
 
 `localStorage` y `sessionStorage` son almacenamiento local del navegador, no una base de datos compartida. La autenticación también es una simulación frontend: proteger una ruta en React no sustituye la autorización de un servidor.
@@ -92,7 +93,8 @@ src/
 ├── assets/
 ├── components/
 │   ├── AvatarProfile/
-│   └── HomeNavbar/
+│   ├── HomeNavbar/
+│   └── TarjetaPropiedad/
 ├── context/
 │   ├── AuthContext.tsx
 │   └── PropiedadesContext.tsx
@@ -129,9 +131,9 @@ src/
 1. No hay backend ni base de datos. El almacenamiento pertenece al navegador actual.
 2. Los datos del navegador pueden borrarse manualmente y no deben considerarse confiables.
 3. Las data URLs de imágenes pueden agotar la cuota de almacenamiento. El contexto maneja el error y evita confirmar una operación que no se pudo guardar.
-4. El catálogo ya está integrado y muestra los registros publicados. Los controles de búsqueda, filtros, orden, mapa, paginación, favoritos y detalle se habilitarán en la Fase 3.
+4. El catálogo ya está integrado y muestra los registros publicados. Los controles de búsqueda, filtros, orden, mapa, paginación y detalle se habilitarán en la Fase 3; el botón de favoritos de las tarjetas ya funciona.
 5. El buscador de Home aún no filtra resultados.
-6. Los favoritos todavía no están en un contexto común ni se guardan entre recargas.
+6. Los favoritos se comparten entre Home y el catálogo y se guardan en `localStorage`; actualmente son globales para el navegador/origen y no se asocian al usuario simulado. Todavía no existe una sección dedicada de favoritos.
 7. El detalle individual de las propiedades está reservado para la Fase 3.
 8. El rol administrativo se simula a partir del correo. La protección de rutas es una restricción de navegación del frontend, no seguridad de backend.
 9. El proyecto no tiene pruebas automatizadas. El build y lint deben volver a ejecutarse después de integrar esta rama.
