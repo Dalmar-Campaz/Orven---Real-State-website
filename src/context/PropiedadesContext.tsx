@@ -13,15 +13,22 @@ import type {
   Propiedad,
   SolicitudPropiedad,
 } from "../types/propiedad";
-import { solicitudesPropiedad } from "../data/propiedades";
 
 interface EstadoPropiedades {
   propiedades: Propiedad[];
   solicitudes: SolicitudPropiedad[];
 }
 
-interface EstadoAlmacenado extends EstadoPropiedades {
-  version: 2;
+interface EstadoPersistido {
+  version: 3;
+  /** Solo propiedades creadas localmente al aprobar una solicitud. */
+  propiedadesLocales: Propiedad[];
+  solicitudes: SolicitudPropiedad[];
+}
+
+interface EstadoPersistidoLeido {
+  propiedadesLocales: Propiedad[];
+  solicitudes: SolicitudPropiedad[];
 }
 
 interface PropiedadesContextType extends EstadoPropiedades {
@@ -48,7 +55,14 @@ const PropiedadesContext = createContext<PropiedadesContextType | undefined>(
 const siguienteId = (lista: { id: number }[]) =>
   Math.max(0, ...lista.map((item) => item.id)) + 1;
 
-const hoy = () => new Date().toISOString().slice(0, 10);
+const hoy = () => {
+  const fecha = new Date();
+  const año = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const dia = String(fecha.getDate()).padStart(2, "0");
+
+  return `${año}-${mes}-${dia}`;
+};
 
 const esRegistro = (valor: unknown): valor is Record<string, unknown> =>
   typeof valor === "object" && valor !== null;
@@ -60,25 +74,37 @@ const esDatosPropiedad = (
 
   return (
     typeof valor.titulo === "string" &&
+    valor.titulo.trim().length > 0 &&
     typeof valor.tipo === "string" &&
     valor.tipo.trim().length > 0 &&
     (valor.operacion === "Venta" || valor.operacion === "Arriendo") &&
     typeof valor.precio === "number" &&
     Number.isFinite(valor.precio) &&
+    valor.precio >= 0 &&
     typeof valor.ciudad === "string" &&
+    valor.ciudad.trim().length > 0 &&
     typeof valor.departamento === "string" &&
+    valor.departamento.trim().length > 0 &&
     (valor.sector === undefined || typeof valor.sector === "string") &&
+    typeof valor.habitaciones === "number" &&
     Number.isInteger(valor.habitaciones) &&
+    valor.habitaciones >= 0 &&
+    typeof valor.banos === "number" &&
     Number.isInteger(valor.banos) &&
+    valor.banos >= 0 &&
     typeof valor.area === "number" &&
     Number.isFinite(valor.area) &&
     valor.area > 0 &&
     typeof valor.descripcion === "string" &&
     Array.isArray(valor.imagenes) &&
     valor.imagenes.length > 0 &&
-    valor.imagenes.every((imagen) => typeof imagen === "string") &&
+    valor.imagenes.every(
+      (imagen) => typeof imagen === "string" && imagen.length > 0,
+    ) &&
     (valor.agenteId === undefined ||
-      (typeof valor.agenteId === "number" && Number.isSafeInteger(valor.agenteId)))
+      (typeof valor.agenteId === "number" &&
+        Number.isSafeInteger(valor.agenteId) &&
+        valor.agenteId > 0))
   );
 };
 
@@ -86,7 +112,9 @@ const esPropiedad = (valor: unknown): valor is Propiedad => {
   if (!esRegistro(valor) || !esDatosPropiedad(valor)) return false;
 
   return (
+    typeof valor.id === "number" &&
     Number.isSafeInteger(valor.id) &&
+    valor.id > 0 &&
     typeof valor.fecha === "string" &&
     (valor.destacada === undefined || typeof valor.destacada === "boolean")
   );
@@ -96,11 +124,16 @@ const esAgente = (valor: unknown): valor is Agente => {
   if (!esRegistro(valor)) return false;
 
   return (
+    typeof valor.id === "number" &&
     Number.isSafeInteger(valor.id) &&
+    valor.id > 0 &&
     typeof valor.nombre === "string" &&
+    valor.nombre.trim().length > 0 &&
     typeof valor.cargo === "string" &&
     typeof valor.especialidad === "string" &&
+    typeof valor.experiencia === "number" &&
     Number.isInteger(valor.experiencia) &&
+    valor.experiencia >= 0 &&
     typeof valor.email === "string" &&
     typeof valor.telefono === "string" &&
     typeof valor.foto === "string" &&
@@ -112,8 +145,11 @@ const esSolicitudPropiedad = (valor: unknown): valor is SolicitudPropiedad => {
   if (!esRegistro(valor) || !esDatosPropiedad(valor)) return false;
 
   const solicitante = valor.solicitante;
+
   return (
+    typeof valor.id === "number" &&
     Number.isSafeInteger(valor.id) &&
+    valor.id > 0 &&
     typeof valor.fecha === "string" &&
     (valor.estado === "Pendiente" ||
       valor.estado === "Aprobada" ||
@@ -155,33 +191,55 @@ const esDatosCatalogo = (valor: unknown): valor is DatosCatalogo => {
   );
 };
 
-const leerEstadoSerializado = (contenido: string): EstadoPropiedades | null => {
+const leerEstadoSerializado = (
+  contenido: string,
+): EstadoPersistidoLeido | null => {
   try {
     const valor: unknown = JSON.parse(contenido);
 
-    // La versión 1 se acepta para conservar las solicitudes creadas antes
-    // de integrar datos.json. Las propiedades base ahora vienen del JSON.
     if (
       !esRegistro(valor) ||
-      (valor.version !== 1 && valor.version !== 2) ||
-      !Array.isArray(valor.propiedades) ||
       !Array.isArray(valor.solicitudes) ||
-      !valor.propiedades.every(esPropiedad) ||
       !valor.solicitudes.every(esSolicitudPropiedad)
     ) {
       return null;
     }
 
-    return {
-      propiedades: valor.propiedades,
-      solicitudes: valor.solicitudes,
-    };
+    // Formato actual: solo persiste registros creados desde el formulario.
+    if (valor.version === 3) {
+      if (
+        !Array.isArray(valor.propiedadesLocales) ||
+        !valor.propiedadesLocales.every(esPropiedad)
+      ) {
+        return null;
+      }
+
+      return {
+        propiedadesLocales: valor.propiedadesLocales,
+        solicitudes: valor.solicitudes,
+      };
+    }
+
+    // Compatibilidad con versiones anteriores. Las propiedades que ya estén
+    // en datos.json se descartan al combinar; las aprobadas localmente se conservan.
+    if (
+      (valor.version === 1 || valor.version === 2) &&
+      Array.isArray(valor.propiedades) &&
+      valor.propiedades.every(esPropiedad)
+    ) {
+      return {
+        propiedadesLocales: valor.propiedades,
+        solicitudes: valor.solicitudes,
+      };
+    }
+
+    return null;
   } catch {
     return null;
   }
 };
 
-const leerEstadoGuardado = (): EstadoPropiedades | null => {
+const leerEstadoGuardado = (): EstadoPersistidoLeido | null => {
   try {
     const contenido = window.localStorage.getItem(CLAVE_ALMACENAMIENTO);
     if (!contenido) return null;
@@ -199,25 +257,17 @@ const leerEstadoGuardado = (): EstadoPropiedades | null => {
 
 const combinarEstado = (
   propiedadesBase: Propiedad[],
-  guardado: EstadoPropiedades | null,
+  guardado: EstadoPersistidoLeido | null,
 ): EstadoPropiedades => {
-  if (!guardado) {
-    return {
-      propiedades: [...propiedadesBase],
-      solicitudes: [...solicitudesPropiedad],
-    };
-  }
-
   const idsBase = new Set(propiedadesBase.map((propiedad) => propiedad.id));
-  const propiedadesLocales = guardado.propiedades.filter(
-    (propiedad) => !idsBase.has(propiedad.id),
-  );
+  const propiedadesLocales =
+    guardado?.propiedadesLocales.filter(
+      (propiedad) => !idsBase.has(propiedad.id),
+    ) ?? [];
 
-  // Los registros del JSON son la fuente principal: una modificación o un
-  // registro nuevo en public/datos.json se refleja al volver a cargar la app.
   return {
     propiedades: [...propiedadesBase, ...propiedadesLocales],
-    solicitudes: guardado.solicitudes,
+    solicitudes: guardado?.solicitudes ?? [],
   };
 };
 
@@ -254,8 +304,18 @@ const cargarFavoritos = (): number[] => {
   return [];
 };
 
-const guardarEstado = (estado: EstadoPropiedades) => {
-  const contenido: EstadoAlmacenado = { version: 2, ...estado };
+const guardarEstado = (
+  estado: EstadoPropiedades,
+  propiedadesBase: Propiedad[],
+) => {
+  const idsBase = new Set(propiedadesBase.map((propiedad) => propiedad.id));
+  const contenido: EstadoPersistido = {
+    version: 3,
+    propiedadesLocales: estado.propiedades.filter(
+      (propiedad) => !idsBase.has(propiedad.id),
+    ),
+    solicitudes: estado.solicitudes,
+  };
 
   try {
     window.localStorage.setItem(
@@ -316,9 +376,28 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
           datos.propiedades,
           leerEstadoGuardado(),
         );
+
         estadoRef.current = inicial;
         setEstado(inicial);
         setAgentes(datos.agentes);
+
+        const idsDisponibles = new Set(
+          inicial.propiedades.map((propiedad) => propiedad.id),
+        );
+        const favoritosValidos = favoritosRef.current.filter((id) =>
+          idsDisponibles.has(id),
+        );
+
+        if (favoritosValidos.length !== favoritosRef.current.length) {
+          favoritosRef.current = favoritosValidos;
+          setFavoritos(favoritosValidos);
+          try {
+            guardarFavoritos(favoritosValidos);
+          } catch {
+            // Los favoritos actuales siguen disponibles en el estado React.
+          }
+        }
+
         setErrorCarga(null);
       } catch (error) {
         if (!activo) return;
@@ -339,24 +418,28 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  // Primero se persiste y después se actualiza React. Así el formulario no
-  // puede mostrar éxito cuando el navegador rechazó el guardado.
+  // El estado se persiste antes de actualizar React para no confirmar
+  // solicitudes o aprobaciones que el navegador no pudo guardar.
   const actualizarEstado = (
     actualizar: (actual: EstadoPropiedades) => EstadoPropiedades,
   ) => {
-    if (cargando) {
-      throw new Error("Espera a que el catálogo termine de cargar.");
+    if (cargando || errorCarga) {
+      throw new Error("El catálogo todavía no está disponible.");
     }
 
     const siguiente = actualizar(estadoRef.current);
     if (siguiente === estadoRef.current) return;
 
-    guardarEstado(siguiente);
+    guardarEstado(siguiente, propiedadesBaseRef.current);
     estadoRef.current = siguiente;
     setEstado(siguiente);
   };
 
   const alternarFavorito = (id: number) => {
+    if (!estadoRef.current.propiedades.some((propiedad) => propiedad.id === id)) {
+      return;
+    }
+
     const siguientes = favoritosRef.current.includes(id)
       ? favoritosRef.current.filter((favoritoId) => favoritoId !== id)
       : [...favoritosRef.current, id];
@@ -395,22 +478,25 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
           evento.newValue === null
             ? []
             : leerFavoritosSerializados(evento.newValue);
+
         if (!actualizados) return;
 
-        favoritosRef.current = actualizados;
-        setFavoritos(actualizados);
+        const idsDisponibles = new Set(
+          estadoRef.current.propiedades.map((propiedad) => propiedad.id),
+        );
+        const validos = actualizados.filter((id) => idsDisponibles.has(id));
+
+        favoritosRef.current = validos;
+        setFavoritos(validos);
         return;
       }
 
-      if (evento.newValue === null) {
-        const inicial = combinarEstado(propiedadesBaseRef.current, null);
-        estadoRef.current = inicial;
-        setEstado(inicial);
-        return;
-      }
+      const actualizado =
+        evento.newValue === null
+          ? null
+          : leerEstadoSerializado(evento.newValue);
 
-      const actualizado = leerEstadoSerializado(evento.newValue);
-      if (!actualizado) return;
+      if (evento.newValue !== null && !actualizado) return;
 
       const combinado = combinarEstado(
         propiedadesBaseRef.current,
@@ -428,6 +514,15 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
     datos,
     solicitante,
   ) => {
+    if (
+      typeof datos.agenteId !== "number" ||
+      !agentes.some((agente) => agente.id === datos.agenteId)
+    ) {
+      throw new Error(
+        "La solicitud debe estar relacionada con un agente del catálogo.",
+      );
+    }
+
     actualizarEstado((actual) => {
       const nueva: SolicitudPropiedad = {
         ...datos,
@@ -449,25 +544,35 @@ export const PropiedadesProvider = ({ children }: { children: ReactNode }) => {
       const solicitud = actual.solicitudes.find((item) => item.id === id);
       if (!solicitud || solicitud.estado !== "Pendiente") return actual;
 
-      const {
-        id: _id,
-        fecha: _fecha,
-        estado: _estado,
-        solicitante: _solicitante,
-        motivoRechazo: _motivo,
-        ...datos
-      } = solicitud;
+      const agenteId =
+        solicitud.agenteId && agentes.some((agente) => agente.id === solicitud.agenteId)
+          ? solicitud.agenteId
+          : agentes[0]?.id;
+
+      if (typeof agenteId !== "number") {
+        throw new Error("No hay un agente disponible para publicar la propiedad.");
+      }
+
+      const nuevaPropiedad: Propiedad = {
+        id: siguienteId(actual.propiedades),
+        titulo: solicitud.titulo,
+        tipo: solicitud.tipo,
+        operacion: solicitud.operacion,
+        precio: solicitud.precio,
+        ciudad: solicitud.ciudad,
+        departamento: solicitud.departamento,
+        sector: solicitud.sector,
+        habitaciones: solicitud.habitaciones,
+        banos: solicitud.banos,
+        area: solicitud.area,
+        descripcion: solicitud.descripcion,
+        imagenes: solicitud.imagenes,
+        agenteId,
+        fecha: hoy(),
+      };
 
       return {
-        propiedades: [
-          ...actual.propiedades,
-          {
-            ...datos,
-            agenteId: solicitud.agenteId ?? agentes[0]?.id,
-            id: siguienteId(actual.propiedades),
-            fecha: hoy(),
-          },
-        ],
+        propiedades: [...actual.propiedades, nuevaPropiedad],
         solicitudes: actual.solicitudes.map((item) =>
           item.id === id ? { ...item, estado: "Aprobada" } : item,
         ),
