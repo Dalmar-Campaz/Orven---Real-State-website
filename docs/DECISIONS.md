@@ -151,3 +151,12 @@ Este documento distingue decisiones implementadas de limitaciones y propuestas f
 - **Decisión:** mantener la estructura y estilos comunes de la barra de navegación en `HomeNavbar`, y dejar en las páginas solo los ajustes propios de cada vista.
 - **Consecuencias:** Home, catálogo, detalle y favoritos comparten una sola implementación visual.
 
+
+## D-025 — Configurar fallback para rutas SPA en Render
+
+- **Estado:** implementada.
+- **Contexto:** la aplicación usa `BrowserRouter`. La navegación interna funcionaba, pero al abrir o recargar directamente una ruta como `/propiedades` el servidor de Render podía responder 404 antes de que React Router se ejecutara.
+- **Decisión:** añadir `public/_redirects` con la regla `/* /index.html 200`. Vite copia los archivos de `public/` a la raíz de `dist/`; Render Static Sites aplica la regla como rewrite interno hacia la entrada de la SPA.
+- **Consecuencias:** las rutas de cliente se sirven desde `index.html` y React Router decide qué página renderizar. Las rutas desconocidas siguen el fallback `*` definido en `src/App.tsx`.
+- **Verificación pendiente en el entorno desplegado:** abrir y recargar directamente rutas internas después de que Render publique el nuevo build.
+- **Evidencia:** `public/_redirects`, `src/App.tsx`, `vite.config.ts`.
