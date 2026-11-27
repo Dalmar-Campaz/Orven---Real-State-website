@@ -1,28 +1,45 @@
 # Orven — plataforma inmobiliaria
 
-Orven es un proyecto académico de frontend para explorar propiedades y representar un flujo básico de publicación y revisión de inmuebles. Está construido con React, TypeScript y Vite.
+Orven es una aplicación académica de frontend para explorar propiedades, consultar asesores y representar un flujo básico de publicación y revisión. Está construida con React, TypeScript y Vite.
 
-> **Estado actual:** prototipo frontend en desarrollo. No tiene backend ni base de datos. El formulario, el panel administrativo, Home y el catálogo comparten los datos mediante `PropiedadesContext`. Las propiedades publicadas y las solicitudes se guardan en `localStorage`; el catálogo ya muestra los inmuebles publicados desde esa fuente compartida.
+> **Datos:** el catálogo inicial se lee desde `public/datos.json` mediante `fetch`. El archivo contiene 20 propiedades y 5 agentes ficticios relacionados mediante `agenteId`. No hay backend ni una base de datos real.
 
-## Funcionalidades y estado actual
+## Funcionalidades
 
-- **Inicio:** muestra las propiedades marcadas como destacadas en el catálogo compartido. El formulario de búsqueda no aplica filtros; al enviarlo desplaza la página hasta la sección de propiedades destacadas. Los botones de favoritos de las tarjetas usan el estado compartido y persistente de `PropiedadesContext`. «Ver detalles» está deshabilitado hasta la Fase 3.
-- **Inicio de sesión:** valida el formato del correo y una longitud mínima de contraseña, y asigna un rol de demostración según el correo. «Recordar mi sesión» utiliza `localStorage`; sin marcarlo, utiliza `sessionStorage`. No verifica credenciales con un servidor.
-- **Registro de propiedades (`/formulario`):** valida los campos, permite previsualizar imágenes y crea una solicitud pendiente a través del contexto. Las imágenes seleccionadas se convierten a data URL y se guardan junto con la solicitud. Si el almacenamiento falla, se muestra un error y no se confirma el envío.
-- **Panel administrativo (`/admin`):** protegido para el rol `admin`. Lee las solicitudes compartidas, con búsqueda, filtro, paginación y detalle. Aprobar una solicitud la convierte en propiedad publicada; rechazarla guarda el motivo y este aparece en el detalle. Las opciones de navegación aún no implementadas se muestran deshabilitadas.
-- **Catálogo (`/propiedades`):** reproduce la página de propiedades del diseño aprobado y muestra todas las propiedades publicadas desde `PropiedadesContext`. Las tarjetas presentan imagen principal, precio, ubicación corta y características. El botón de favoritos de cada tarjeta funciona; búsqueda, filtros, ordenamiento, mapa, paginación y detalle siguen deshabilitados hasta la Fase 3.
+- **Inicio:** muestra propiedades destacadas y un buscador que envía los criterios elegidos al catálogo. Las opciones de ciudad, tipo y rango de precio se derivan de los datos.
+- **Catálogo (`/propiedades`):** muestra los inmuebles del JSON y los aprobados localmente. Incluye filtros combinados por ubicación, tipo, operación, precio mínimo/máximo y habitaciones; permite ordenar por fecha, precio o área y paginar los resultados.
+- **Detalle (`/propiedades/:id`):** muestra imágenes, descripción, características y el agente relacionado con la propiedad.
+- **Favoritos (`/favoritos`):** reúne las propiedades guardadas desde las tarjetas o el detalle.
+- **Inicio de sesión (`/login`):** valida el formato del correo y una longitud mínima de contraseña, y asigna un rol de demostración según el correo. «Recordar mi sesión» utiliza `localStorage`; sin marcarlo, utiliza `sessionStorage`. No verifica credenciales con un servidor.
+- **Registro de propiedades (`/formulario`):** valida campos, permite previsualizar imágenes y crea una solicitud pendiente. La solicitud se relaciona con el primer agente disponible.
+- **Panel administrativo (`/admin`):** protegido para el rol `admin`. Lee las solicitudes compartidas, con búsqueda, filtros, paginación y detalle. Aprobar una solicitud la convierte en propiedad publicada; rechazarla guarda el motivo.
 
-## Persistencia y límites
+## Datos y persistencia
 
-- `orven_propiedades` guarda un único objeto JSON versionado con las propiedades publicadas y las solicitudes.
-- `orven_favoritos` guarda por separado un arreglo JSON de identificadores de propiedades favoritas (`number[]`).
+### Archivo JSON de la entrega
+
+`public/datos.json` contiene dos entidades:
+
+- `propiedades`: mínimo 20 inmuebles con ID único.
+- `agentes`: mínimo 5 agentes con ID único.
+
+Cada inmueble contiene un `agenteId` que referencia un agente existente. Todos los registros son ficticios y están marcados como datos de demostración. El proveedor valida las cantidades, la estructura, los IDs y las relaciones antes de mostrar la aplicación.
+
+Para agregar una propiedad de prueba, añade un objeto con la misma estructura y un nuevo ID a `propiedades`, usando un `agenteId` que exista en `agentes`. Para probar una categoría nueva, cambia o añade el valor de `tipo`. Recarga la aplicación: el registro y la nueva opción del filtro deben aparecer sin modificar React.
+
+### Almacenamiento del navegador
+
+- `orven_propiedades` guarda un JSON versionado con propiedades locales y solicitudes. El formato actual es la versión 2; también se acepta la versión 1 para conservar datos de sesiones anteriores.
+- El catálogo base siempre se obtiene de `datos.json`. Las propiedades guardadas localmente cuyos IDs no aparecen en el archivo se agregan al catálogo; si el ID existe en ambos, prevalece el JSON.
+- `orven_favoritos` guarda un arreglo JSON de identificadores de propiedades favoritas (`number[]`).
 - `orven_user` guarda la sesión cuando «Recordar mi sesión» está marcado.
 - `orven_user_session` guarda la sesión solo en la pestaña actual cuando el checkbox está desmarcado.
 - Las contraseñas no se guardan.
-- Los cambios de propiedades, solicitudes y favoritos se sincronizan entre pestañas del mismo navegador mediante el evento `storage`. Este mecanismo no sincroniza navegadores, perfiles ni dispositivos; los favoritos tampoco están asociados a una cuenta de usuario.
-- Las imágenes del formulario se almacenan como data URL dentro de los datos locales. Son prácticas para el prototipo, pero pueden consumir rápidamente la cuota disponible; si el navegador rechaza el guardado, la operación no se aplica y el formulario muestra un error. Para imágenes más grandes, una fase futura debería evaluar IndexedDB o un servicio de imágenes.
+- Los cambios en propiedades, solicitudes y favoritos se sincronizan entre pestañas del mismo navegador mediante el evento `storage`. No se sincronizan navegadores, perfiles ni dispositivos; los favoritos tampoco están asociados a una cuenta de usuario.
 
-`localStorage` y `sessionStorage` son almacenamiento local del navegador, no una base de datos compartida. La autenticación también es una simulación frontend: proteger una ruta en React no sustituye la autorización de un servidor.
+Las imágenes del formulario se almacenan como data URL en el almacenamiento local. Pueden consumir rápidamente la cuota disponible; si el navegador rechaza el guardado, la operación no se aplica y el formulario muestra un error.
+
+`localStorage` y `sessionStorage` son almacenamiento local del navegador, no una base de datos compartida. La autenticación es una simulación frontend: proteger una ruta en React no sustituye la autorización de un servidor.
 
 ## Tecnologías
 
@@ -32,7 +49,7 @@ Orven es un proyecto académico de frontend para explorar propiedades y represen
 | TypeScript 7 | Tipado estático |
 | React Router DOM 7 | Navegación entre rutas |
 | Vite 8 | Servidor de desarrollo y compilación |
-| CSS | Estilos |
+| CSS | Estilos propios, Grid/Flexbox y media queries |
 | Oxlint | Análisis estático configurado |
 
 Las versiones corresponden a los rangos declarados en `package.json`.
@@ -66,7 +83,7 @@ npm run dev
 
 Vite mostrará en la terminal la dirección local para abrir la aplicación.
 
-## Scripts disponibles
+## Scripts
 
 | Comando | Descripción |
 |---|---|
@@ -77,18 +94,20 @@ Vite mostrará en la terminal la dirección local para abrir la aplicación.
 
 El proyecto no define un script de pruebas automatizadas.
 
-## Cuentas de demostración
+## Cuenta de demostración
 
 En `/login`, cualquier correo con formato válido y una contraseña de al menos 6 caracteres inicia sesión:
 
 - `admin@orven.com` recibe el rol `admin` y accede a `/admin`.
 - Cualquier otro correo recibe el rol `customer` y se dirige a Home.
 
-La contraseña no se comprueba. No se almacena. Es una simulación académica, no autenticación real.
+La contraseña no se comprueba ni se almacena. Es una simulación académica, no autenticación real.
 
-## Estructura actual
+## Estructura principal
 
 ```text
+public/
+└── datos.json
 src/
 ├── assets/
 ├── components/
@@ -102,38 +121,33 @@ src/
 │   └── propiedades.ts
 ├── pages/
 │   ├── Admin/
+│   ├── DetallePropiedad/
+│   ├── Favoritos/
 │   ├── Home/
 │   ├── Login/
-│   ├── Propiedades/           # Catálogo público conectado a PropiedadesContext
+│   ├── Propiedades/
 │   └── RegistrarPropiedad/
 ├── routes/
-│   └── ProtectedRoute.tsx
 ├── types/
-│   └── propiedad.ts
 ├── utils/
-│   ├── archivos.ts
-│   └── formato.ts
 ├── App.tsx
-├── App.css
 ├── index.css
 └── main.tsx
 ```
 
-## Documentación y planificación
+## Documentación
 
 - [Arquitectura](docs/ARCHITECTURE.md)
 - [Modelo de datos](docs/DATA_MODEL.md)
 - [Decisiones técnicas](docs/DECISIONS.md)
-- [Plan de trabajo](docs/correcion%20de%20errores/FIXROADMAP%20001.md)
+- [Correspondencia con la rúbrica y pruebas de defensa](docs/RUBRICA_PROYECTO.md)
+- [Plan de trabajo original](docs/correcion%20de%20errores/FIXROADMAP%20001.md)
 
 ## Limitaciones conocidas
 
-1. No hay backend ni base de datos. El almacenamiento pertenece al navegador actual.
-2. Los datos del navegador pueden borrarse manualmente y no deben considerarse confiables.
-3. Las data URLs de imágenes pueden agotar la cuota de almacenamiento. El contexto maneja el error y evita confirmar una operación que no se pudo guardar.
-4. El catálogo ya está integrado y muestra los registros publicados. Los controles de búsqueda, filtros, orden, mapa, paginación y detalle se habilitarán en la Fase 3; el botón de favoritos de las tarjetas ya funciona.
-5. El buscador de Home aún no filtra resultados.
-6. Los favoritos se comparten entre Home y el catálogo y se guardan en `localStorage`; actualmente son globales para el navegador/origen y no se asocian al usuario simulado. Todavía no existe una sección dedicada de favoritos.
-7. El detalle individual de las propiedades está reservado para la Fase 3.
-8. El rol administrativo se simula a partir del correo. La protección de rutas es una restricción de navegación del frontend, no seguridad de backend.
-9. El proyecto no tiene pruebas automatizadas. Ejecuta `npm run build` y `npm run lint` después de los cambios para comprobar compilación y análisis estático.
+1. No hay backend ni base de datos compartida. El catálogo base es un archivo estático.
+2. Las solicitudes y aprobaciones locales no modifican el archivo público `datos.json`; quedan en el navegador actual.
+3. Los datos del navegador pueden borrarse o alterarse manualmente y no deben considerarse confiables.
+4. Las data URLs de imágenes pueden agotar la cuota de almacenamiento.
+5. La autenticación y los roles son simulados; la protección de rutas es navegación frontend, no seguridad de backend.
+6. No hay pruebas automatizadas configuradas. Ejecuta `npm run build` y `npm run lint`, además de las pruebas manuales descritas en la guía de rúbrica.

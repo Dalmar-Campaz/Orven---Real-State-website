@@ -797,3 +797,64 @@
     text-align: center;
   }
 }
+
+/* Controles activos de búsqueda y filtros combinados. */
+.catalog-tabs button {
+  cursor: pointer;
+}
+
+.catalog-tabs button:hover:not(.is-selected) {
+  background: #e4e7dc;
+}
+
+.catalog-field input,
+.catalog-field select {
+  color: #53645a;
+}
+
+.catalog-field input:focus,
+.catalog-field select:focus,
+.catalog-view-controls select:focus {
+  border-color: var(--catalog-primary);
+  outline: 2px solid rgba(110, 121, 87, 0.15);
+}
+
+.catalog-active-filters {
+  color: #7b857b;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.catalog-clear-filters {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.catalog-clear-filters:hover {
+  text-decoration: underline;
+}
+
+.catalog-average {
+  margin-top: 6px !important;
+  color: #536b50 !important;
+  font-weight: 700;
+}
+
+.catalog-empty button {
+  min-height: 36px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  background: var(--catalog-primary);
+  cursor: pointer;
+}
+
+.catalog-empty button:hover {
+  background: var(--catalog-primary-dark);
+}
+
+.catalog-pagination span {
+  color: #66736b;
+  font-size: 11px;
+}

@@ -208,7 +208,7 @@ function Select({
 export function RegistrarPropiedad() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { crearSolicitud } = usePropiedades();
+  const { crearSolicitud, agentes } = usePropiedades();
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Si hay sesión, el correo del formulario empieza prellenado.
@@ -354,8 +354,14 @@ useEffect(
         imagenes.map((i) => archivoADataUrl(i.file)),
       );
 
+      const agenteResponsable = agentes[0];
+      if (!agenteResponsable) {
+        throw new Error("No hay agentes disponibles para asociar la solicitud.");
+      }
+
       const datos: DatosPropiedad = {
         titulo: form.titulo.trim(),
+        agenteId: agenteResponsable.id,
         tipo,
         operacion: form.operacion,
         precio: Number(form.precio),
