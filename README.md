@@ -1,45 +1,51 @@
 # Orven — plataforma inmobiliaria
 
-Orven es una aplicación académica de frontend para explorar propiedades, consultar asesores y representar un flujo básico de publicación y revisión. Está construida con React, TypeScript y Vite.
+Orven es una aplicación académica frontend para explorar propiedades, consultar asesores y representar un flujo básico de publicación y revisión. Está construida con React, TypeScript y Vite.
 
-> **Datos:** el catálogo inicial se lee desde `public/datos.json` mediante `fetch`. El archivo contiene 20 propiedades y 5 agentes ficticios relacionados mediante `agenteId`. No hay backend ni una base de datos real.
+> **Fuente del catálogo:** las propiedades y los agentes iniciales se leen exclusivamente desde `public/datos.json` mediante `fetch("/datos.json")`. No existen arreglos TypeScript alternativos para poblar el catálogo.
 
 ## Funcionalidades
 
-- **Inicio:** muestra propiedades destacadas y un buscador que envía los criterios elegidos al catálogo. Las opciones de ciudad, tipo y rango de precio se derivan de los datos.
-- **Catálogo (`/propiedades`):** muestra los inmuebles del JSON y los aprobados localmente. Incluye filtros combinados por ubicación, tipo, operación, precio mínimo/máximo y habitaciones; permite ordenar por fecha, precio o área y paginar los resultados.
-- **Detalle (`/propiedades/:id`):** muestra imágenes, descripción, características y el agente relacionado con la propiedad.
-- **Favoritos (`/favoritos`):** reúne las propiedades guardadas desde las tarjetas o el detalle.
+- **Inicio:** muestra las propiedades destacadas del JSON. El buscador obtiene ciudades, tipos y rangos de precio a partir de los datos y envía los criterios al catálogo.
+- **Catálogo (`/propiedades`):** muestra todas las propiedades del JSON y las publicaciones creadas por el flujo local de aprobación. Incluye filtros combinados por ubicación, tipo, operación, precio y habitaciones; ordenamiento por fecha, precio o área; paginación y precio promedio.
+- **Detalle (`/propiedades/:id`):** muestra las imágenes, descripción, características y el agente relacionado mediante `agenteId`.
+- **Favoritos (`/favoritos`):** reúne las propiedades guardadas desde las tarjetas o desde el detalle.
 - **Inicio de sesión (`/login`):** valida el formato del correo y una longitud mínima de contraseña, y asigna un rol de demostración según el correo. «Recordar mi sesión» utiliza `localStorage`; sin marcarlo, utiliza `sessionStorage`. No verifica credenciales con un servidor.
-- **Registro de propiedades (`/formulario`):** valida campos, permite previsualizar imágenes y crea una solicitud pendiente. La solicitud se relaciona con el primer agente disponible.
-- **Panel administrativo (`/admin`):** protegido para el rol `admin`. Lee las solicitudes compartidas, con búsqueda, filtros, paginación y detalle. Aprobar una solicitud la convierte en propiedad publicada; rechazarla guarda el motivo.
+- **Registro de propiedades (`/formulario`):** permite enviar una solicitud pendiente con datos del inmueble y del solicitante. La solicitud se asocia a un agente del JSON.
+- **Panel administrativo (`/admin`):** protegido para el rol `admin`. Permite consultar, buscar, filtrar y revisar solicitudes; aprobarlas para publicarlas en el catálogo local o rechazarlas guardando un motivo. El panel comienza sin solicitudes de muestra: las solicitudes aparecen al enviar el formulario.
 
-## Datos y persistencia
+## Datos del catálogo
 
-### Archivo JSON de la entrega
+### Archivo `public/datos.json`
 
-`public/datos.json` contiene dos entidades:
+El archivo contiene dos entidades:
 
-- `propiedades`: mínimo 20 inmuebles con ID único.
-- `agentes`: mínimo 5 agentes con ID único.
+- `propiedades`: 20 inmuebles iniciales, cada uno con un ID único.
+- `agentes`: 5 asesores iniciales, cada uno con un ID único.
 
-Cada inmueble contiene un `agenteId` que referencia un agente existente. Todos los registros son ficticios y están marcados como datos de demostración. El proveedor valida las cantidades, la estructura, los IDs y las relaciones antes de mostrar la aplicación.
+Cada propiedad incluye `agenteId`, que referencia el `id` de un agente existente. El proveedor valida cantidades, tipos, identificadores y relaciones antes de mostrar las páginas.
 
-Para agregar una propiedad de prueba, añade un objeto con la misma estructura y un nuevo ID a `propiedades`, usando un `agenteId` que exista en `agentes`. Para probar una categoría nueva, cambia o añade el valor de `tipo`. Recarga la aplicación: el registro y la nueva opción del filtro deben aparecer sin modificar React.
+Para agregar una propiedad de prueba, añade un objeto a `propiedades` con un ID nuevo y un `agenteId` válido. Para probar una categoría nueva, escribe un nuevo valor no vacío en `tipo`. Recarga la aplicación: el inmueble y la nueva opción del filtro aparecerán sin modificar código React.
 
-### Almacenamiento del navegador
+Todos los registros y perfiles incluidos son ficticios y se utilizan como datos académicos de demostración.
 
-- `orven_propiedades` guarda un JSON versionado con propiedades locales y solicitudes. El formato actual es la versión 2; también se acepta la versión 1 para conservar datos de sesiones anteriores.
-- El catálogo base siempre se obtiene de `datos.json`. Las propiedades guardadas localmente cuyos IDs no aparecen en el archivo se agregan al catálogo; si el ID existe en ambos, prevalece el JSON.
-- `orven_favoritos` guarda un arreglo JSON de identificadores de propiedades favoritas (`number[]`).
+### Publicaciones creadas desde la aplicación
+
+El navegador no puede escribir de vuelta en el archivo estático `public/datos.json`. Por eso, cuando el administrador aprueba una solicitud, esa propiedad se guarda como registro local creado por el usuario y se muestra junto al catálogo base. No es un arreglo de propiedades precargadas ni reemplaza el JSON como fuente inicial. Estos registros locales se pierden al borrar los datos del navegador o cambiar de navegador/dispositivo.
+
+## Persistencia del navegador
+
+- `orven_propiedades` guarda un objeto versionado con las propiedades aprobadas localmente y las solicitudes. La versión actual es la 3 y solo almacena registros creados desde el formulario; no duplica el catálogo base del JSON.
+- `orven_favoritos` guarda un arreglo JSON de IDs de propiedades favoritas (`number[]`).
 - `orven_user` guarda la sesión cuando «Recordar mi sesión» está marcado.
 - `orven_user_session` guarda la sesión solo en la pestaña actual cuando el checkbox está desmarcado.
 - Las contraseñas no se guardan.
-- Los cambios en propiedades, solicitudes y favoritos se sincronizan entre pestañas del mismo navegador mediante el evento `storage`. No se sincronizan navegadores, perfiles ni dispositivos; los favoritos tampoco están asociados a una cuenta de usuario.
+- Los cambios se sincronizan entre pestañas del mismo navegador/origen mediante el evento `storage`; no se sincronizan perfiles o dispositivos distintos.
+- Se aceptan estados antiguos de versiones 1 y 2 para migrar datos. Durante esa migración se descartan los cuatro registros iniciales de propiedades y las ocho solicitudes ficticias de la versión anterior.
 
-Las imágenes del formulario se almacenan como data URL en el almacenamiento local. Pueden consumir rápidamente la cuota disponible; si el navegador rechaza el guardado, la operación no se aplica y el formulario muestra un error.
+`localStorage` y `sessionStorage` son almacenamiento del navegador, no una base de datos compartida. La autenticación también es una simulación frontend: proteger una ruta en React no sustituye la autorización de un servidor.
 
-`localStorage` y `sessionStorage` son almacenamiento local del navegador, no una base de datos compartida. La autenticación es una simulación frontend: proteger una ruta en React no sustituye la autorización de un servidor.
+Las imágenes del formulario se convierten a data URLs para conservarlas con la solicitud local. Pueden consumir la cuota de almacenamiento del navegador; si el guardado falla, el formulario muestra un error y no confirma el envío.
 
 ## Tecnologías
 
@@ -92,7 +98,7 @@ Vite mostrará en la terminal la dirección local para abrir la aplicación.
 | `npm run lint` | Ejecuta Oxlint. |
 | `npm run preview` | Sirve localmente el resultado de una compilación previa. |
 
-El proyecto no define un script de pruebas automatizadas.
+El workflow de GitHub Actions ejecuta `npm ci`, `npm run lint` y `npm run build` en los cambios de la rama principal y en las pull requests.
 
 ## Cuenta de demostración
 
@@ -117,8 +123,6 @@ src/
 ├── context/
 │   ├── AuthContext.tsx
 │   └── PropiedadesContext.tsx
-├── data/
-│   └── propiedades.ts
 ├── pages/
 │   ├── Admin/
 │   ├── DetallePropiedad/
@@ -128,11 +132,15 @@ src/
 │   ├── Propiedades/
 │   └── RegistrarPropiedad/
 ├── routes/
+│   └── ProtectedRoute.tsx
 ├── types/
+│   └── propiedad.ts
 ├── utils/
-├── App.tsx
+│   ├── archivos.ts
+│   └── formato.ts
 ├── index.css
-└── main.tsx
+├── main.tsx
+└── App.tsx
 ```
 
 ## Documentación
@@ -145,9 +153,9 @@ src/
 
 ## Limitaciones conocidas
 
-1. No hay backend ni base de datos compartida. El catálogo base es un archivo estático.
-2. Las solicitudes y aprobaciones locales no modifican el archivo público `datos.json`; quedan en el navegador actual.
+1. No hay backend ni base de datos compartida. El catálogo base es un archivo JSON estático.
+2. Las solicitudes y aprobaciones locales pertenecen al navegador actual y no modifican el JSON del repositorio.
 3. Los datos del navegador pueden borrarse o alterarse manualmente y no deben considerarse confiables.
-4. Las data URLs de imágenes pueden agotar la cuota de almacenamiento.
-5. La autenticación y los roles son simulados; la protección de rutas es navegación frontend, no seguridad de backend.
-6. No hay pruebas automatizadas configuradas. Ejecuta `npm run build` y `npm run lint`, además de las pruebas manuales descritas en la guía de rúbrica.
+4. La autenticación y los roles son simulados; la protección de rutas es navegación frontend, no seguridad de backend.
+5. El almacenamiento de imágenes en data URLs puede agotar la cuota disponible.
+6. No hay pruebas automatizadas de componentes configuradas; la verificación continua comprueba lint, TypeScript y compilación de producción.

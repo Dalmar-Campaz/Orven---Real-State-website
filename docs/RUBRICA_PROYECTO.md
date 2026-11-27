@@ -1,32 +1,34 @@
 # Guía de cumplimiento de la rúbrica — Programación IV
 
-Esta guía relaciona los requisitos del documento del profesor con la implementación de Orven y propone una secuencia breve para comprobarlos durante la defensa.
+Esta guía relaciona los requisitos del profesor con la implementación actual de Orven y recoge las pruebas para la defensa.
 
 ## 1. Base técnica
 
 | Requisito | Implementación en Orven | Comprobación |
 |---|---|---|
 | React y Vite | Aplicación React montada con Vite. | Ejecutar `npm run dev`. |
-| Componentes y props | `TarjetaPropiedad` recibe propiedad, agente, favoritos y callback mediante props. | Abrir Home y el catálogo; ambas páginas reutilizan la tarjeta. |
-| Estado con `useState` | Criterios de búsqueda, orden y paginación viven en el estado React. | Cambiar filtros y observar los resultados. |
-| Datos desde JSON | `PropiedadesContext` ejecuta `fetch("/datos.json")`. | Verificar la pestaña Network o modificar el JSON y recargar. |
-| Renderizado dinámico | Tarjetas y opciones se generan con `map()`. | No existe un JSX escrito por cada inmueble. |
-| Al menos un filtro | Ubicación, tipo, operación, precio y habitaciones. | Probar cada control por separado. |
-| Filtros anidados | Los criterios se aplican mediante varios `filter()` encadenados. | Activar dos o más filtros y comprobar que se cumplen simultáneamente. |
+| Componentes y props | `TarjetaPropiedad` recibe propiedad, agente, favoritos y callback mediante props. | Home, catálogo y favoritos reutilizan la tarjeta. |
+| Estado con `useState` | Criterios de búsqueda, orden, paginación y estados de interfaz viven en React. | Cambiar filtros y observar los resultados. |
+| Datos desde JSON | `PropiedadesContext` ejecuta `fetch("/datos.json")`. | Revisar la pestaña Network o modificar el JSON y recargar. |
+| Renderizado dinámico | Las tarjetas y opciones se generan con `map()`. | No hay un JSX escrito por cada inmueble. |
+| Filtros | Ubicación, tipo, operación, precio y habitaciones. | Probar cada control por separado. |
+| Filtros anidados | Los criterios se aplican mediante varios `filter()` encadenados. | Activar dos o más filtros y comprobar que todos se cumplen. |
 
 ## 2. Datos
 
 | Requisito | Implementación |
 |---|---|
-| Mínimo dos entidades relacionadas | `propiedades` y `agentes`. |
-| 20 registros principales | 20 propiedades en `public/datos.json`. |
-| 5 registros secundarios | 5 agentes en `public/datos.json`. |
-| ID único | Cada propiedad y agente tiene un `id` único. |
+| Mínimo dos entidades relacionadas | `propiedades` y `agentes` dentro de `public/datos.json`. |
+| 20 registros principales | 20 propiedades iniciales en el JSON. |
+| 5 registros secundarios | 5 agentes iniciales en el JSON. |
+| Identificador único | Cada propiedad y agente tiene un `id` único. |
 | Relación entre entidades | Cada propiedad contiene `agenteId`, que referencia a `agentes.id`. |
 | Campo filtrable | `tipo`, además de ubicación, operación, precio y habitaciones. |
 | Vista de detalle | `/propiedades/:id` muestra los datos del inmueble y del agente relacionado. |
-| Consistencia | El proveedor valida estructura, cantidades, IDs y referencias antes de cargar el catálogo. |
-| Datos ficticios | Los nombres y registros del JSON son datos de demostración; no representan personas reales. |
+| Consistencia | El proveedor valida estructura, cantidades, IDs e integridad de las relaciones. |
+| Sin propiedades hardcodeadas | Se eliminó `src/data/propiedades.ts`; el catálogo base procede del JSON. |
+
+Las propiedades generadas desde una solicitud aprobada son datos creados por el usuario y guardados localmente para simular el flujo de publicación. No son registros precargados ni reemplazan la fuente JSON.
 
 ## 3. Pruebas que exige la defensa
 
@@ -34,18 +36,18 @@ Esta guía relaciona los requisitos del documento del profesor con la implementa
 
 1. Abrir `public/datos.json`.
 2. Duplicar un objeto de `propiedades` y cambiar su `id` por uno que no exista.
-3. Mantener un `agenteId` válido.
+3. Mantener un `agenteId` que exista en `agentes`.
 4. Guardar y recargar la aplicación.
-5. Comprobar que el nuevo inmueble aparece en el catálogo sin modificar componentes React.
+5. Comprobar que el nuevo inmueble aparece en el catálogo sin modificar React.
 
 ### Prueba 2 — Agregar una categoría nueva
 
-1. En el registro anterior, cambiar `tipo` por una categoría nueva, por ejemplo `Local comercial`.
+1. En el registro agregado, asignar a `tipo` una categoría que no exista, por ejemplo `Local comercial`.
 2. Guardar y recargar.
 3. Abrir el filtro «Tipo de propiedad».
-4. Comprobar que aparece la categoría nueva automáticamente.
+4. Comprobar que aparece la nueva categoría automáticamente.
 
-El validador acepta valores de `tipo` como cadenas no vacías; no hay que editar un enum cerrado ni un arreglo manual de opciones.
+El validador acepta valores de `tipo` como cadenas no vacías; no hay que editar un enum cerrado ni una lista manual de opciones.
 
 ### Prueba 3 — Activar dos filtros
 
@@ -53,35 +55,44 @@ El validador acepta valores de `tipo` como cadenas no vacías; no hay que editar
 2. Elegir un tipo de inmueble.
 3. Comprobar que los resultados cumplen ambos criterios.
 4. Añadir un rango de precio o un mínimo de habitaciones.
-5. Comprobar que los resultados siguen cumpliendo todos los filtros activos.
+5. Comprobar que todos los criterios siguen aplicándose simultáneamente.
 
 ### Cambio en vivo
 
-El profesor puede pedir un cambio concreto. Una demostración sencilla consiste en modificar un valor de `tipo` en el JSON y explicar cómo `map()`, `Set` y el filtrado construyen las opciones y resultados después de recargar.
+Una demostración sencilla consiste en cambiar un valor de `tipo` en el JSON, recargar la aplicación y explicar cómo `map()`, `Set` y el filtrado crean las opciones y resultados.
 
 ## 4. Fundamentos web
 
-| Requisito | Ubicación |
+| Requisito | Implementación |
 |---|---|
-| HTML semántico | Home, catálogo, detalle y demás páginas utilizan `header`, `nav`, `main`, `section`, `article` o `footer`. |
-| CSS propio | Hojas CSS junto a páginas y componentes; no se usa Tailwind. |
+| HTML semántico | Home, catálogo, detalle y otras páginas utilizan `header`, `nav`, `main`, `section`, `article` o `footer`. |
+| CSS propio | Hojas CSS junto a páginas y componentes; no se utiliza Tailwind. |
 | Grid/Flexbox | Rejillas de propiedades, navegación y formularios. |
-| Media query | Hojas de estilo de Home, catálogo, detalle y favoritos. |
+| Media queries | Home, catálogo, detalle y favoritos tienen estilos responsive. |
 | `map()` | Tarjetas, ciudades, tipos, operaciones y habitaciones. |
 | `filter()` | Propiedades destacadas, filtros combinados y favoritos. |
 | `reduce()` | Precio promedio de los resultados filtrados. |
-| `useEffect` con `fetch` | El proveedor carga `datos.json` una vez al montar y limpia la ejecución si se desmonta. |
+| `useEffect` con `fetch` | El proveedor carga `datos.json` al montar y cancela la actualización de estado si se desmonta. |
 
-## 5. Entrega y preparación
+## 5. Pruebas funcionales complementarias
 
-- Ejecutar `npm run build`.
+- Enviar una solicitud desde `/formulario` y comprobar que aparece en Admin.
+- Aprobarla y comprobar que aparece en el catálogo como publicación local.
+- Rechazar otra y comprobar que conserva el motivo.
+- Agregar y quitar favoritos desde tarjeta y detalle.
+- Comprobar el enlace de contacto del agente.
+- Probar las rutas públicas, login, logout y protección de `/admin`.
+- Probar la navegación y las rejillas en móvil.
+
+## 6. Verificación de entrega
+
+- Ejecutar `npm ci`.
 - Ejecutar `npm run lint`.
-- Probar las tres pruebas de defensa.
-- Probar también formulario → Admin → aprobar/rechazar.
-- Probar favoritos, detalle, enlaces de navegación y versión móvil.
-- Preparar una presentación de 5 minutos que explique origen de los datos, relación `agenteId`, filtros combinados y flujo de una solicitud.
-- Explicar que `localStorage` conserva el estado local de la demostración, pero que el catálogo inicial se carga desde `public/datos.json`.
+- Ejecutar `npm run build`.
+- Revisar el workflow de GitHub Actions `Orven quality checks`.
+- Realizar las tres pruebas requeridas con `public/datos.json`.
+- Preparar una presentación de cinco minutos que explique origen de datos, relación `agenteId`, filtros combinados y el flujo de solicitudes.
 
-## 6. Alcance que no exige la rúbrica
+## 7. Límites de la implementación
 
-La rúbrica enumera como extras opcionales los gráficos, CRUD general, ordenamiento, modo oscuro y Next.js. Orven conserva su flujo de solicitudes, favoritos, ordenamiento y vistas de detalle porque forman parte de la experiencia ya diseñada; no requiere agregar un backend ni una base de datos real para esta entrega.
+El archivo `datos.json` es estático y el navegador no puede escribir en él. Por eso, los inmuebles iniciales proceden únicamente del JSON, mientras que las publicaciones aprobadas a partir del formulario se conservan localmente en el navegador para simular la administración sin backend. No se sincronizan entre usuarios o dispositivos.
