@@ -228,8 +228,10 @@ const leerEstadoSerializado = (
       valor.propiedades.every(esPropiedad)
     ) {
       return {
-        propiedadesLocales: valor.propiedades,
-        solicitudes: valor.solicitudes,
+        // Las cuatro propiedades iniciales y las ocho solicitudes de muestra
+        // pertenecían a la versión anterior. No se migran como datos reales.
+        propiedadesLocales: valor.propiedades.filter((propiedad) => propiedad.id > 4),
+        solicitudes: valor.solicitudes.filter((solicitud) => solicitud.id > 8),
       };
     }
 
