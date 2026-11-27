@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Admin.css";
-import logo from "../../assets/LogoWhite.png";
+import logo from "../../assets/Logo.png";
 import homeIcon from "../../assets/icons/house.png";
 import houseVerdeIcon from "../../assets/icons/house-verde.png";
 import clipboardIcon from "../../assets/icons/clipboard-list.png";
