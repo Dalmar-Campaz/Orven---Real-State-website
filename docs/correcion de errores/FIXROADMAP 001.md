@@ -10,8 +10,8 @@
  
 - [x] **Fase 0 — Preparar el proyecto y establecer un punto seguro.**
 - [x] **Fase 1 — Corregir los cimientos de la aplicación.**
-- [ ] **Fase 2 — Integrar la página diseñada de «Ver todas las propiedades».**
-- [ ] **Fase 3 — Implementar las funcionalidades de usuario.**
+- [x] **Fase 2 — Integrar la página diseñada de «Ver todas las propiedades».**
+- [x] **Fase 3 — Implementar las funcionalidades de usuario.**
 - [ ] **Fase 4 — Verificar, documentar y preparar la entrega.**
 ---
  
@@ -229,10 +229,10 @@
 - [ ] Probar persistencia después de recargar el navegador.
 - [ ] Revisar que no existan botones sin función ni enlaces rotos.
 - [ ] Revisar que las imágenes y demás assets carguen correctamente.
-- [ ] Actualizar `README.md` con las funcionalidades realmente terminadas y los pasos de ejecución.
-- [ ] Actualizar `docs/ARCHITECTURE.md` si cambió la estructura o el flujo de componentes.
-- [ ] Actualizar `docs/DATA_MODEL.md` si cambiaron entidades, campos o persistencia.
-- [ ] Registrar en `docs/DECISIONS.md` las decisiones importantes tomadas durante el desarrollo.
+- [x] Actualizar `README.md` con las funcionalidades realmente terminadas y los pasos de ejecución.
+- [x] Actualizar `docs/ARCHITECTURE.md` si cambió la estructura o el flujo de componentes.
+- [x] Actualizar `docs/DATA_MODEL.md` si cambiaron entidades, campos o persistencia.
+- [x] Registrar en `docs/DECISIONS.md` las decisiones importantes tomadas durante el desarrollo.
 - [ ] Revisar que la documentación no afirme que existe backend, base de datos o seguridad real si no se implementaron.
 - [ ] Crear un commit final con un mensaje que describa el conjunto de cambios.
 **Criterio para completar el proyecto:** la aplicación compila, los flujos principales están probados y la documentación coincide con el comportamiento entregado.
@@ -247,7 +247,8 @@
 | 2026-11-16 | 1.5, 1.6 y 1.7 | Formulario, Admin y Home conectados mediante `usePropiedades`. Se completaron en `finish-phase-1` los detalles de rechazo, galería, navegación del panel y filtrado de destacadas; quedan las pruebas manuales de 1.9. |
 | 2026-11-16 | Cierre de Fase 1 | Build, lint y pruebas manuales de persistencia, flujo de solicitudes, aprobación/rechazo y protección de `/admin` ejecutados y verificados por el usuario en Codespaces. Fase 1 completada; Fase 2 queda como siguiente etapa. |
 | 2026-11-16 | Admin y Home | Motivo de rechazo visible, galería corregida, navegación administrativa aclarada, propiedades destacadas filtradas y ruta temporal `/propiedades` habilitada. |
-| 2026-11-17 | Implementación de Fase 2 | Catálogo integrado según la página 2 del PDF, conectado a `PropiedadesContext` y documentado. Pendientes build/lint y validación visual en Codespaces. |
+| 2026-11-17 | Implementación de Fase 2 | Catálogo integrado según el diseño aprobado, conectado a `PropiedadesContext`; la verificación final quedó asignada a Fase 4. |
+| 2026-11-26 | Cierre de integración según rúbrica | Se eliminó `src/data/propiedades.ts` y el fallback de solicitudes ficticias; `public/datos.json` es la única fuente del catálogo base. Se integraron búsqueda, filtros combinados, detalle, favoritos, contacto del agente y navegación de Admin; almacenamiento v3 conserva solo publicaciones creadas localmente. Documentación actualizada. Build, lint y pruebas funcionales finales pendientes de CI/validación. |
  
 ## Decisiones pendientes de confirmar
  
@@ -264,3 +265,12 @@
 6. Después de cada cambio, explicar qué cambió, por qué y cómo comprobarlo.
 7. Actualizar la documentación cuando una decisión o comportamiento del proyecto cambie.
  
+
+## Actualización final de alcance — 2026-11-26
+
+- Fase 2 y Fase 3 están integradas en el código actual.
+- El catálogo base se carga únicamente desde `public/datos.json`; se eliminó el archivo de fixtures `src/data/propiedades.ts`.
+- Admin inicia sin solicitudes inventadas. Las solicitudes nacen del formulario.
+- Las propiedades aprobadas se guardan como registros locales creados por el usuario; el navegador no modifica el archivo estático `datos.json`.
+- La navegación común se centralizó en `HomeNavbar`; se eliminaron el stylesheet vacío de App y un icono sin referencias.
+- Fase 4 permanece abierta hasta que finalicen los comandos de calidad y las pruebas funcionales de entrega.
