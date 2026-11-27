@@ -398,6 +398,11 @@ section[id] {
    FOOTER
 */
 
+.footer .logo {
+  width: 150px;
+}
+
+
 .footer {
   padding: 20px 0 10px;
   width: min(1200px, 86%);
