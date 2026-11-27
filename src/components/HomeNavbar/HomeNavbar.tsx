@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import logo from "../../assets/Logo.png";
 import "./HomeNavbar.css";
 import AvatarProfile from "../AvatarProfile/AvatarProfile";
@@ -10,77 +11,74 @@ type HomeNavbarProps = {
 export default function HomeNavbar({
   activePage = "home",
 }: HomeNavbarProps) {
-  // Estado para guardar el ID de la sección activa actual (ej: "inicio", "propiedades", "nosotros")
   const [activeSection, setActiveSection] = useState("inicio");
 
   useEffect(() => {
-    // Si no estamos en la página de inicio, no necesitamos observar el scroll de estas secciones
     if (activePage !== "home") return;
 
-    // Seleccionamos todas las secciones del DOM que tienen un ID correspondiente a los enlaces
-    const sections = document.querySelectorAll("section[id], div[id]"); // Ajusta según tus contenedores
-    
+    const sections = document.querySelectorAll("section[id], div[id]");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Si la sección entra en el área visible de la pantalla (al menos un 50% visible)
           if (entry.isIntersecting) {
             setActiveSection(entry.target.id);
           }
         });
       },
       {
-        // Margen negativo superior para que detecte la sección un poco antes de llegar arriba del todo
         rootMargin: "-20% 0px -50% 0px",
         threshold: 0,
-      }
+      },
     );
 
     sections.forEach((section) => observer.observe(section));
-
-    return () => {
-      sections.forEach((section) => observer.unobserve(section));
-    };
+    return () => observer.disconnect();
   }, [activePage]);
 
   return (
     <header className="navbar">
       <div className="navbar-container">
-        <a href="#inicio" aria-label="Orven, volver al inicio">
+        <Link to="/" aria-label="Orven, volver al inicio">
           <img className="logo" src={logo} alt="Orven" />
-        </a>
+        </Link>
 
         {activePage === "home" ? (
           <nav className="nav-links" aria-label="Navegación principal">
             <a
               href="#inicio"
               className={activeSection === "inicio" ? "active" : ""}
-              aria-current={activeSection === "inicio" ? "page" : undefined}
+              aria-current={activeSection === "inicio" ? "location" : undefined}
             >
               Inicio
             </a>
-
             <a
               href="#propiedades"
               className={activeSection === "propiedades" ? "active" : ""}
-              aria-current={activeSection === "propiedades" ? "page" : undefined}
+              aria-current={activeSection === "propiedades" ? "location" : undefined}
             >
               Propiedades
             </a>
-
             <a
               href="#nosotros"
               className={activeSection === "nosotros" ? "active" : ""}
-              aria-current={activeSection === "nosotros" ? "page" : undefined}
+              aria-current={activeSection === "nosotros" ? "location" : undefined}
             >
               Sobre Nosotros
             </a>
           </nav>
         ) : (
-          ""
+          <nav className="nav-links" aria-label="Navegación principal">
+            <Link to="/">Inicio</Link>
+            <Link to="/propiedades">Propiedades</Link>
+          </nav>
         )}
 
-        <AvatarProfile />
+        <div className="navbar-actions">
+          <Link className="nav-favorites" to="/favoritos">
+            Favoritos
+          </Link>
+          <AvatarProfile />
+        </div>
       </div>
     </header>
   );
