@@ -227,10 +227,15 @@ const leerEstadoSerializado = (
       Array.isArray(valor.propiedades) &&
       valor.propiedades.every(esPropiedad)
     ) {
+      const primerIdLocal = valor.version === 2 ? 20 : 4;
+
       return {
-        // Las cuatro propiedades iniciales y las ocho solicitudes de muestra
-        // pertenecían a la versión anterior. No se migran como datos reales.
-        propiedadesLocales: valor.propiedades.filter((propiedad) => propiedad.id > 4),
+        // v1 guardaba cuatro propiedades base; v2 guardaba las veinte del JSON.
+        // Ninguno de esos registros base se copia al almacenamiento local.
+        propiedadesLocales: valor.propiedades.filter(
+          (propiedad) => propiedad.id > primerIdLocal,
+        ),
+        // Las ocho solicitudes precargadas del prototipo anterior no son datos reales.
         solicitudes: valor.solicitudes.filter((solicitud) => solicitud.id > 8),
       };
     }
