@@ -71,7 +71,7 @@
   text-decoration: underline;
 }
 
-@media (max-width: 620px) {
+@media (max-width: 760px) {
   .navbar-container {
     width: 90%;
   }
