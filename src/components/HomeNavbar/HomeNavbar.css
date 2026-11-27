@@ -5,3 +5,32 @@
   width: 100%;
   z-index: 1000;
 }
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-favorites {
+  color: #52634a;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-favorites:hover {
+  color: #253c34;
+  text-decoration: underline;
+}
+
+@media (max-width: 620px) {
+  .navbar-actions {
+    gap: 10px;
+  }
+
+  .nav-favorites {
+    font-size: 11px;
+  }
+}
