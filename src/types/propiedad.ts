@@ -1,6 +1,19 @@
-export type TipoInmueble = "Casa" | "Apartamento";
-export type Operacion = "Venta";
+export type TipoInmueble = string;
+export type Operacion = "Venta" | "Arriendo";
 export type EstadoSolicitud = "Pendiente" | "Aprobada" | "Rechazada";
+
+/** Persona asesora relacionada con una o varias propiedades. */
+export interface Agente {
+  id: number;
+  nombre: string;
+  cargo: string;
+  especialidad: string;
+  experiencia: number;
+  email: string;
+  telefono: string;
+  foto: string;
+  descripcion: string;
+}
 
 /** Lo que describe a un inmueble, sea solicitud o ya publicado. */
 export interface DatosPropiedad {
@@ -15,13 +28,14 @@ export interface DatosPropiedad {
   banos: number;
   area: number;
   descripcion: string;
-  imagenes: string[]; // URLs
+  imagenes: string[];
+  agenteId?: number;
 }
 
 /** Un inmueble ya publicado en el catálogo. */
 export interface Propiedad extends DatosPropiedad {
   id: number;
-  fecha: string; // ISO: "2026-11-06"
+  fecha: string;
   destacada?: boolean;
 }
 
@@ -32,4 +46,10 @@ export interface SolicitudPropiedad extends DatosPropiedad {
   estado: EstadoSolicitud;
   solicitante: { nombre: string; email: string; telefono: string };
   motivoRechazo?: string;
+}
+
+/** Estructura pública del archivo public/datos.json. */
+export interface DatosCatalogo {
+  propiedades: Propiedad[];
+  agentes: Agente[];
 }
