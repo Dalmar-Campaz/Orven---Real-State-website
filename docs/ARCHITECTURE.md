@@ -20,6 +20,7 @@ No hay backend ni motor de base de datos. El catálogo base se carga mediante `f
 5. Mientras se carga el archivo, `AppRoutes` presenta el estado de carga. Si falla la lectura o la validación, presenta un estado de error y no muestra un catálogo incompleto.
 6. `AppRoutes` consulta la sesión con `useAuth` y declara las rutas.
 7. `ProtectedRoute` comprueba la sesión y el rol antes de mostrar el panel administrativo.
+8. En producción, Render debe entregar `index.html` para las rutas que no correspondan a archivos estáticos. La regla `public/_redirects` (`/* /index.html 200`) se copia a `dist/_redirects` con Vite y permite que `BrowserRouter` resuelva las rutas al abrirlas o recargarlas directamente.
 
 ## 3. Estructura principal
 
@@ -145,3 +146,9 @@ Comandos:
 - `npm run build`: TypeScript y Vite.
 
 El workflow `.github/workflows/quality.yml` ejecuta ambos comandos después de instalar dependencias. No hay un runner de pruebas automatizadas de componentes configurado.
+
+### Despliegue SPA en Render
+
+`BrowserRouter` utiliza rutas del lado del cliente. Al navegar desde Home, React Router puede resolverlas sin pedir un documento nuevo al servidor; al abrir una URL interna directamente o recargarla, Render recibe esa ruta. Sin una regla de rewrite, el servidor intenta localizar un archivo o directorio físico y responde 404 antes de que React arranque.
+
+El archivo `public/_redirects` contiene `/* /index.html 200`. Vite copia los archivos de `public/` a la raíz del directorio de salida (`dist/`), por lo que Render recibe la regla al publicar el sitio. El código `200` configura un rewrite interno y conserva la URL del navegador; React Router interpreta después la ruta. Esta regla no sustituye el manejo de rutas desconocidas definido en `AppRoutes`.
