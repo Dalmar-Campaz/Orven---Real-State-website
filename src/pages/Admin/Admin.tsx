@@ -21,14 +21,6 @@ const FILTROS: FiltroEstado[] = ["Todos", "Pendiente", "Aprobada", "Rechazada"];
 
 /* ---------- Iconos ---------- */
 const ICONS = {
-  grid: (
-    <>
-      <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
-      <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
-      <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
-      <rect x="13.5" y="13.5" width="7" height="7" rx="1.5" />
-    </>
-  ),
   clipboard: (
     <>
       <rect x="5" y="4.5" width="14" height="16.5" rx="2" />
@@ -249,10 +241,9 @@ export function AdminPanel() {
           <button
             type="button"
             className="admin-nav__item"
-            disabled
-            title="La gestión del catálogo estará disponible en una fase posterior."
+            onClick={() => navigate("/propiedades")}
           >
-            <img style={{ width: "20px", height: "20px" }} src={homeIcon} alt="" /> Propiedades (próximamente)
+            <img style={{ width: "20px", height: "20px" }} src={homeIcon} alt="" /> Catálogo de propiedades
           </button>
           <button
             type="button"
@@ -412,7 +403,9 @@ export function AdminPanel() {
                     {visibles.length === 0 && (
                       <tr>
                         <td colSpan={6} className="table__empty">
-                          No hay solicitudes que coincidan con tu búsqueda.
+                          {solicitudes.length === 0
+                            ? "Todavía no hay solicitudes. Las publicaciones enviadas desde el formulario aparecerán aquí."
+                            : "No hay solicitudes que coincidan con tu búsqueda."}
                         </td>
                       </tr>
                     )}
