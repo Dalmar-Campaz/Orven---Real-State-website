@@ -273,6 +273,7 @@ function Home() {
         </a>
         <div className="footer-bottom">
           <p>© 2026 Orven. Todos los derechos reservados.</p>
+          <p>Code By: Dalmar Campaz - Jhoan Galindo - Jose Vidal</p>
         </div>
       </footer>
     </div>
