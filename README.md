@@ -89,6 +89,20 @@ npm run dev
 
 Vite mostrará en la terminal la dirección local para abrir la aplicación.
 
+## Despliegue y rutas directas
+
+Orven utiliza `BrowserRouter`, por lo que las rutas como `/propiedades`, `/favoritos` o `/admin` son gestionadas por React en el navegador. En producción, el servidor debe entregar `index.html` para las rutas de la SPA en lugar de buscar un archivo físico con ese nombre de ruta.
+
+Para Render Static Sites, `public/_redirects` contiene:
+
+```text
+/* /index.html 200
+```
+
+Vite copia los archivos de `public/` directamente a la raíz de `dist/` durante la compilación. Render utiliza esta regla como rewrite interno: conserva la URL solicitada y entrega la aplicación, que después resuelve la ruta con React Router. Sin este fallback, abrir o recargar una ruta distinta de Home puede devolver un 404 del servidor antes de que React se ejecute.
+
+Después de desplegar, comprueba que puedes abrir y recargar directamente `/propiedades`, `/favoritos`, `/login` y `/admin` (esta última con una sesión de administrador).
+
 ## Scripts
 
 | Comando | Descripción |
@@ -113,6 +127,7 @@ La contraseña no se comprueba ni se almacena. Es una simulación académica, no
 
 ```text
 public/
+├── _redirects
 └── datos.json
 src/
 ├── assets/
