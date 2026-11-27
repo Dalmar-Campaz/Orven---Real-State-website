@@ -3,7 +3,6 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, type UserRole } from "../../context/AuthContext";
 import "./Login.css";
-import logo from "../../assets/Logo.png";
 import handShake from "../../assets/icons/handshake.png";
 import shield from "../../assets/icons/shield-check.png";
 import home from "../../assets/icons/green-house.png";
