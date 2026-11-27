@@ -25,12 +25,18 @@ function Home() {
     Math.ceil(precioMaximo / 3 / 100000000) * 100000000,
   );
   const rangosDisponibles = [
-    { valor: `0-${tercioPrecio}`, etiqueta: `Hasta ${formatoPrecio(tercioPrecio)}` },
     {
-      valor: `${tercioPrecio}-${tercioPrecio * 2}`,
-      etiqueta: `${formatoPrecio(tercioPrecio)} a ${formatoPrecio(tercioPrecio * 2)}`,
+      valor: `0-${tercioPrecio}`,
+      etiqueta: `Hasta ${formatoPrecio(tercioPrecio)}`,
     },
-    { valor: `${tercioPrecio * 2}-`, etiqueta: `Más de ${formatoPrecio(tercioPrecio * 2)}` },
+    {
+      valor: `${tercioPrecio + 1}-${tercioPrecio * 2}`,
+      etiqueta: `Más de ${formatoPrecio(tercioPrecio)} a ${formatoPrecio(tercioPrecio * 2)}`,
+    },
+    {
+      valor: `${tercioPrecio * 2 + 1}-`,
+      etiqueta: `Más de ${formatoPrecio(tercioPrecio * 2)}`,
+    },
   ];
   const agenteDestacado = agentes[0];
 
@@ -249,7 +255,12 @@ function Home() {
                     <small>{agenteDestacado.experiencia} años de experiencia</small>
                   </div>
                 </div>
-                <span className="contact-agent">Agente destacado</span>
+                <a
+                  className="contact-agent"
+                  href={`mailto:${agenteDestacado.email}`}
+                >
+                  Contactar
+                </a>
               </div>
             )}
           </article>
@@ -262,7 +273,7 @@ function Home() {
             propiedad. Envíanos tu solicitud y da el primer paso.
           </p>
           <button onClick={handleClickFormulario} className="publish-button">
-            Solicitar mi venta
+            Solicitar publicación
           </button>
         </section>
       </main>

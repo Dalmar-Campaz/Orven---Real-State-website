@@ -302,26 +302,14 @@ export default function Propiedades() {
                   <option value="price-desc">Mayor precio</option>
                   <option value="area-desc">Mayor área</option>
                 </select>
-                <button
-                  type="button"
-                  className="catalog-view-button is-active"
-                  disabled
-                  aria-label="Vista de cuadrícula seleccionada"
+                <span
+                  className="catalog-view-current"
+                  role="img"
+                  aria-label="Vista de cuadrícula"
+                  title="Vista de cuadrícula"
                 >
                   <img src={gridIcon} alt="" />
-                </button>
-                <button
-                  type="button"
-                  className="catalog-view-button"
-                  disabled
-                  title="La vista de mapa no forma parte de esta entrega."
-                  aria-label="Vista de mapa no disponible"
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z" />
-                    <path d="M9 3v15M15 6v15" />
-                  </svg>
-                </button>
+                </span>
               </div>
             </div>
 

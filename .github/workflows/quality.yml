@@ -1,0 +1,36 @@
+name: Orven quality checks
+
+on:
+  push:
+    branches:
+      - main
+      - chore/orven-json-source-cleanup
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: TypeScript, lint and production build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Oxlint
+        run: npm run lint
+
+      - name: Check TypeScript and build with Vite
+        run: npm run build

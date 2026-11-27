@@ -6,11 +6,6 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.property-detail-page .navbar {
-  height: 72px;
-  background: #fbfaf6;
-}
-
 .property-detail {
   width: min(1120px, 90%);
   margin: 0 auto;
