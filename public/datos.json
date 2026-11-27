@@ -1,0 +1,445 @@
+{
+  "agentes": [
+    {
+      "id": 1,
+      "nombre": "Alejandro Gómez",
+      "cargo": "Asesor inmobiliario senior",
+      "especialidad": "Vivienda urbana",
+      "experiencia": 8,
+      "email": "alejandro.gomez@example.com",
+      "telefono": "000 000 0001",
+      "foto": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop",
+      "descripcion": "Acompaña a compradores y propietarios durante todo el proceso de negociación."
+    },
+    {
+      "id": 2,
+      "nombre": "Laura Martínez",
+      "cargo": "Asesora inmobiliaria",
+      "especialidad": "Apartamentos familiares",
+      "experiencia": 6,
+      "email": "laura.martinez@example.com",
+      "telefono": "000 000 0002",
+      "foto": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop",
+      "descripcion": "Especialista en encontrar espacios funcionales para familias y profesionales."
+    },
+    {
+      "id": 3,
+      "nombre": "Andrés Herrera",
+      "cargo": "Consultor inmobiliario",
+      "especialidad": "Casas campestres",
+      "experiencia": 10,
+      "email": "andres.herrera@example.com",
+      "telefono": "000 000 0003",
+      "foto": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop",
+      "descripcion": "Conoce proyectos residenciales y propiedades ubicadas fuera de los centros urbanos."
+    },
+    {
+      "id": 4,
+      "nombre": "Valentina Ríos",
+      "cargo": "Asesora comercial",
+      "especialidad": "Inversión inmobiliaria",
+      "experiencia": 5,
+      "email": "valentina.rios@example.com",
+      "telefono": "000 000 0004",
+      "foto": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop",
+      "descripcion": "Orienta a quienes buscan inmuebles con potencial de valorización."
+    },
+    {
+      "id": 5,
+      "nombre": "Mateo Cárdenas",
+      "cargo": "Agente inmobiliario",
+      "especialidad": "Propiedades premium",
+      "experiencia": 7,
+      "email": "mateo.cardenas@example.com",
+      "telefono": "000 000 0005",
+      "foto": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop",
+      "descripcion": "Gestiona la comercialización de viviendas de alto nivel y proyectos exclusivos."
+    }
+  ],
+  "propiedades": [
+    {
+      "id": 1,
+      "titulo": "Casa moderna con piscina",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 1250000000,
+      "ciudad": "Medellín",
+      "departamento": "Antioquia",
+      "sector": "El Poblado",
+      "habitaciones": 4,
+      "banos": 3,
+      "area": 280,
+      "descripcion": "Hermosa casa de dos pisos con piscina, jardín y excelentes acabados. Ubicada en una zona residencial con acceso a servicios y vías principales.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-01",
+      "destacada": true,
+      "agenteId": 1
+    },
+    {
+      "id": 2,
+      "titulo": "Apartamento con vista a la ciudad",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 650000000,
+      "ciudad": "Medellín",
+      "departamento": "Antioquia",
+      "sector": "El Poblado",
+      "habitaciones": 3,
+      "banos": 2,
+      "area": 120,
+      "descripcion": "Apartamento moderno con vista panorámica, espacios abiertos y excelente iluminación natural.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-02",
+      "destacada": true,
+      "agenteId": 2
+    },
+    {
+      "id": 3,
+      "titulo": "Casa campestre",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 980000000,
+      "ciudad": "La Calera",
+      "departamento": "Cundinamarca",
+      "sector": "Vereda El Hato",
+      "habitaciones": 4,
+      "banos": 3,
+      "area": 240,
+      "descripcion": "Casa campestre rodeada de naturaleza, con amplios espacios y vistas abiertas al paisaje.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-03",
+      "destacada": true,
+      "agenteId": 3
+    },
+    {
+      "id": 4,
+      "titulo": "Apartamento familiar",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 452800000,
+      "ciudad": "Envigado",
+      "departamento": "Antioquia",
+      "sector": "La Magnolia",
+      "habitaciones": 2,
+      "banos": 2,
+      "area": 85,
+      "descripcion": "Apartamento ideal para familias, cerca de colegios, parques y comercios de barrio.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-04",
+      "destacada": true,
+      "agenteId": 2
+    },
+    {
+      "id": 5,
+      "titulo": "Casa contemporánea en Laureles",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 890000000,
+      "ciudad": "Medellín",
+      "departamento": "Antioquia",
+      "sector": "Laureles",
+      "habitaciones": 4,
+      "banos": 3,
+      "area": 210,
+      "descripcion": "Vivienda contemporánea con terraza, cocina abierta y espacios para compartir.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-05",
+      "agenteId": 1
+    },
+    {
+      "id": 6,
+      "titulo": "Apartamento luminoso en Cali",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 385000000,
+      "ciudad": "Cali",
+      "departamento": "Valle del Cauca",
+      "sector": "Ciudad Jardín",
+      "habitaciones": 3,
+      "banos": 2,
+      "area": 102,
+      "descripcion": "Apartamento con balcón, iluminación natural y zonas comunes para toda la familia.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-06",
+      "agenteId": 2
+    },
+    {
+      "id": 7,
+      "titulo": "Casa frente al mar",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 1500000000,
+      "ciudad": "Santa Marta",
+      "departamento": "Magdalena",
+      "sector": "Bello Horizonte",
+      "habitaciones": 5,
+      "banos": 4,
+      "area": 350,
+      "descripcion": "Casa amplia frente al mar con piscina, jardín y espacios exteriores para descansar.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-07",
+      "agenteId": 5
+    },
+    {
+      "id": 8,
+      "titulo": "Apartamento en Chapinero",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 520000000,
+      "ciudad": "Bogotá",
+      "departamento": "Cundinamarca",
+      "sector": "Chapinero Alto",
+      "habitaciones": 2,
+      "banos": 2,
+      "area": 78,
+      "descripcion": "Apartamento práctico y bien distribuido, cerca de universidades, restaurantes y transporte.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-08",
+      "agenteId": 4
+    },
+    {
+      "id": 9,
+      "titulo": "Casa con jardín en Rionegro",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 720000000,
+      "ciudad": "Rionegro",
+      "departamento": "Antioquia",
+      "sector": "Llanogrande",
+      "habitaciones": 4,
+      "banos": 3,
+      "area": 260,
+      "descripcion": "Casa rodeada de zonas verdes, con jardín privado y espacios interiores amplios.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-09",
+      "agenteId": 3
+    },
+    {
+      "id": 10,
+      "titulo": "Apartamento con terraza",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 610000000,
+      "ciudad": "Barranquilla",
+      "departamento": "Atlántico",
+      "sector": "Villa Santos",
+      "habitaciones": 3,
+      "banos": 3,
+      "area": 145,
+      "descripcion": "Apartamento con terraza privada, acabados modernos y acceso a zonas sociales.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-10",
+      "agenteId": 2
+    },
+    {
+      "id": 11,
+      "titulo": "Casa tradicional renovada",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 430000000,
+      "ciudad": "Buenaventura",
+      "departamento": "Valle del Cauca",
+      "sector": "Ciudadela Colpuertos",
+      "habitaciones": 3,
+      "banos": 2,
+      "area": 155,
+      "descripcion": "Casa renovada con distribución cómoda, patio y espacios para adaptar a las necesidades del hogar.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-11",
+      "agenteId": 1
+    },
+    {
+      "id": 12,
+      "titulo": "Apartamento cerca del centro",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 295000000,
+      "ciudad": "Pereira",
+      "departamento": "Risaralda",
+      "sector": "Álamos",
+      "habitaciones": 2,
+      "banos": 2,
+      "area": 74,
+      "descripcion": "Apartamento con distribución eficiente, cerca de comercio y servicios esenciales.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-12",
+      "agenteId": 4
+    },
+    {
+      "id": 13,
+      "titulo": "Casa amplia en Cartagena",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 1180000000,
+      "ciudad": "Cartagena",
+      "departamento": "Bolívar",
+      "sector": "Manga",
+      "habitaciones": 4,
+      "banos": 4,
+      "area": 300,
+      "descripcion": "Casa de espacios generosos en sector residencial, con patio y zonas para reuniones.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-13",
+      "agenteId": 5
+    },
+    {
+      "id": 14,
+      "titulo": "Apartamento tipo loft",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 340000000,
+      "ciudad": "Bogotá",
+      "departamento": "Cundinamarca",
+      "sector": "Chapinero",
+      "habitaciones": 1,
+      "banos": 1,
+      "area": 58,
+      "descripcion": "Loft de ambiente abierto, ideal para una persona o pareja que busca funcionalidad.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-14",
+      "agenteId": 4
+    },
+    {
+      "id": 15,
+      "titulo": "Casa campestre con terraza",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 1050000000,
+      "ciudad": "Chía",
+      "departamento": "Cundinamarca",
+      "sector": "La Balsa",
+      "habitaciones": 4,
+      "banos": 4,
+      "area": 310,
+      "descripcion": "Casa campestre con terraza, amplias zonas verdes y espacios para disfrutar en familia.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-15",
+      "agenteId": 3
+    },
+    {
+      "id": 16,
+      "titulo": "Apartamento junto al parque",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 475000000,
+      "ciudad": "Envigado",
+      "departamento": "Antioquia",
+      "sector": "Alto de Misael",
+      "habitaciones": 3,
+      "banos": 2,
+      "area": 98,
+      "descripcion": "Apartamento con vista a zonas verdes, iluminación cruzada y espacios bien aprovechados.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-16",
+      "agenteId": 2
+    },
+    {
+      "id": 17,
+      "titulo": "Casa familiar en el norte",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 560000000,
+      "ciudad": "Cali",
+      "departamento": "Valle del Cauca",
+      "sector": "La Flora",
+      "habitaciones": 3,
+      "banos": 3,
+      "area": 185,
+      "descripcion": "Casa familiar con patio, garaje y ambientes independientes para mayor comodidad.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-17",
+      "agenteId": 1
+    },
+    {
+      "id": 18,
+      "titulo": "Apartamento con balcón",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 399000000,
+      "ciudad": "Manizales",
+      "departamento": "Caldas",
+      "sector": "Cable",
+      "habitaciones": 2,
+      "banos": 2,
+      "area": 82,
+      "descripcion": "Apartamento con balcón y vista abierta, ubicado cerca de universidades y servicios.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-18",
+      "agenteId": 4
+    },
+    {
+      "id": 19,
+      "titulo": "Casa de diseño minimalista",
+      "tipo": "Casa",
+      "operacion": "Venta",
+      "precio": 1320000000,
+      "ciudad": "Medellín",
+      "departamento": "Antioquia",
+      "sector": "Las Palmas",
+      "habitaciones": 4,
+      "banos": 4,
+      "area": 325,
+      "descripcion": "Diseño minimalista con ventanales amplios, acabados de alta calidad y espacios sociales integrados.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-19",
+      "agenteId": 5
+    },
+    {
+      "id": 20,
+      "titulo": "Apartamento nuevo en Bucaramanga",
+      "tipo": "Apartamento",
+      "operacion": "Venta",
+      "precio": 315000000,
+      "ciudad": "Bucaramanga",
+      "departamento": "Santander",
+      "sector": "Sotomayor",
+      "habitaciones": 2,
+      "banos": 2,
+      "area": 76,
+      "descripcion": "Apartamento nuevo con distribución práctica, buena iluminación y zonas comunes.",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&auto=format&fit=crop"
+      ],
+      "fecha": "2026-11-20",
+      "agenteId": 2
+    }
+  ]
+}
