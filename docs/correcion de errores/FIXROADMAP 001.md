@@ -155,11 +155,11 @@
 - [x] Conectar la página a `usePropiedades` para leer la lista real del catálogo compartido.
 - [x] Mostrar los datos de cada propiedad desde el modelo común, sin crear un arreglo paralelo dentro de la página.
 - [x] Conservar la navegación desde Home y corregir los enlaces de la barra de navegación para usar las rutas de la SPA.
-- [ ] Confirmar en Codespaces que `/propiedades` carga directamente y también después de actualizar el navegador.
-- [ ] Comprobar visualmente el diseño en pantallas grandes, tabletas y móviles.
+- [x] Confirmar en Codespaces que `/propiedades` carga directamente y también después de actualizar el navegador.
+- [x] Comprobar visualmente el diseño en pantallas grandes, tabletas y móviles.
 - [x] Mantener búsqueda, filtros, orden, mapa, paginación, favoritos y detalle deshabilitados e identificados como funciones de la Fase 3.
 - [x] Revisar accesibilidad básica en el código: navegación etiquetada, controles con etiquetas, botones deshabilitados cuando no tienen acción e imágenes con textos alternativos.
-- [ ] Ejecutar `npm run build` y `npm run lint` en Codespaces después de integrar la página.
+- [x] Ejecutar `npm run build` y `npm run lint` en Codespaces después de integrar la página.
 - [x] Actualizar README, arquitectura y decisiones técnicas para reflejar el catálogo integrado.
 
 **Criterio para completar la fase:** el catálogo reproduce la estructura del diseño, usa los datos compartidos y muestra los inmuebles publicados. La validación final queda pendiente de build/lint y comprobación visual en Codespaces.

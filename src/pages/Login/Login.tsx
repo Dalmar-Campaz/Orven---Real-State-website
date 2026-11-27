@@ -3,10 +3,10 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, type UserRole } from "../../context/AuthContext";
 import "./Login.css";
-import logo from "../../assets/LogoWhite.png";
+import logo from "../../assets/Logo.png";
 import handShake from "../../assets/icons/handshake.png";
 import shield from "../../assets/icons/shield-check.png";
-import home from "../../assets/icons/house.png";
+import home from "../../assets/icons/green-house.png";
 const heroImage = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop";
 
 /* ---------- Tipos ---------- */
@@ -151,8 +151,6 @@ export function Login() {
           style={{ backgroundImage: `url(${heroImage})` }}
         >
           <div className="login-hero__overlay" />
-
-          <img className="login-hero__logo" src={logo} alt="Orven" />
 
           <div className="login-hero__copy">
             <h1>
