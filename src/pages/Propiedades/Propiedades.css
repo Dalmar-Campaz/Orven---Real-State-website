@@ -25,6 +25,10 @@
   font: inherit;
 }
 
+.catalog-page .navbar {
+  box-shadow: 0 1px 8px rgba(28, 45, 35, 0.06);
+}
+
 .catalog-main {
   width: 100%;
 }
