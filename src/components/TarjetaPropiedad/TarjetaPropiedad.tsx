@@ -41,6 +41,7 @@ export default function TarjetaPropiedad({
       </div>
 
       <div className="property-info">
+        <h3 className="property-title">{propiedad.titulo}</h3>
         <p className="property-price">{formatoPrecio(propiedad.precio)}</p>
 
         <p className="property-location">
